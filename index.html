@@ -379,7 +379,7 @@ function renderAll(){
   if(!ST.m.has('Todos'))parts.push([...ST.m].join('+'));
   if(!ST.e.has('Todos'))parts.push([...ST.e].join('+'));
   document.getElementById('fmeta').textContent=parts.length?`${fd.length} linhas · ${parts.join(' · ')}`:`${fd.length} linhas · todos`;
-  document.getElementById('total-pill').textContent='R$ '+(total/1e6).toFixed(2)+'M';
+  document.getElementById('total-pill').textContent='R$ '+(total/1e6).toFixed(3)+'M';
   renderCards(total,assets,ctT,ctY);
   renderYTD(ctY);
   renderAlloc(total,ctT);
@@ -396,7 +396,7 @@ function renderCards(total,assets,ctT,ctY){
     const yc=ytd>.001?'yp':ytd<-.001?'yn':'y0',ys=ytd>=0?'+':'';
     return`<div class="cc"><div class="cc-top" style="background:${COLORS[ct]}"></div><div class="cc-body">
       <div class="cc-hdr"><span class="cc-name">${ct}</span><span class="badge ${bc}">${bd}</span></div>
-      <div class="cc-val" style="color:${COLORS[ct]}">R$ ${(v/1e6).toFixed(2)}M</div>
+      <div class="cc-val" style="color:${COLORS[ct]}">R$ ${(v/1e6).toFixed(3)}M</div>
       <div class="cc-foot">
         <span class="cc-pct">${(p*100).toFixed(1)}% · alvo ${(tgt*100).toFixed(0)}%</span>
         <span class="cc-ytd ${yc}">${ys}${(ytd*100).toFixed(1)}% YTD</span>
@@ -471,7 +471,7 @@ function renderTable(assets,ctT){
       <td><span class="tkr">${a.ticker||a.subcat}</span></td>
       <td style="font-size:11px;color:var(--ink3)">${a.titular||'—'}</td>
       <td style="font-size:11px;color:var(--ink3)">${a.entidade||'—'}</td>
-      <td class="r">R$ ${a.valor>=1e6?(a.valor/1e6).toFixed(2)+'M':(a.valor/1e3).toFixed(1)+'k'}</td>
+      <td class="r">R$ ${a.valor>=1e6?(a.valor/1e6).toFixed(3)+'M':(a.valor/1e3).toFixed(1)+'k'}</td>
       <td class="r"><div class="conc-c">
         <div class="conc-bar"><div class="conc-fill" style="width:${Math.min(conc/lim*100,100)}%;background:${over?'var(--dn)':COLORS[a.container]}"></div></div>
         <span class="cv ${over?'cw':'cok'}">${(conc*100).toFixed(1)}%</span>
@@ -520,7 +520,7 @@ function drawDonut(svgId,slices,colors){
 function buildLegend(legId,slices,colors,tot){
   document.getElementById(legId).innerHTML=slices.map((sl,i)=>{
     const pct=tot>0?(sl.v/tot*100).toFixed(1):'0.0';
-    const val=sl.v>=1e6?(sl.v/1e6).toFixed(2)+'M':(sl.v/1e3).toFixed(0)+'k';
+    const val=sl.v>=1e6?(sl.v/1e6).toFixed(3)+'M':(sl.v/1e3).toFixed(0)+'k';
     return`<div class="li"><div class="ld" style="background:${colors[i%colors.length]}"></div><div><div class="ll">${sl.l}</div><div><span class="lpct">${pct}%</span> <span class="lv">R$ ${val}</span></div></div></div>`;
   }).join('');
 }
