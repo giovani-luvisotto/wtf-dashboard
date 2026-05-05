@@ -1,371 +1,505 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>WTF Investments — CIO Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,600;0,700;1,300&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
 <style>
-:root {
-  --ink: #0f0f0f;
-  --ink2: #2a2a2a;
-  --ink3: #555;
-  --ink4: #888;
-  --paper: #fafaf8;
-  --paper2: #f3f2ef;
-  --paper3: #eceae5;
-  --rule: #dddbd5;
-  --rule2: #ccc9c0;
-  --imob:       #1a7a58;
-  --imob-pale:  #e8f5f0;
-  --prev:       #1a4f8a;
-  --prev-pale:  #e8f0fa;
-  --prov:       #5c3d9e;
-  --prov-pale:  #f0ecfb;
-  --cresc:      #b83a10;
-  --cresc-pale: #fdf0eb;
-  --up:    #15803d;
-  --up-bg: #dcfce7;
-  --dn:    #b91c1c;
-  --dn-bg: #fee2e2;
-  --warn:    #92400e;
-  --warn-bg: #fef3c7;
-  --ff-display: 'Fraunces', Georgia, serif;
-  --ff-sans:    'IBM Plex Sans', sans-serif;
-  --ff-mono:    'IBM Plex Mono', monospace;
+:root{
+  --ink:#0f0f0f;--ink2:#2a2a2a;--ink3:#555;--ink4:#888;
+  --paper:#fafaf8;--paper2:#f3f2ef;--paper3:#eceae5;
+  --rule:#dddbd5;--rule2:#ccc9c0;
+  --imob:#1a7a58;--imob-pale:#e8f5f0;
+  --prev:#1a4f8a;--prev-pale:#e8f0fa;
+  --prov:#5c3d9e;--prov-pale:#f0ecfb;
+  --cresc:#b83a10;--cresc-pale:#fdf0eb;
+  --up:#15803d;--up-bg:#dcfce7;
+  --dn:#b91c1c;--dn-bg:#fee2e2;
+  --warn:#92400e;--warn-bg:#fef3c7;
 }
-*, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
-body { background:var(--paper); color:var(--ink); font-family:var(--ff-sans); font-size:14px; line-height:1.5; min-height:100vh; }
-
+*{margin:0;padding:0;box-sizing:border-box;}
+body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-size:14px;}
 /* HEADER */
-header { background:var(--ink); color:#fff; padding:0 36px; display:flex; align-items:stretch; justify-content:space-between; min-height:62px; position:sticky; top:0; z-index:100; }
-.hd-left { display:flex; align-items:center; gap:18px; }
-.logo-mark { font-family:var(--ff-display); font-size:19px; font-weight:700; letter-spacing:-0.5px; color:#fff; }
-.logo-rule { width:1px; height:26px; background:rgba(255,255,255,0.18); }
-.logo-sub { font-family:var(--ff-mono); font-size:10px; letter-spacing:2.5px; text-transform:uppercase; color:rgba(255,255,255,0.45); }
-.hd-right { display:flex; align-items:stretch; }
-.hd-stat { display:flex; flex-direction:column; align-items:flex-end; justify-content:center; padding:0 22px; border-left:1px solid rgba(255,255,255,0.07); }
-.hd-stat-label { font-family:var(--ff-mono); font-size:9px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.38); margin-bottom:2px; }
-.hd-stat-value { font-family:var(--ff-mono); font-size:14px; font-weight:600; color:#fff; }
-.hd-stat-value.hi { color:#7dd3a8; font-size:16px; letter-spacing:-0.5px; }
-
-/* LAYOUT */
-main { max-width:1380px; margin:0 auto; padding:26px 36px 60px; }
-.s-head { display:flex; align-items:center; gap:12px; margin:30px 0 14px; }
-.s-head:first-child { margin-top:0; }
-.s-title { font-family:var(--ff-mono); font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--ink4); white-space:nowrap; }
-.s-rule { flex:1; height:1px; background:var(--rule); }
-
+.hdr{position:sticky;top:0;z-index:100;background:#0f0f0f;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:56px;border-bottom:1px solid #222;}
+.hdr-left{display:flex;align-items:center;gap:16px;}
+.hdr-logo{font-family:'Fraunces',serif;font-size:20px;font-weight:600;letter-spacing:-0.5px;color:#fff;}
+.hdr-sep{width:1px;height:24px;background:#333;}
+.hdr-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:2px;text-transform:uppercase;color:#888;}
+.hdr-right{display:flex;align-items:center;gap:8px;}
+.pill{display:inline-flex;align-items:center;gap:4px;padding:4px 10px;border-radius:100px;font-size:11px;font-family:'IBM Plex Mono',monospace;}
+.pill-dark{background:#1a1a1a;border:1px solid #333;color:#aaa;}
+.pill-green{background:#0d2e1a;border:1px solid #1a4f2a;color:#7dd3a8;font-size:13px;font-weight:600;}
+/* MAIN */
+.main{max-width:1400px;margin:0 auto;padding:24px;}
+.section-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--ink4);margin-bottom:16px;display:flex;align-items:center;gap:12px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--rule);}
 /* CONTAINER CARDS */
-.cards-grid { display:grid; grid-template-columns:repeat(4,1fr); border:1px solid var(--rule2); border-radius:10px; overflow:hidden; margin-bottom:26px; }
-.c-card { background:#fff; cursor:pointer; transition:background .15s; border-right:1px solid var(--rule2); }
-.c-card:last-child { border-right:none; }
-.c-card:hover, .c-card.active { background:var(--paper2); }
-.c-stripe { height:4px; }
-.c-body { padding:18px 20px 20px; }
-.c-top { display:flex; justify-content:space-between; align-items:center; margin-bottom:11px; }
-.c-name { font-family:var(--ff-mono); font-size:11px; font-weight:600; letter-spacing:1px; text-transform:uppercase; color:var(--ink3); }
-.c-badge { font-family:var(--ff-mono); font-size:9px; font-weight:600; letter-spacing:0.8px; padding:2px 8px; border-radius:20px; text-transform:uppercase; }
-.b-ok   { background:var(--up-bg);   color:var(--up);   }
-.b-warn { background:var(--warn-bg); color:var(--warn); }
-.b-crit { background:var(--dn-bg);   color:var(--dn);   }
-.c-value { font-family:var(--ff-display); font-size:27px; font-weight:600; letter-spacing:-1px; line-height:1; margin-bottom:10px; }
-.c-foot { display:flex; justify-content:space-between; align-items:center; padding-top:10px; border-top:1px solid var(--rule); }
-.c-pct { font-family:var(--ff-mono); font-size:11px; color:var(--ink4); }
-.c-ytd { font-family:var(--ff-mono); font-size:12px; font-weight:600; }
-
-/* CHARTS */
-.charts-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-bottom:26px; }
-.panel { background:#fff; border:1px solid var(--rule2); border-radius:10px; padding:22px 24px; }
-.panel-label { font-family:var(--ff-mono); font-size:10px; font-weight:600; letter-spacing:2.5px; text-transform:uppercase; color:var(--ink4); margin-bottom:18px; padding-bottom:12px; border-bottom:1px solid var(--rule); }
-
-/* YTD bars */
-.ytd-rows { display:flex; flex-direction:column; gap:15px; }
-.ytd-row { display:grid; grid-template-columns:110px 1fr 58px; gap:12px; align-items:center; }
-.ytd-label { font-family:var(--ff-sans); font-size:13px; font-weight:600; color:var(--ink2); text-align:right; }
-.ytd-track { height:10px; background:var(--paper3); border-radius:5px; position:relative; border:1px solid var(--rule); }
-.ytd-fill { position:absolute; top:0; height:100%; border-radius:5px; }
-.ytd-zero { position:absolute; top:-5px; width:2px; height:20px; background:var(--rule2); }
-.ytd-val { font-family:var(--ff-mono); font-size:12px; font-weight:600; text-align:right; }
-
-/* Alloc */
-.alloc-rows { display:flex; flex-direction:column; gap:17px; }
-.alloc-top { display:flex; justify-content:space-between; align-items:baseline; margin-bottom:6px; }
-.alloc-name { font-family:var(--ff-sans); font-size:13px; font-weight:600; color:var(--ink); display:flex; align-items:center; gap:7px; }
-.a-swatch { width:10px; height:10px; border-radius:2px; flex-shrink:0; }
-.alloc-nums { font-family:var(--ff-mono); font-size:11px; color:var(--ink3); }
-.alloc-track { height:8px; background:var(--paper3); border-radius:4px; position:relative; border:1px solid var(--rule); }
-.alloc-fill { height:100%; border-radius:4px; }
-.alloc-pin { position:absolute; top:-5px; width:3px; height:18px; background:var(--ink); border-radius:2px; opacity:0.3; }
-
+.cards-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px;}
+.card{background:#fff;border:1px solid var(--rule);border-radius:12px;overflow:hidden;cursor:pointer;transition:all .15s;}
+.card:hover{border-color:var(--rule2);box-shadow:0 4px 16px rgba(0,0,0,.08);transform:translateY(-1px);}
+.card.active{box-shadow:0 0 0 2px var(--card-color);}
+.card-bar{height:4px;width:100%;}
+.card-body{padding:16px;}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px;}
+.card-name{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink3);}
+.badge{display:inline-block;padding:2px 8px;border-radius:4px;font-size:10px;font-family:'IBM Plex Mono',monospace;font-weight:500;}
+.badge-ok{background:var(--up-bg);color:var(--up);}
+.badge-warn{background:var(--warn-bg);color:var(--warn);}
+.badge-crit{background:var(--dn-bg);color:var(--dn);}
+.card-value{font-family:'Fraunces',serif;font-size:28px;font-weight:600;margin-bottom:12px;line-height:1;}
+.card-footer{display:flex;justify-content:space-between;align-items:center;padding-top:12px;border-top:1px solid var(--rule);}
+.card-pct{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink4);}
+.card-ytd{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;}
+.card-target-row{display:flex;justify-content:space-between;align-items:center;margin-top:6px;}
+.card-target-label{font-size:10px;color:var(--ink4);font-family:'IBM Plex Mono',monospace;}
+/* ANALYTICS */
+.analytics-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-bottom:32px;}
+.panel{background:#fff;border:1px solid var(--rule);border-radius:12px;padding:20px;}
+.panel-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink4);margin-bottom:20px;}
+/* Bar charts */
+.bar-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.bar-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink2);width:100px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.bar-track{flex:1;height:20px;background:var(--paper3);border-radius:4px;position:relative;overflow:visible;}
+.bar-center{position:absolute;top:0;bottom:0;width:1px;background:var(--ink2);z-index:2;}
+.bar-fill{position:absolute;top:2px;bottom:2px;border-radius:3px;transition:width .3s;}
+.bar-val{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;width:56px;text-align:right;flex-shrink:0;}
+/* Alloc bars */
+.alloc-row{display:flex;align-items:center;gap:8px;margin-bottom:14px;}
+.alloc-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink2);width:80px;flex-shrink:0;}
+.alloc-track{flex:1;height:16px;background:var(--paper3);border-radius:4px;position:relative;overflow:visible;}
+.alloc-bar{position:absolute;top:0;bottom:0;left:0;border-radius:4px;transition:width .3s;}
+.alloc-target{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--ink);border-radius:1px;z-index:2;}
+.alloc-val{font-family:'IBM Plex Mono',monospace;font-size:11px;width:80px;text-align:right;flex-shrink:0;}
 /* ALERTS */
-.alerts-wrap { background:#fff; border:1px solid var(--rule2); border-radius:10px; overflow:hidden; margin-bottom:26px; }
-.alerts-head { background:var(--paper2); padding:11px 22px; border-bottom:1px solid var(--rule2); font-family:var(--ff-mono); font-size:10px; font-weight:600; letter-spacing:2.5px; text-transform:uppercase; color:var(--ink4); }
-.alerts-grid { display:grid; grid-template-columns:repeat(3,1fr); }
-.a-cell { padding:16px 20px; border-right:1px solid var(--rule); border-bottom:1px solid var(--rule); position:relative; overflow:hidden; }
-.a-cell:nth-child(3n) { border-right:none; }
-.a-stripe { position:absolute; top:0; left:0; width:100%; height:3px; }
-.a-cell.crit .a-stripe { background:var(--dn); }
-.a-cell.warn .a-stripe { background:var(--warn); }
-.a-cell.info .a-stripe { background:var(--prev); }
-.a-type { font-family:var(--ff-mono); font-size:9px; letter-spacing:1.5px; text-transform:uppercase; font-weight:600; margin-bottom:5px; }
-.a-cell.crit .a-type { color:var(--dn); }
-.a-cell.warn .a-type { color:var(--warn); }
-.a-cell.info .a-type { color:var(--prev); }
-.a-title { font-family:var(--ff-sans); font-size:14px; font-weight:600; color:var(--ink); margin-bottom:3px; line-height:1.3; }
-.a-body { font-family:var(--ff-mono); font-size:11px; color:var(--ink3); line-height:1.6; }
-
+.alerts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px;}
+.alert-card{background:#fff;border:1px solid var(--rule);border-radius:8px;overflow:hidden;}
+.alert-bar{height:3px;width:100%;}
+.alert-body{padding:14px;}
+.alert-type{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;}
+.alert-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:4px;}
+.alert-desc{font-size:12px;color:var(--ink3);line-height:1.5;}
 /* TABLE */
-.table-wrap { background:#fff; border:1px solid var(--rule2); border-radius:10px; overflow:hidden; }
-.tb-bar { display:flex; align-items:center; gap:7px; padding:11px 20px; background:var(--paper2); border-bottom:1px solid var(--rule2); flex-wrap:wrap; }
-.tb-label { font-family:var(--ff-mono); font-size:10px; font-weight:600; letter-spacing:2px; text-transform:uppercase; color:var(--ink4); flex:1; }
-.tb-btn { font-family:var(--ff-mono); font-size:10px; padding:5px 12px; border-radius:20px; border:1px solid var(--rule2); background:#fff; color:var(--ink3); cursor:pointer; transition:all .13s; white-space:nowrap; }
-.tb-btn:hover { border-color:var(--ink4); color:var(--ink); }
-.tb-btn.on { background:var(--ink); border-color:var(--ink); color:#fff; }
-.c-tabs { display:flex; border-bottom:1px solid var(--rule2); overflow-x:auto; }
-.c-tab { font-family:var(--ff-mono); font-size:11px; font-weight:500; padding:10px 20px; border:none; background:transparent; color:var(--ink4); cursor:pointer; border-bottom:3px solid transparent; transition:all .15s; white-space:nowrap; }
-.c-tab:hover { color:var(--ink2); background:var(--paper2); }
-.c-tab.on { color:var(--ink); border-bottom-color:var(--ink); font-weight:600; }
-.c-tab.on.t-imob { border-bottom-color:var(--imob); color:var(--imob); }
-.c-tab.on.t-prev { border-bottom-color:var(--prev); color:var(--prev); }
-.c-tab.on.t-prov { border-bottom-color:var(--prov); color:var(--prov); }
-.c-tab.on.t-cresc { border-bottom-color:var(--cresc); color:var(--cresc); }
-table { width:100%; border-collapse:collapse; }
-thead th { font-family:var(--ff-mono); font-size:10px; font-weight:600; letter-spacing:1.5px; text-transform:uppercase; color:var(--ink4); padding:10px 16px; text-align:left; background:var(--paper2); border-bottom:2px solid var(--rule2); cursor:pointer; white-space:nowrap; user-select:none; }
-thead th:hover { color:var(--ink2); }
-tbody td { padding:11px 16px; border-bottom:1px solid var(--rule); font-size:13px; color:var(--ink2); vertical-align:middle; }
-tbody tr:last-child td { border-bottom:none; }
-tbody tr:hover td { background:var(--paper2); }
-
-/* Table cell components */
-.c-tag { display:inline-flex; align-items:center; gap:6px; font-family:var(--ff-mono); font-size:11px; font-weight:600; padding:3px 9px 3px 6px; border-radius:4px; white-space:nowrap; }
-.c-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
-.c-tag.t-imob { background:var(--imob-pale); color:var(--imob); }
-.c-tag.t-prev { background:var(--prev-pale); color:var(--prev); }
-.c-tag.t-prov { background:var(--prov-pale); color:var(--prov); }
-.c-tag.t-cresc { background:var(--cresc-pale); color:var(--cresc); }
-.sub-tag { display:inline-block; font-family:var(--ff-mono); font-size:10px; padding:2px 8px; border-radius:4px; background:var(--paper3); color:var(--ink3); border:1px solid var(--rule2); white-space:nowrap; }
-.ticker { font-family:var(--ff-mono); font-size:12px; font-weight:600; color:var(--ink); }
-.conc-wrap { display:flex; align-items:center; gap:8px; justify-content:flex-end; }
-.conc-val { font-family:var(--ff-mono); font-size:12px; font-weight:600; min-width:36px; text-align:right; }
-.conc-over { color:var(--dn); }
-.conc-track { width:44px; height:5px; background:var(--paper3); border-radius:3px; overflow:hidden; border:1px solid var(--rule); flex-shrink:0; }
-.conc-fill { height:100%; border-radius:3px; }
-.flag-badge { font-family:var(--ff-mono); font-size:9px; font-weight:700; padding:1px 5px; border-radius:3px; background:var(--dn-bg); color:var(--dn); margin-left:3px; }
-.up   { color:var(--up);   font-weight:600; font-family:var(--ff-mono); font-size:12px; }
-.dn   { color:var(--dn);   font-weight:600; font-family:var(--ff-mono); font-size:12px; }
-.zero { color:var(--ink4); font-family:var(--ff-mono); font-size:12px; }
-.mono { font-family:var(--ff-mono); font-size:12px; }
-.empty td { text-align:center; padding:40px; color:var(--ink4); font-style:italic; }
-
-@keyframes rise { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-.cards-grid  { animation:rise .35s ease; }
-.charts-row  { animation:rise .35s .06s ease both; }
-.alerts-wrap { animation:rise .35s .12s ease both; }
-.table-wrap  { animation:rise .35s .18s ease both; }
+.table-wrap{background:#fff;border:1px solid var(--rule);border-radius:12px;overflow:hidden;}
+.table-toolbar{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--rule);flex-wrap:wrap;gap:8px;}
+.table-count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink4);}
+.toolbar-right{display:flex;align-items:center;gap:6px;}
+.sort-btn{padding:5px 10px;border-radius:6px;border:1px solid var(--rule);background:var(--paper);font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;cursor:pointer;color:var(--ink3);transition:all .1s;}
+.sort-btn:hover,.sort-btn.active{background:var(--ink);color:#fff;border-color:var(--ink);}
+.filter-tabs{display:flex;border-bottom:1px solid var(--rule);overflow-x:auto;}
+.tab{padding:10px 20px;font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;cursor:pointer;border-bottom:2px solid transparent;color:var(--ink4);white-space:nowrap;transition:all .15s;}
+.tab:hover{color:var(--ink);}
+.tab.active{border-bottom-color:var(--tab-color);color:var(--tab-color);font-weight:600;}
+table{width:100%;border-collapse:collapse;}
+thead th{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);padding:10px 12px;text-align:right;background:var(--paper2);border-bottom:1px solid var(--rule);white-space:nowrap;}
+thead th:first-child{text-align:left;}
+thead th:nth-child(2){text-align:left;}
+thead th:nth-child(3){text-align:left;}
+tbody tr{border-bottom:1px solid var(--rule);transition:background .1s;}
+tbody tr:hover{background:var(--paper2);}
+tbody tr:last-child{border-bottom:none;}
+td{padding:10px 12px;font-size:13px;vertical-align:middle;}
+.tag{display:inline-block;padding:2px 7px;border-radius:4px;font-family:'IBM Plex Mono',monospace;font-size:10px;font-weight:500;}
+.tag-gray{background:var(--paper3);color:var(--ink3);}
+.ticker-cell{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--ink);}
+.val-cell{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12px;color:var(--ink2);}
+.conc-cell{text-align:right;min-width:120px;}
+.conc-wrap{display:flex;align-items:center;gap:6px;justify-content:flex-end;}
+.mini-bar-track{width:60px;height:6px;background:var(--paper3);border-radius:3px;overflow:hidden;flex-shrink:0;}
+.mini-bar-fill{height:100%;border-radius:3px;}
+.conc-pct{font-family:'IBM Plex Mono',monospace;font-size:11px;width:38px;text-align:right;}
+.conc-alert{display:inline-block;width:14px;height:14px;background:var(--dn-bg);color:var(--dn);border-radius:50%;font-size:9px;font-weight:700;text-align:center;line-height:14px;}
+.perf-cell{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12px;}
+.positive{color:var(--up);}
+.negative{color:var(--dn);}
+.neutral{color:var(--ink4);}
+.hidden{display:none!important;}
 </style>
 </head>
 <body>
 
-<header>
-  <div class="hd-left">
-    <span class="logo-mark">WTF Investments</span>
-    <span class="logo-rule"></span>
-    <span class="logo-sub">CIO Dashboard</span>
+<header class="hdr">
+  <div class="hdr-left">
+    <span class="hdr-logo">WTF Investments</span>
+    <div class="hdr-sep"></div>
+    <span class="hdr-sub">CIO Dashboard</span>
   </div>
-  <div class="hd-right">
-    <div class="hd-stat">
-      <span class="hd-stat-label">Sócios</span>
-      <span class="hd-stat-value" style="font-size:12px">Giovani · Ellen · Bryan</span>
-    </div>
-    <div class="hd-stat">
-      <span class="hd-stat-label">Posição</span>
-      <span class="hd-stat-value" id="hd-date" style="font-size:12px"></span>
-    </div>
-    <div class="hd-stat">
-      <span class="hd-stat-label">Patrimônio Total</span>
-      <span class="hd-stat-value hi" id="hd-total"></span>
-    </div>
+  <div class="hdr-right">
+    <span class="pill pill-dark">👤 Giovani · Ellen · Bryan</span>
+    <span class="pill pill-dark">📅 Maio 2026</span>
+    <span class="pill pill-green">R$ 11.38M</span>
   </div>
 </header>
 
-<main>
-  <div class="s-head"><span class="s-title">Containers</span><span class="s-rule"></span></div>
-  <div class="cards-grid" id="cardsGrid"></div>
+<div class="main">
 
-  <div class="s-head"><span class="s-title">Visão Analítica</span><span class="s-rule"></span></div>
-  <div class="charts-row">
-    <div class="panel">
-      <div class="panel-label">Desempenho YTD por Container</div>
-      <div class="ytd-rows" id="ytdChart"></div>
-    </div>
-    <div class="panel">
-      <div class="panel-label">Alocação Atual vs Alvo Estratégico</div>
-      <div class="alloc-rows" id="allocRows"></div>
+<!-- SECTION 1: CONTAINERS -->
+<div class="section-title">Containers</div>
+<div class="cards-grid" id="cards-grid"></div>
+
+<!-- SECTION 2: ANALYTICS -->
+<div class="section-title">Visão Analítica</div>
+<div class="analytics-grid">
+  <div class="panel">
+    <div class="panel-title">YTD por Container</div>
+    <div id="ytd-bars"></div>
+  </div>
+  <div class="panel">
+    <div class="panel-title">Alocação Atual vs Alvo</div>
+    <div id="alloc-bars"></div>
+  </div>
+</div>
+
+<!-- SECTION 3: ALERTS -->
+<div class="section-title">Alertas de Compliance</div>
+<div class="alerts-grid" id="alerts-grid"></div>
+
+<!-- SECTION 4: TABLE -->
+<div class="section-title">Carteira Detalhada</div>
+<div class="table-wrap">
+  <div class="table-toolbar">
+    <span class="table-count" id="asset-count">— ativos</span>
+    <div class="toolbar-right">
+      <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink4);margin-right:4px;">ORDENAR:</span>
+      <button class="sort-btn active" onclick="setSort('valor')">Valor</button>
+      <button class="sort-btn" onclick="setSort('ano')">YTD</button>
+      <button class="sort-btn" onclick="setSort('mes')">Mês</button>
+      <button class="sort-btn" onclick="setSort('dia')">Dia</button>
+      <button class="sort-btn" onclick="setSort('conc')">Conc.</button>
+      <button class="sort-btn" id="pos-btn" onclick="togglePos()">Só ▲</button>
     </div>
   </div>
+  <div class="filter-tabs" id="filter-tabs"></div>
+  <table>
+    <thead>
+      <tr>
+        <th>Container</th>
+        <th>Subclasse</th>
+        <th>Ativo</th>
+        <th style="text-align:right">Valor</th>
+        <th style="text-align:right">Conc.</th>
+        <th style="text-align:right">Dia</th>
+        <th style="text-align:right">Mês</th>
+        <th style="text-align:right">YTD</th>
+      </tr>
+    </thead>
+    <tbody id="table-body"></tbody>
+  </table>
+</div>
 
-  <div class="s-head"><span class="s-title">Alertas de Compliance</span><span class="s-rule"></span></div>
-  <div class="alerts-wrap">
-    <div class="alerts-head">⚡ Radar de Risco — Posição Atual</div>
-    <div class="alerts-grid" id="alertsGrid"></div>
-  </div>
-
-  <div class="s-head"><span class="s-title">Carteira Detalhada</span><span class="s-rule"></span></div>
-  <div class="table-wrap">
-    <div class="tb-bar">
-      <span class="tb-label" id="tb-label">Portfólio completo</span>
-      <button class="tb-btn on"  onclick="setSort('valor',this)">Valor ↕</button>
-      <button class="tb-btn" onclick="setSort('ano',this)">YTD ↕</button>
-      <button class="tb-btn" onclick="setSort('mes',this)">Mês ↕</button>
-      <button class="tb-btn" onclick="setSort('dia',this)">Dia ↕</button>
-      <button class="tb-btn" onclick="setSort('conc',this)">Conc. ↕</button>
-      <button class="tb-btn" id="posBtn" onclick="togglePos()">▲ Só positivos</button>
-    </div>
-    <div class="c-tabs">
-      <button class="c-tab on"       onclick="setTab('',this)">Todos</button>
-      <button class="c-tab t-imob"   onclick="setTab('Imobilizado',this)">Imobilizado</button>
-      <button class="c-tab t-prev"   onclick="setTab('Previdência',this)">Previdência</button>
-      <button class="c-tab t-prov"   onclick="setTab('Proventos',this)">Proventos</button>
-      <button class="c-tab t-cresc"  onclick="setTab('Crescimento',this)">Crescimento</button>
-    </div>
-    <table>
-      <thead><tr>
-        <th onclick="setSort('container')">Container</th>
-        <th onclick="setSort('subcat')">Subclasse</th>
-        <th onclick="setSort('ticker')">Ativo</th>
-        <th onclick="setSort('valor')" style="text-align:right">Valor</th>
-        <th onclick="setSort('conc')"  style="text-align:right">Concentração</th>
-        <th onclick="setSort('dia')"   style="text-align:right">Dia</th>
-        <th onclick="setSort('mes')"   style="text-align:right">Mês</th>
-        <th onclick="setSort('ano')"   style="text-align:right">YTD</th>
-      </tr></thead>
-      <tbody id="tbody"></tbody>
-    </table>
-  </div>
-</main>
+</div><!-- /main -->
 
 <script>
-const RECORDS=[{"container":"Imobilizado","subcat":"Imóveis","ticker":"Indaia 501","valor":967595.04,"dia":0,"mes":0,"ano":0.01737},{"container":"Imobilizado","subcat":"Imóveis","ticker":"Orlando 113","valor":1084087.79,"dia":0,"mes":0,"ano":0.02298},{"container":"Imobilizado","subcat":"Imóveis","ticker":"Arizona 62","valor":673711.03,"dia":0,"mes":0,"ano":0.03618},{"container":"Imobilizado","subcat":"Imóveis","ticker":"Vista do Morro","valor":155031.22,"dia":0,"mes":0,"ano":0.02298},{"container":"Imobilizado","subcat":"Imóveis","ticker":"Itanhaem 806","valor":244595.72,"dia":0,"mes":0,"ano":0.02298},{"container":"Imobilizado","subcat":"Imóveis","ticker":"Terreno Canela","valor":343164.69,"dia":0,"mes":0,"ano":0.01055},{"container":"Imobilizado","subcat":"Joias","ticker":"Joias","valor":157584.9,"dia":0,"mes":0,"ano":0.02298},{"container":"Imobilizado","subcat":"Metais","ticker":"Silver Coin (oz)","valor":7136.78,"dia":-0.0336,"mes":-0.00926,"ano":-0.08712},{"container":"Previdência","subcat":"Prev Gigio","ticker":"Gigio Principal","valor":1388673.9,"dia":-0.00219,"mes":0.00639,"ano":0.06072},{"container":"Previdência","subcat":"Prev Gigio","ticker":"35420532000162","valor":258997.29,"dia":0,"mes":0,"ano":0.04574},{"container":"Previdência","subcat":"Prev Gigio","ticker":"41498482000139 (G)","valor":484998.32,"dia":0,"mes":0,"ano":0.02309},{"container":"Previdência","subcat":"Prev Ellen","ticker":"33784231000192","valor":289824.32,"dia":0,"mes":0,"ano":0.05683},{"container":"Previdência","subcat":"Prev Ellen","ticker":"35420532000162 (E)","valor":241067.48,"dia":0,"mes":0,"ano":0.04590},{"container":"Previdência","subcat":"Prev Ellen","ticker":"41498482000139 (E)","valor":204907.75,"dia":0,"mes":0,"ano":0.02309},{"container":"Previdência","subcat":"Prev Bryan","ticker":"41498482000139 (B)","valor":61231.49,"dia":0,"mes":0,"ano":0.02309},{"container":"Proventos","subcat":"Ações BR Renda","ticker":"ISAE4","valor":93824,"dia":-0.00644,"mes":-0.00644,"ano":0.01901},{"container":"Proventos","subcat":"Ações BR Renda","ticker":"BBSE3","valor":71169,"dia":0.000295,"mes":0.000295,"ano":0.00995},{"container":"Proventos","subcat":"Ações BR Renda","ticker":"TAEE11","valor":87318,"dia":-0.02211,"mes":-0.02211,"ano":0.00838},{"container":"Proventos","subcat":"Ações BR Renda","ticker":"EGIE3","valor":88325,"dia":0.000566,"mes":0.000566,"ano":0.18302},{"container":"Proventos","subcat":"Ações BR Renda","ticker":"FESA4","valor":44940,"dia":-0.02601,"mes":-0.02601,"ano":-0.00795},{"container":"Proventos","subcat":"Ações BR Renda","ticker":"KLBN3","valor":69800,"dia":-0.01412,"mes":-0.01412,"ano":-0.09698},{"container":"Proventos","subcat":"FIIs BR","ticker":"VISC11","valor":24180.2,"dia":-0.00272,"mes":-0.00272,"ano":0.03973},{"container":"Proventos","subcat":"FIIs BR","ticker":"PMLL11","valor":22759.8,"dia":-0.01927,"mes":-0.01927,"ano":0.05858},{"container":"Proventos","subcat":"FIIs BR","ticker":"RBRX11","valor":43800,"dia":0,"mes":0,"ano":0.08333},{"container":"Proventos","subcat":"FIIs BR","ticker":"JSRE11","valor":25108,"dia":-0.03133,"mes":-0.03133,"ano":-0.03490},{"container":"Proventos","subcat":"FIIs BR","ticker":"HGRU11","valor":25872,"dia":-0.02392,"mes":-0.02392,"ano":0.14812},{"container":"Proventos","subcat":"FIIs BR","ticker":"RVBI11/PSEC11","valor":5962,"dia":-0.03683,"mes":-0.03683,"ano":-0.07637},{"container":"Proventos","subcat":"FIIs BR","ticker":"HSML11","valor":34372.47,"dia":-0.01128,"mes":-0.01128,"ano":0.05516},{"container":"Proventos","subcat":"FIIs BR","ticker":"VGIR11","valor":29280,"dia":0.00103,"mes":0.00103,"ano":0.06990},{"container":"Proventos","subcat":"FIIs BR","ticker":"HSLG11","valor":37012,"dia":-0.00623,"mes":-0.00623,"ano":0.02708},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","ticker":"Tesouro IPCA+ 2029","valor":21387.47,"dia":0,"mes":0,"ano":0.04844},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","ticker":"Tesouro IPCA+ 2032","valor":32574.88,"dia":0,"mes":0,"ano":0.14715},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","ticker":"Tesouro IPCA+ 2040","valor":138421.52,"dia":0,"mes":0,"ano":0.32700},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","ticker":"CRI BELENUS ABR/2029","valor":15719.15,"dia":0,"mes":0,"ano":-0.05881},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","ticker":"CRA PLANAGRI JUN/2028","valor":7677.38,"dia":0,"mes":0,"ano":-0.14444},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","ticker":"CRA FS Bioenergia MAI/2029","valor":25303.38,"dia":0,"mes":0,"ano":0.02032},{"container":"Proventos","subcat":"BDR BR Renda","ticker":"AURA33","valor":402330,"dia":-0.02819,"mes":-0.02819,"ano":0.57261},{"container":"Proventos","subcat":"BDR BR Renda","ticker":"SPYI11","valor":113113,"dia":0,"mes":0,"ano":-0.07930},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"AMBIBZ 10.875 05/02/33","valor":14644.03,"dia":0.00289,"mes":0.00412,"ano":-0.21296},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"MOVIBZ 5.25 08/02/31","valor":48376.38,"dia":0.00289,"mes":0.00412,"ano":-0.09356},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"BRASKM 8 15/10/34","valor":25781.23,"dia":0.00289,"mes":0.00412,"ano":0.37539},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"CLOPAR 5.5 14/01/32","valor":39625.1,"dia":0.00289,"mes":0.00412,"ano":-0.08286},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"RRRPBZ 9.75 05/02/31","valor":59062.16,"dia":0.00289,"mes":0.00412,"ano":-0.06844},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"BRASKM 4.5 31/01/30","valor":35050.01,"dia":0.00289,"mes":0.00412,"ano":0.36916},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"SIMHBZ 5.2 26/01/31","valor":30935.18,"dia":0.00289,"mes":0.00412,"ano":-0.00169},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"PRIOBZ 6.125 09/06/26","valor":25454.25,"dia":0.00289,"mes":0.00412,"ano":-0.07716},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"CSNABZ 6.75 28/01/28","valor":21629.82,"dia":0.00289,"mes":0.00412,"ano":-0.14735},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"AEGEBZ 6.75 20/05/29","valor":21790.08,"dia":0.00289,"mes":0.00412,"ano":-0.21958},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"MRFGBZ 6.625 06/08/29","valor":25423.98,"dia":0.00289,"mes":0.00412,"ano":-0.04662},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"ECOPET 6.875 29/04/30","valor":25034.89,"dia":0.00289,"mes":0.00412,"ano":-0.11307},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"BRFSBZ 4.35 29/09/26","valor":24875.47,"dia":0.00289,"mes":0.00412,"ano":-0.11103},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"ELEBRA 4.625 04/02/30","valor":24252.12,"dia":0.00289,"mes":0.00412,"ano":-0.08404},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"RDEDOR 4.5 22/01/30","valor":23981.25,"dia":0.00289,"mes":0.00412,"ano":-0.09947},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"MOVIBZ 7.85 11/04/29","valor":64830.88,"dia":0.00289,"mes":0.00412,"ano":0.00351},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"BRAZIL 6.125 15/03/34","valor":30499.38,"dia":0.00289,"mes":0.00412,"ano":0.15420},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"CSNABZ 8.875 05/12/30","valor":29417.51,"dia":0.00289,"mes":0.00412,"ano":-0.18255},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","ticker":"BRASKM 4.5 10/01/28","valor":15357.03,"dia":0.00289,"mes":0.00412,"ano":0.39732},{"container":"Proventos","subcat":"FGTS","ticker":"Ellen FGTS","valor":334891.45,"dia":0,"mes":0,"ano":0.02067},{"container":"Proventos","subcat":"FGTS","ticker":"Fundo Privatização FGTS","valor":101514.26,"dia":0,"mes":0,"ano":0.12563},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","ticker":"Apto Osasco - Tita","valor":146705.25,"dia":0,"mes":0,"ano":0.02355},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","ticker":"Tesouro Selic","valor":147573.89,"dia":0,"mes":0,"ano":0.03783},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","ticker":"Tesouro Selic 2031","valor":2255,"dia":0,"mes":0,"ano":0.05331},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","ticker":"Trend DI FIC RF","valor":100064.92,"dia":0,"mes":0,"ano":0.03128},{"container":"Proventos","subcat":"RF USD Caixa (MM)","ticker":"JPM USD MM VNAC A","valor":117505.81,"dia":0.00289,"mes":0.00412,"ano":-0.08260},{"container":"Proventos","subcat":"RF USD Caixa (MM)","ticker":"Saldo Avenue","valor":7405.3,"dia":0.00289,"mes":0.00412,"ano":7.255},{"container":"Crescimento","subcat":"Ações BR Cresc","ticker":"PRIO3","valor":130891,"dia":0.03734,"mes":0.03734,"ano":0.92983},{"container":"Crescimento","subcat":"Ações BR Cresc","ticker":"BPAC11","valor":40670,"dia":-0.02090,"mes":-0.02090,"ano":0.11660},{"container":"Crescimento","subcat":"Ações BR Cresc","ticker":"BPAC3","valor":12975,"dia":-0.01331,"mes":-0.01331,"ano":-0.42063},{"container":"Crescimento","subcat":"BDR BR Cresc","ticker":"INBR32","valor":35940,"dia":-0.03904,"mes":-0.03904,"ano":-0.22023},{"container":"Crescimento","subcat":"BDR BR Cresc","ticker":"IVVB11","valor":5234.32,"dia":0.000348,"mes":0.000348,"ano":0.03870},{"container":"Crescimento","subcat":"Stocks","ticker":"VT","valor":51967.55,"dia":-0.00353,"mes":-0.00072,"ano":-0.03453},{"container":"Crescimento","subcat":"Stocks","ticker":"VWRA","valor":7233.92,"dia":0.000166,"mes":0.01160,"ano":0.00091},{"container":"Crescimento","subcat":"Stocks","ticker":"BRK.B","valor":57669.36,"dia":0.00842,"mes":0.00840,"ano":-0.14633},{"container":"Crescimento","subcat":"Stocks","ticker":"QQQ","valor":66746.64,"dia":-0.00092,"mes":0.00991,"ano":-0.01222},{"container":"Crescimento","subcat":"Stocks","ticker":"CSPX","valor":234745.87,"dia":-0.00405,"mes":0.00942,"ano":-0.02660},{"container":"Crescimento","subcat":"REITs","ticker":"VNQ","valor":71229.95,"dia":-0.00233,"mes":-0.00390,"ano":-0.01632},{"container":"Crescimento","subcat":"Fundos USD Cresc","ticker":"JPM Global Div A USD","valor":189809.37,"dia":0.00289,"mes":0.00412,"ano":-0.06508},{"container":"Crescimento","subcat":"Fundos USD Cresc","ticker":"Schroder US Large Cap","valor":174539.56,"dia":0.00289,"mes":0.00412,"ano":-0.08337},{"container":"Crescimento","subcat":"Fundos USD Cresc","ticker":"BGF US Growth A2","valor":60989.71,"dia":0.00289,"mes":0.00412,"ano":-0.06799},{"container":"Crescimento","subcat":"BTC","ticker":"BTC","valor":514926.19,"dia":0.02689,"mes":0.05198,"ano":-0.16363},{"container":"Crescimento","subcat":"ETH","ticker":"stETH","valor":99248.72,"dia":0.02878,"mes":0.04530,"ano":-0.27913},{"container":"Crescimento","subcat":"ETH","ticker":"ETH","valor":4685.1,"dia":0.02878,"mes":0.04530,"ano":-0.28416},{"container":"Crescimento","subcat":"Altcoins","ticker":"HASH11","valor":5344.56,"dia":0.03818,"mes":0.03818,"ano":-0.18714},{"container":"Crescimento","subcat":"Altcoins","ticker":"NCIQ","valor":8483.09,"dia":0.01602,"mes":0.03920,"ano":-0.19555},{"container":"Crescimento","subcat":"Altcoins","ticker":"OBTC3","valor":7520,"dia":0.03581,"mes":0.03581,"ano":0.17638},{"container":"Crescimento","subcat":"USDC","ticker":"USDC","valor":28663.07,"dia":0.00289,"mes":0.00412,"ano":-0.04170}];
+const RAW = [{"container": "Imobilizado", "subcat": "Imóveis", "ticker": "Indaia 501", "valor": 967595.04, "dia": 0.0, "mes": 0.0, "ano": 0.01737026483234594}, {"container": "Imobilizado", "subcat": "Imóveis", "ticker": "Orlando 113", "valor": 1084087.79, "dia": 0.0, "mes": 0.0, "ano": 0.02298416798477443}, {"container": "Imobilizado", "subcat": "Imóveis", "ticker": "Arizona 62", "valor": 673711.03, "dia": 0.0, "mes": 0.0, "ano": 0.036181603665569106}, {"container": "Imobilizado", "subcat": "Imóveis", "ticker": "Vista do Morro", "valor": 155031.22, "dia": 0.0, "mes": 0.0, "ano": 0.02298416798477443}, {"container": "Imobilizado", "subcat": "Imóveis", "ticker": "Itanhaem 806", "valor": 244595.72, "dia": 0.0, "mes": 0.0, "ano": 0.02298416798477443}, {"container": "Imobilizado", "subcat": "Imóveis", "ticker": "Terreno Canela", "valor": 343164.69, "dia": 0.0, "mes": 0.0, "ano": 0.01055040163846166}, {"container": "Imobilizado", "subcat": "Joias", "ticker": "Joias ", "valor": 157584.9, "dia": 0.0, "mes": 0.0, "ano": 0.022984167984774206}, {"container": "Imobilizado", "subcat": "Metais", "ticker": "Silver Coin (oz)", "valor": 7092.56, "dia": 0.0, "mes": -0.015401268605309548, "ano": -0.09277533171504082}, {"container": "Previdência", "subcat": "Prev Gigio", "ticker": "", "valor": 1387929.03, "dia": 0.0, "mes": 0.005853459365421587, "ano": 0.06015190012806726}, {"container": "Previdência", "subcat": "Prev Ellen", "ticker": "35420532000162", "valor": 500064.77, "dia": 0.0, "mes": 0.0, "ano": 0.0458172434749518}, {"container": "Previdência", "subcat": "Prev Bryan", "ticker": "41498482000139", "valor": 751137.56, "dia": 0.0, "mes": 0.0, "ano": 0.02308656251101207}, {"container": "Previdência", "subcat": "Prev Ellen", "ticker": "33784231000192", "valor": 289824.32, "dia": 0.0, "mes": 0.0, "ano": 0.05683169188209058}, {"container": "Proventos", "subcat": "Ações BR Renda", "ticker": "ISAE4", "valor": 93824.0, "dia": 0.0, "mes": -0.006438495425279523, "ano": 0.03556098589353547}, {"container": "Proventos", "subcat": "Ações BR Renda", "ticker": "BBSE3", "valor": 71085.0, "dia": 0.0, "mes": -0.0008854781582053883, "ano": 0.008761902815720646}, {"container": "Proventos", "subcat": "Ações BR Renda", "ticker": "TAEE11", "valor": 87150.0, "dia": 0.0, "mes": -0.02398871119473189, "ano": 0.006437504561592754}, {"container": "Proventos", "subcat": "Ações BR Renda", "ticker": "EGIE3", "valor": 87875.0, "dia": 0.0, "mes": -0.00453129425092047, "ano": 0.1769929521059299}, {"container": "Proventos", "subcat": "Ações BR Renda", "ticker": "FESA4", "valor": 45360.0, "dia": 0.0, "mes": -0.016905071521456483, "ano": 0.0013245033112583293}, {"container": "Proventos", "subcat": "Ações BR Renda", "ticker": "KLBN3", "valor": 69800.0, "dia": 0.0, "mes": -0.01412429378531077, "ano": -0.09697539801326815}, {"container": "Proventos", "subcat": "FIIs BR", "ticker": "VISC11", "valor": 24206.6, "dia": 0.0, "mes": -0.0016332456219942948, "ano": 0.04086652161574089}, {"container": "Proventos", "subcat": "FIIs BR", "ticker": "PMLL11", "valor": 22806.0, "dia": 0.0, "mes": -0.0172835037553164, "ano": 0.07118701386540427}, {"container": "Proventos", "subcat": "FIIs BR", "ticker": "RBRX11", "valor": 43800.0, "dia": 0.0, "mes": 0.0, "ano": 0.1061494617558794}, {"container": "Proventos", "subcat": "FIIs BR", "ticker": "JSRE11", "valor": 25200.0, "dia": 0.0, "mes": -0.02777777777777779, "ano": -0.024163568773234226}, {"container": "Proventos", "subcat": "FIIs BR", "ticker": "HGRU11", "valor": 26072.0, "dia": 0.0, "mes": -0.01637365124877377, "ano": 0.16683315252610975}, {"container": "Proventos", "subcat": "FIIs BR", "ticker": "RVBI11 / PSEC11", "valor": 5957.0, "dia": 0.0, "mes": -0.03764135702746363, "ano": -0.03841807909604522}, {"container": "Proventos", "subcat": "FIIs BR", "ticker": "HSML11", "valor": 34430.55, "dia": 0.0, "mes": -0.009606348543385379, "ano": 0.05694227769110749}, {"container": "Proventos", "subcat": "FIIs BR", "ticker": "VGIR11", "valor": 29370.0, "dia": 0.0, "mes": 0.004102564102564044, "ano": 0.088705193312822}, {"container": "Proventos", "subcat": "FIIs BR", "ticker": "HSLG11", "valor": 37200.0, "dia": 0.0, "mes": -0.0011813983460423616, "ano": 0.04061765693185637}, {"container": "Proventos", "subcat": "RF BR Renda (IPCA+)", "ticker": "Tesouro IPCA+ 2029", "valor": 21387.47, "dia": 0.0, "mes": 0.0, "ano": 0.04844290996687639}, {"container": "Proventos", "subcat": "RF BR Renda (IPCA+)", "ticker": "Tesouro IPCA+ 2032", "valor": 32574.88, "dia": 0.0, "mes": 0.0, "ano": 0.14715226983797192}, {"container": "Proventos", "subcat": "RF BR Renda (IPCA+)", "ticker": "Tesouro IPCA+ 2040", "valor": 138421.52, "dia": 0.0, "mes": 0.0, "ano": 0.32277275130486616}, {"container": "Proventos", "subcat": "RF BR Renda (IPCA+)", "ticker": "CRI BELENUS ABR/2029", "valor": 15719.15, "dia": 0.0, "mes": 0.0, "ano": 0.0355717033835774}, {"container": "Proventos", "subcat": "RF BR Renda (IPCA+)", "ticker": "CRA PLANAGRI JUN/2028", "valor": 7677.38, "dia": 0.0, "mes": 0.0, "ano": 0.07255787572244232}, {"container": "Proventos", "subcat": "RF BR Renda (IPCA+)", "ticker": "CRA FS Bioenergia MAI/2029", "valor": 25303.38, "dia": 0.0, "mes": 0.0, "ano": 0.02031527159543489}, {"container": "Proventos", "subcat": "BDR BR Renda", "ticker": "AURA33", "valor": 402750.0, "dia": 0.0, "mes": -0.02717391304347827, "ano": 0.574254876144545}, {"container": "Proventos", "subcat": "BDR BR Renda", "ticker": "SPYI11", "valor": 113234.0, "dia": 0.0, "mes": 0.0010697267334436322, "ano": -0.07469511696817029}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "AMBIBZ 10.875 05/02/33", "valor": 14630.77, "dia": 0.0, "mes": 0.0032128351754936446, "ano": -0.21367279642875087}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "MOVIBZ 5.25 08/02/31", "valor": 48332.58, "dia": 0.0, "mes": 0.003212835175493644, "ano": -0.09437974077504485}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "BRASKM 8 15/10/34", "valor": 25757.88, "dia": 0.0, "mes": 0.0032128351754936446, "ano": 0.37414452505872403}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "CLOPAR 5.5 14/01/32", "valor": 39589.22, "dia": 0.0, "mes": 0.0032128351754936446, "ano": -0.0836906402314127}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "RRRPBZ 9.75 05/02/31", "valor": 59008.68, "dia": 0.0, "mes": 0.0032128351754935236, "ano": -0.06698296550636669}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "BRASKM 4.5 31/01/30", "valor": 35018.26, "dia": 0.0, "mes": 0.0032128351754936446, "ano": 0.37050202382816544}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "SIMHBZ 5.2 26/01/31", "valor": 30907.17, "dia": 0.0, "mes": 0.0032128351754936446, "ano": -0.002589501824240781}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "PRIOBZ 6.125 09/06/26", "valor": 25431.2, "dia": 0.0, "mes": 0.0032128351754934226, "ano": -0.07799713694330046}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "CSNABZ 6.75 28/01/28", "valor": 21610.24, "dia": 0.0, "mes": 0.0032128351754936446, "ano": -0.1481175785006702}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "AEGEBZ 6.75 20/05/29", "valor": 21770.35, "dia": 0.0, "mes": 0.0032128351754936446, "ano": -0.2202900718116553}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "MRFGBZ 6.625 06/08/29", "valor": 25400.96, "dia": 0.0, "mes": 0.0032128351754936446, "ano": -0.047481880605026006}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "ECOPET 6.875 29/04/30", "valor": 25012.22, "dia": 0.0, "mes": 0.0032128351754936446, "ano": -0.1138777156302514}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "BRFSBZ 4.35 29/09/26", "valor": 24852.94, "dia": 0.0, "mes": 0.0032128351754936446, "ano": -0.11183427539945323}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "ELEBRA 4.625 04/02/30", "valor": 24230.16, "dia": 0.0, "mes": 0.0032128351754936446, "ano": -0.08487372284544015}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "RDEDOR 4.5 22/01/30", "valor": 23959.53, "dia": 0.0, "mes": 0.0032128351754936446, "ano": -0.10028774369923354}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "MOVIBZ 7.85 11/04/29", "valor": 64772.17, "dia": 0.0, "mes": 0.0032128351754936446, "ano": -0.010969966478634033}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "BRAZIL 6.125 15/03/34", "valor": 30471.76, "dia": 0.0, "mes": 0.0032128351754934226, "ano": 0.15315285655961672}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "CSNABZ 8.875 05/12/30", "valor": 29390.87, "dia": 0.0, "mes": 0.0032128351754936446, "ano": -0.18329474233805076}, {"container": "Proventos", "subcat": "RF USD Renda (Bonds)", "ticker": "BRASKM 4.5 10/01/28", "valor": 15343.12, "dia": 0.0, "mes": 0.0032128351754936446, "ano": 0.3960586548940279}, {"container": "Proventos", "subcat": "FGTS", "ticker": "Ellen FGTS", "valor": 334891.45, "dia": 0.0, "mes": 0.0, "ano": 0.020672140583636978}, {"container": "Proventos", "subcat": "FGTS", "ticker": "Fundo Privatização FGTS", "valor": 101514.26, "dia": 0.0, "mes": 0.0, "ano": 0.1256291826773701}, {"container": "Proventos", "subcat": "RF BR Caixa (Selic)", "ticker": "Apartamento Osasco - Tita", "valor": 146705.25, "dia": 0.0, "mes": 0.0, "ano": 0.02354826619172279}, {"container": "Proventos", "subcat": "RF BR Caixa (Selic)", "ticker": "Tesouro Selic", "valor": 147573.89, "dia": 0.0, "mes": 0.0, "ano": 0.0378297503352798}, {"container": "Proventos", "subcat": "RF BR Caixa (Selic)", "ticker": "Tesouro Selic 2031", "valor": 2255.0, "dia": 0.0, "mes": 0.0, "ano": 0.05330518291543651}, {"container": "Proventos", "subcat": "RF BR Caixa (Selic)", "ticker": "Trend DI FIC RF", "valor": 100064.92, "dia": 0.0, "mes": 0.0, "ano": 0.03128421964346284}, {"container": "Proventos", "subcat": "RF USD Caixa (MM)", "ticker": "JPM USD Standard mny mkt VNAC A", "valor": 117399.4, "dia": 0.0, "mes": 0.003212835175493444, "ano": -0.08343139617870894}, {"container": "Proventos", "subcat": "RF USD Caixa (MM)", "ticker": "Saldo Avenue Investimento", "valor": 7398.6, "dia": 0.0, "mes": 0.0032128351754936446, "ano": 6.322110900392378}, {"container": "Crescimento", "subcat": "Ações BR Cresc", "ticker": "PRIO3", "valor": 133304.0, "dia": 0.0, "mes": 0.056467399488028924, "ano": 0.9654109841503871}, {"container": "Crescimento", "subcat": "Ações BR Cresc", "ticker": "BPAC11", "valor": 40677.0, "dia": 0.0, "mes": -0.02072800808897879, "ano": 0.11678912077120152}, {"container": "Crescimento", "subcat": "Ações BR Cresc", "ticker": "BPAC3", "valor": 12870.0, "dia": 0.0, "mes": -0.02129277566539922, "ano": -0.4253181513730744}, {"container": "Crescimento", "subcat": "BDR BR Cresc", "ticker": "INBR32", "valor": 35840.0, "dia": 0.0, "mes": -0.0417112299465241, "ano": -0.22239620432147233}, {"container": "Crescimento", "subcat": "BDR BR Cresc", "ticker": "IVVB11", "valor": 5233.15, "dia": 0.0, "mes": 0.00012422360248454112, "ano": 0.03846352285625865}, {"container": "Crescimento", "subcat": "Stocks", "ticker": "VT", "valor": 51951.27, "dia": 0.0, "mes": -0.0010335683596407463, "ano": -0.03483594433691806}, {"container": "Crescimento", "subcat": "Stocks", "ticker": "VWRA", "valor": 7227.37, "dia": 0.0, "mes": 0.010684443557057666, "ano": 5.169500208346278e-06}, {"container": "Crescimento", "subcat": "Stocks", "ticker": "BRK.B", "valor": 56757.04, "dia": 0.0, "mes": -0.007547978174784142, "ano": -0.15983227910909525}, {"container": "Crescimento", "subcat": "Stocks", "ticker": "QQQ", "valor": 66814.29, "dia": 0.0, "mes": 0.010935173170524726, "ano": -0.011218542124588726}, {"container": "Crescimento", "subcat": "Stocks", "ticker": "CSPX", "valor": 234466.58, "dia": 0.0, "mes": 0.008217764841420117, "ano": -0.02776014614995137}, {"container": "Crescimento", "subcat": "REITs", "ticker": "VNQ", "valor": 71090.97, "dia": 0.0, "mes": -0.005847635774394178, "ano": -0.01824261690712059}, {"container": "Crescimento", "subcat": "Fundos USD Cresc", "ticker": "JPM Global Div A USD", "valor": 189637.49, "dia": 0.0, "mes": 0.0032128351754936446, "ano": -0.06592180741101206}, {"container": "Crescimento", "subcat": "Fundos USD Cresc", "ticker": "Schroder ISF US Large Cap A USD", "valor": 174381.5, "dia": 0.0, "mes": 0.003212835175493423, "ano": -0.08420251731250461}, {"container": "Crescimento", "subcat": "Fundos USD Cresc", "ticker": "BGF US Growth A2", "valor": 60934.48, "dia": 0.0, "mes": 0.0032128351754936446, "ano": -0.06883273993439908}, {"container": "Crescimento", "subcat": "BTC", "ticker": "BTC", "valor": 514449.89, "dia": 0.0, "mes": 0.05100273384809051, "ano": -0.16440766375073723}, {"container": "Crescimento", "subcat": "ETH", "ticker": "stETH", "valor": 99325.86, "dia": 0.0, "mes": 0.046112028567196095, "ano": -0.2785689170680833}, {"container": "Crescimento", "subcat": "ETH", "ticker": "ETH", "valor": 4688.74, "dia": 0.0, "mes": 0.046112028567196095, "ano": -0.28360744173807617}, {"container": "Crescimento", "subcat": "Altcoins", "ticker": "HASH11", "valor": 5364.32, "dia": 0.0, "mes": 0.04202020202020196, "ano": -0.18292693770108226}, {"container": "Crescimento", "subcat": "Altcoins", "ticker": "NCIQ", "valor": 8521.27, "dia": 0.0, "mes": 0.04387486114345118, "ano": -0.19193485818104195}, {"container": "Crescimento", "subcat": "Altcoins", "ticker": "OBTC3", "valor": 7440.0, "dia": 0.0, "mes": 0.024793388429751984, "ano": 0.16386390301134135}, {"container": "Crescimento", "subcat": "USDC", "ticker": "USDC", "valor": 28637.12, "dia": 0.0, "mes": 0.0032128351754936446, "ano": -0.04256692320589838}];
+const CONTAINER_VALS = {"Imobilizado": 3632862.95, "Previdência": 2928955.68, "Proventos": 3004496.78, "Crescimento": 1809612.34};
+const TOTAL = 11375927.75;
+const TARGETS = {Imobilizado:0.20,Previdência:0.30,Proventos:0.30,Crescimento:0.20};
+const COLORS = {Imobilizado:'#1a7a58',Previdência:'#1a4f8a',Proventos:'#5c3d9e',Crescimento:'#b83a10'};
+const PALES = {Imobilizado:'#e8f5f0',Previdência:'#e8f0fa',Proventos:'#f0ecfb',Crescimento:'#fdf0eb'};
+const LIMIT = (c,t)=>{if(c==='Imobilizado'||c==='Previdência')return 0.50;if(t==='BTC')return 0.50;return 0.10;};
 
-const COLORS={Imobilizado:'#1a7a58',Previdência:'#1a4f8a',Proventos:'#5c3d9e',Crescimento:'#b83a10'};
-const CLS={Imobilizado:'t-imob',Previdência:'t-prev',Proventos:'t-prov',Crescimento:'t-cresc'};
-const TARGETS={Imobilizado:.20,Previdência:.30,Proventos:.30,Crescimento:.20};
-const LIMITS={Imobilizado:.50,Previdência:.50,Proventos:.10,Crescimento:.10};
-const CONTAINERS=['Imobilizado','Previdência','Proventos','Crescimento'];
+let activeContainer = null;
+let sortBy = 'valor';
+let posOnly = false;
 
-let sortKey='valor',sortDir=-1,posOnly=false,cFilter='';
-
-function buildAgg(){const m={};RECORDS.forEach(r=>{const k=r.container+'||'+r.ticker;if(!m[k])m[k]={...r,valor:0};m[k].valor+=r.valor;});return Object.values(m);}
-const AGG=buildAgg();
-
-const totals={};
-CONTAINERS.forEach(c=>{const recs=AGG.filter(r=>r.container===c);const t=recs.reduce((s,r)=>s+r.valor,0);totals[c]={total:t,ytd:recs.reduce((s,r)=>s+r.valor*r.ano,0)/t};});
-const grand=Object.values(totals).reduce((s,v)=>s+v.total,0);
-
-document.getElementById('hd-date').textContent=new Date().toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
-document.getElementById('hd-total').textContent='R$ '+(grand/1e6).toFixed(3).replace('.',',')+'M';
-
-// CARDS
-function badgeInfo(c){const d=Math.abs(totals[c].total/grand-TARGETS[c]);if(d<.02)return['b-ok','✓ OK'];if(d<.05)return['b-warn','⚠ Desvio'];return['b-crit','✖ Crítico'];}
-const cg=document.getElementById('cardsGrid');
-CONTAINERS.forEach(c=>{
-  const d=totals[c],pct=d.total/grand,[bc,bl]=badgeInfo(c);
-  const ycls=d.ytd>=0?'up':'dn',ystr=(d.ytd>=0?'+':'')+(d.ytd*100).toFixed(2)+'%';
-  cg.innerHTML+=`<div class="c-card" onclick="clickCard('${c}',this)">
-    <div class="c-stripe" style="background:${COLORS[c]}"></div>
-    <div class="c-body">
-      <div class="c-top"><span class="c-name">${c}</span><span class="c-badge ${bc}">${bl}</span></div>
-      <div class="c-value" style="color:${COLORS[c]}">R$ ${(d.total/1e6).toFixed(3).replace('.',',')}M</div>
-      <div class="c-foot"><span class="c-pct">${(pct*100).toFixed(1)}% do portfólio</span><span class="c-ytd ${ycls}">${ystr} YTD</span></div>
-    </div></div>`;
+// Aggregate by container+ticker
+const agg = {};
+RAW.forEach(r=>{
+  const k=r.container+'|||'+r.ticker;
+  if(!agg[k])agg[k]={container:r.container,subcat:r.subcat,ticker:r.ticker,valor:0,dw:0,mw:0,aw:0};
+  agg[k].valor+=r.valor;
+  agg[k].dw+=r.dia*r.valor;
+  agg[k].mw+=r.mes*r.valor;
+  agg[k].aw+=r.ano*r.valor;
+});
+const rows=Object.values(agg).map(r=>{
+  return{...r,dia:r.dw/r.valor,mes:r.mw/r.valor,ano:r.aw/r.valor,conc:r.valor/CONTAINER_VALS[r.container]};
 });
 
-function clickCard(c,el){
-  if(cFilter===c){cFilter='';document.querySelectorAll('.c-card').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.c-tab').forEach((t,i)=>{t.classList.toggle('on',i===0);});}
-  else{cFilter=c;document.querySelectorAll('.c-card').forEach(x=>x.classList.remove('active'));el.classList.add('active');const tabs=document.querySelectorAll('.c-tab');tabs.forEach(t=>t.classList.remove('on'));const idx=CONTAINERS.indexOf(c)+1;if(tabs[idx])tabs[idx].classList.add('on');}
+// Container weighted YTD
+function containerYTD(c){
+  const rs=rows.filter(r=>r.container===c);
+  const tv=rs.reduce((s,r)=>s+r.valor,0);
+  if(!tv)return 0;
+  return rs.reduce((s,r)=>s+r.ano*r.valor,0)/tv;
+}
+
+// BUILD CARDS
+function buildCards(){
+  const grid=document.getElementById('cards-grid');
+  ['Imobilizado','Previdência','Proventos','Crescimento'].forEach(c=>{
+    const val=CONTAINER_VALS[c];
+    const pct=val/TOTAL;
+    const target=TARGETS[c];
+    const diff=pct-target;
+    const ytd=containerYTD(c);
+    const color=COLORS[c];
+    // compliance badge
+    const absDiff=Math.abs(diff)*100;
+    let badge,badgeClass;
+    if(absDiff<=2){badge='OK';badgeClass='badge-ok';}
+    else if(absDiff<=5){badge='Desvio';badgeClass='badge-warn';}
+    else{badge='Crítico';badgeClass='badge-crit';}
+    const ytdClass=ytd>0?'positive':ytd<0?'negative':'neutral';
+    const div=document.createElement('div');
+    div.className='card';
+    div.style.setProperty('--card-color',color);
+    div.innerHTML=`
+      <div class="card-bar" style="background:${color}"></div>
+      <div class="card-body">
+        <div class="card-header">
+          <span class="card-name">${c}</span>
+          <span class="badge ${badgeClass}">${badge}</span>
+        </div>
+        <div class="card-value" style="color:${color}">R$ ${(val/1e6).toFixed(2)}M</div>
+        <div class="card-footer">
+          <div>
+            <div class="card-pct">${(pct*100).toFixed(1)}% portfólio</div>
+            <div class="card-target-row">
+              <span class="card-target-label">Alvo: ${(target*100).toFixed(0)}% | Δ: ${diff>=0?'+':''}${(diff*100).toFixed(1)}pp</span>
+            </div>
+          </div>
+          <div class="card-ytd ${ytdClass}">${ytd>=0?'+':''}${(ytd*100).toFixed(1)}% YTD</div>
+        </div>
+      </div>`;
+    div.onclick=()=>toggleContainer(c,div);
+    grid.appendChild(div);
+  });
+}
+
+function toggleContainer(c,el){
+  if(activeContainer===c){activeContainer=null;document.querySelectorAll('.card').forEach(x=>x.classList.remove('active'));}
+  else{activeContainer=c;document.querySelectorAll('.card').forEach(x=>x.classList.remove('active'));el.classList.add('active');}
+  renderTable();updateTabActive();
+}
+
+// BUILD YTD BARS
+function buildYTD(){
+  const div=document.getElementById('ytd-bars');
+  ['Imobilizado','Previdência','Proventos','Crescimento'].forEach(c=>{
+    const ytd=containerYTD(c)*100;
+    const color=COLORS[c];
+    const isPos=ytd>=0;
+    const maxAbs=20;
+    const half=50;
+    const fillW=Math.min(Math.abs(ytd)/maxAbs*half,half);
+    const left=isPos?half:half-fillW;
+    const row=document.createElement('div');
+    row.className='bar-row';
+    row.innerHTML=`
+      <span class="bar-label">${c}</span>
+      <div class="bar-track">
+        <div class="bar-center" style="left:50%"></div>
+        <div class="bar-fill" style="left:${left}%;width:${fillW}%;background:${isPos?'#15803d':'#b91c1c'};top:2px;bottom:2px;border-radius:3px;"></div>
+      </div>
+      <span class="bar-val" style="color:${isPos?'#15803d':'#b91c1c'}">${ytd>=0?'+':''}${ytd.toFixed(1)}%</span>`;
+    div.appendChild(row);
+  });
+}
+
+// BUILD ALLOC BARS
+function buildAlloc(){
+  const div=document.getElementById('alloc-bars');
+  ['Imobilizado','Previdência','Proventos','Crescimento'].forEach(c=>{
+    const actual=(CONTAINER_VALS[c]/TOTAL)*100;
+    const target=TARGETS[c]*100;
+    const color=COLORS[c];
+    const row=document.createElement('div');
+    row.className='alloc-row';
+    row.innerHTML=`
+      <span class="alloc-label">${c}</span>
+      <div class="alloc-track">
+        <div class="alloc-bar" style="width:${Math.min(actual,100)}%;background:${color};opacity:0.85;"></div>
+        <div class="alloc-target" style="left:${target}%;"></div>
+      </div>
+      <span class="alloc-val" style="color:${color}">${actual.toFixed(1)}% <span style="color:var(--ink4);font-size:10px">/ ${target.toFixed(0)}%</span></span>`;
+    div.appendChild(row);
+  });
+  // Legend
+  const leg=document.createElement('div');
+  leg.style.cssText='display:flex;align-items:center;gap:6px;margin-top:12px;font-family:"IBM Plex Mono",monospace;font-size:10px;color:var(--ink4);';
+  leg.innerHTML='<div style="width:16px;height:2px;background:var(--ink);"></div> linha = alvo estratégico';
+  div.appendChild(leg);
+}
+
+// BUILD ALERTS
+function buildAlerts(){
+  const grid=document.getElementById('alerts-grid');
+  const alerts=[];
+  
+  // Concentration breaches
+  rows.forEach(r=>{
+    const lim=LIMIT(r.container,r.ticker);
+    if(r.conc>lim){
+      alerts.push({
+        level:'crit',color:'#b91c1c',
+        type:'CONCENTRAÇÃO',
+        title:`${r.ticker} — ${r.container}`,
+        desc:`${(r.conc*100).toFixed(1)}% do container (limite ${(lim*100).toFixed(0)}%). Excesso de ${((r.conc-lim)*100).toFixed(1)}pp.`
+      });
+    }
+  });
+
+  // Container allocation deviations
+  ['Imobilizado','Previdência','Proventos','Crescimento'].forEach(c=>{
+    const actual=CONTAINER_VALS[c]/TOTAL;
+    const target=TARGETS[c];
+    const diff=(actual-target)*100;
+    if(Math.abs(diff)>2){
+      alerts.push({
+        level:Math.abs(diff)>5?'crit':'warn',
+        color:Math.abs(diff)>5?'#b91c1c':'#d97706',
+        type:'ALOCAÇÃO',
+        title:`${c} ${diff>0?'SOBREPONDERADO':'SUBPONDERADO'}`,
+        desc:`Atual ${(actual*100).toFixed(1)}% vs alvo ${(target*100).toFixed(0)}% — desvio de ${diff>=0?'+':''}${diff.toFixed(1)}pp.`
+      });
+    }
+  });
+
+  // YTD < -20% with value > 10k
+  rows.forEach(r=>{
+    if(r.ano<-0.20&&r.valor>10000){
+      alerts.push({
+        level:'warn',color:'#d97706',
+        type:'REVISAR TESE',
+        title:`${r.ticker} — YTD ${(r.ano*100).toFixed(1)}%`,
+        desc:`Valor R$${(r.valor/1000).toFixed(1)}k com performance negativa expressiva. Fundamento ainda válido?`
+      });
+    }
+  });
+
+  // Anomalies YTD > 200%
+  rows.forEach(r=>{
+    if(Math.abs(r.ano)>2){
+      alerts.push({
+        level:'info',color:'#1a4f8a',
+        type:'ANOMALIA DADOS',
+        title:`${r.ticker} — YTD ${(r.ano*100).toFixed(0)}%`,
+        desc:`Variação anual de ${(r.ano*100).toFixed(0)}% é atípica. Provável distorção no dado de retorno. Verificar planilha.`
+      });
+    }
+  });
+
+  alerts.forEach(a=>{
+    const el=document.createElement('div');
+    el.className='alert-card';
+    el.innerHTML=`
+      <div class="alert-bar" style="background:${a.color}"></div>
+      <div class="alert-body">
+        <div class="alert-type" style="color:${a.color}">${a.type}</div>
+        <div class="alert-title">${a.title}</div>
+        <div class="alert-desc">${a.desc}</div>
+      </div>`;
+    grid.appendChild(el);
+  });
+}
+
+// FILTER TABS
+function buildTabs(){
+  const tabs=document.getElementById('filter-tabs');
+  const all=['Todos','Imobilizado','Previdência','Proventos','Crescimento'];
+  all.forEach(c=>{
+    const t=document.createElement('div');
+    t.className='tab'+(c==='Todos'?' active':'');
+    t.textContent=c;
+    t.style.setProperty('--tab-color',c==='Todos'?'var(--ink)':COLORS[c]);
+    t.onclick=()=>{
+      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+      t.classList.add('active');
+      activeContainer=c==='Todos'?null:c;
+      document.querySelectorAll('.card').forEach(x=>x.classList.remove('active'));
+      if(activeContainer){
+        document.querySelectorAll('.card').forEach((x,i)=>{
+          const names=['Imobilizado','Previdência','Proventos','Crescimento'];
+          if(names[i]===activeContainer)x.classList.add('active');
+        });
+      }
+      renderTable();
+    };
+    tabs.appendChild(t);
+  });
+}
+
+function updateTabActive(){
+  document.querySelectorAll('.tab').forEach(t=>{
+    const name=t.textContent;
+    t.classList.toggle('active',name===(activeContainer||'Todos'));
+  });
+}
+
+function setSort(s){
+  sortBy=s;
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.toggle('active',b.textContent.includes(sortBy==='valor'?'Valor':sortBy==='ano'?'YTD':sortBy==='mes'?'Mês':sortBy==='dia'?'Dia':'Conc')));
   renderTable();
 }
 
-// YTD
-const ye=document.getElementById('ytdChart');
-const mxA=Math.max(...CONTAINERS.map(c=>Math.abs(totals[c].ytd)),.08);
-CONTAINERS.forEach(c=>{
-  const v=totals[c].ytd,isP=v>=0,w=(Math.abs(v)/mxA*48).toFixed(1);
-  ye.innerHTML+=`<div class="ytd-row">
-    <div class="ytd-label">${c}</div>
-    <div class="ytd-track"><div class="ytd-zero" style="left:50%"></div><div class="ytd-fill" style="width:${w}%;background:${COLORS[c]};position:absolute;top:0;${isP?'left:50%':'right:50%'};border-radius:${isP?'0 5px 5px 0':'5px 0 0 5px'}"></div></div>
-    <div class="ytd-val ${isP?'up':'dn'}">${isP?'+':''}${(v*100).toFixed(2)}%</div>
-  </div>`;
-});
-
-// ALLOC
-const ae=document.getElementById('allocRows');
-CONTAINERS.forEach(c=>{
-  const pct=totals[c].total/grand,tgt=TARGETS[c],dev=pct-tgt;
-  const ds=(dev>=0?'+':'')+(dev*100).toFixed(1)+'pp';
-  const dc=Math.abs(dev)<.02?'#15803d':Math.abs(dev)<.05?'#92400e':'#b91c1c';
-  ae.innerHTML+=`<div>
-    <div class="alloc-top">
-      <span class="alloc-name"><span class="a-swatch" style="background:${COLORS[c]}"></span>${c}</span>
-      <span class="alloc-nums">${(pct*100).toFixed(1)}% <span style="font-weight:600;color:${dc}">${ds}</span> <span style="color:#aaa;font-weight:400">/ alvo ${(tgt*100).toFixed(0)}%</span></span>
-    </div>
-    <div class="alloc-track">
-      <div class="alloc-fill" style="width:${Math.min(pct/.5*100,100)}%;background:${COLORS[c]};opacity:0.7"></div>
-      <div class="alloc-pin" style="left:${tgt/.5*100}%"></div>
-    </div>
-  </div>`;
-});
-
-// ALERTS
-function concLim(t,c){return(c==='Crescimento'&&t==='BTC')?.50:LIMITS[c];}
-const alerts=[];
-AGG.forEach(r=>{const p=r.valor/totals[r.container].total,l=concLim(r.ticker,r.container);if(p>l)alerts.push({cls:'crit',tag:'⚠ Concentração',title:`${r.ticker} — ${r.container}`,body:`${(p*100).toFixed(1)}% do container (limite: ${(l*100).toFixed(0)}%)`});});
-CONTAINERS.forEach(c=>{const dev=totals[c].total/grand-TARGETS[c];if(Math.abs(dev)>.02)alerts.push({cls:Math.abs(dev)>.05?'crit':'warn',tag:'📊 Alocação',title:`${c} ${dev>0?'sobreponderado':'subponderado'}`,body:`${(totals[c].total/grand*100).toFixed(1)}% atual vs ${(TARGETS[c]*100).toFixed(0)}% alvo (${(dev>=0?'+':'')+(dev*100).toFixed(1)}pp)`});});
-AGG.forEach(r=>{if(r.ano<-.20&&r.valor>10000)alerts.push({cls:'warn',tag:'📉 Performance',title:r.ticker,body:`YTD ${(r.ano*100).toFixed(1)}% — revisar tese`});});
-AGG.forEach(r=>{if(r.ano>2)alerts.push({cls:'info',tag:'🔍 Anomalia de Dados',title:r.ticker,body:`YTD ${(r.ano*100).toFixed(0)}% — verificar dado fonte`});});
-
-const ag=document.getElementById('alertsGrid');
-if(!alerts.length){ag.innerHTML='<div style="padding:24px;color:#15803d;font-size:14px;font-weight:600;grid-column:1/-1">✓ Nenhum alerta. Portfolio em conformidade.</div>';}
-else alerts.slice(0,9).forEach(a=>{ag.innerHTML+=`<div class="a-cell ${a.cls}"><div class="a-stripe"></div><div class="a-type">${a.tag}</div><div class="a-title">${a.title}</div><div class="a-body">${a.body}</div></div>`;});
-
-// TABLE
-function fV(v){return'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});}
-function fP(v){if(!v&&v!==0)return'<span class="zero">—</span>';if(v===0)return'<span class="zero">—</span>';return`<span class="${v>0?'up':'dn'}">${v>0?'+':''}${(v*100).toFixed(2)}%</span>`;}
-
-function renderTable(){
-  let data=[...AGG];
-  if(cFilter)data=data.filter(r=>r.container===cFilter);
-  if(posOnly)data=data.filter(r=>r.ano>0);
-  data.sort((a,b)=>{
-    let va=a[sortKey],vb=b[sortKey];
-    if(sortKey==='conc'){va=a.valor/totals[a.container].total;vb=b.valor/totals[b.container].total;}
-    if(typeof va==='string')return va.localeCompare(vb)*sortDir;
-    return((va||0)-(vb||0))*sortDir;
-  });
-  document.getElementById('tb-label').textContent=cFilter?`${data.length} ativos — ${cFilter}`:`${data.length} ativos — Portfólio completo`;
-  const tb=document.getElementById('tbody');
-  if(!data.length){tb.innerHTML='<tr class="empty"><td colspan="8">Nenhum ativo encontrado</td></tr>';return;}
-  tb.innerHTML=data.map(r=>{
-    const tc=totals[r.container].total,conc=r.valor/tc,lim=concLim(r.ticker,r.container);
-    const over=conc>lim,bw=Math.min(conc/lim*100,100);
-    return`<tr>
-      <td><span class="c-tag ${CLS[r.container]}"><span class="c-dot" style="background:${COLORS[r.container]}"></span>${r.container}</span></td>
-      <td><span class="sub-tag">${r.subcat}</span></td>
-      <td><span class="ticker">${r.ticker}</span></td>
-      <td class="mono" style="text-align:right">${fV(r.valor)}</td>
-      <td style="text-align:right"><div class="conc-wrap"><span class="conc-val${over?' conc-over':''}">${(conc*100).toFixed(1)}%${over?'<span class="flag-badge">!</span>':''}</span><div class="conc-track"><div class="conc-fill" style="width:${bw}%;background:${over?'var(--dn)':COLORS[r.container]}"></div></div></div></td>
-      <td style="text-align:right">${fP(r.dia)}</td>
-      <td style="text-align:right">${fP(r.mes)}</td>
-      <td style="text-align:right">${fP(r.ano)}</td>
-    </tr>`;
-  }).join('');
+function togglePos(){
+  posOnly=!posOnly;
+  document.getElementById('pos-btn').classList.toggle('active',posOnly);
+  renderTable();
 }
 
-function setSort(k,btn){if(sortKey===k)sortDir*=-1;else{sortKey=k;sortDir=-1;}document.querySelectorAll('.tb-btn').forEach(b=>b.classList.remove('on'));if(btn)btn.classList.add('on');renderTable();}
-function togglePos(){posOnly=!posOnly;document.getElementById('posBtn').classList.toggle('on',posOnly);renderTable();}
-function setTab(val,el){cFilter=val;document.querySelectorAll('.c-card').forEach(x=>x.classList.remove('active'));document.querySelectorAll('.c-tab').forEach(t=>t.classList.remove('on'));if(el)el.classList.add('on');if(val){const i=CONTAINERS.indexOf(val);if(i>=0)document.querySelectorAll('.c-card')[i].classList.add('active');}renderTable();}
+function fmt(v,decimals=2){
+  if(v===0)return'—';
+  const s=v>=0?'+':'';
+  return s+(v*100).toFixed(decimals)+'%';
+}
+function fmtBRL(v){
+  return 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:0,maximumFractionDigits:0});
+}
+function perfClass(v){return v>0.001?'positive':v<-0.001?'negative':'neutral';}
 
+function renderTable(){
+  let data=[...rows];
+  if(activeContainer)data=data.filter(r=>r.container===activeContainer);
+  if(posOnly)data=data.filter(r=>r.ano>0);
+  data.sort((a,b)=>{
+    if(sortBy==='valor')return b.valor-a.valor;
+    if(sortBy==='ano')return b.ano-a.ano;
+    if(sortBy==='mes')return b.mes-a.mes;
+    if(sortBy==='dia')return b.dia-a.dia;
+    if(sortBy==='conc')return b.conc-a.conc;
+    return 0;
+  });
+  document.getElementById('asset-count').textContent=`${data.length} ativo${data.length!==1?'s':''}`;
+  const tbody=document.getElementById('table-body');
+  tbody.innerHTML='';
+  data.forEach(r=>{
+    const color=COLORS[r.container];
+    const pale=PALES[r.container];
+    const lim=LIMIT(r.container,r.ticker);
+    const isBreached=r.conc>lim;
+    const concPct=(r.conc*100).toFixed(1);
+    const barW=Math.min(r.conc/lim*100,100);
+    const tr=document.createElement('tr');
+    tr.innerHTML=`
+      <td><span class="tag" style="background:${pale};color:${color}">${r.container}</span></td>
+      <td><span class="tag tag-gray">${r.subcat||'—'}</span></td>
+      <td class="ticker-cell">${r.ticker||'—'}</td>
+      <td class="val-cell">${fmtBRL(r.valor)}</td>
+      <td class="conc-cell">
+        <div class="conc-wrap">
+          ${isBreached?'<span class="conc-alert">!</span>':''}
+          <div class="mini-bar-track">
+            <div class="mini-bar-fill" style="width:${barW}%;background:${isBreached?'#b91c1c':color};"></div>
+          </div>
+          <span class="conc-pct" style="color:${isBreached?'#b91c1c':'var(--ink3)'}">${concPct}%</span>
+        </div>
+      </td>
+      <td class="perf-cell ${perfClass(r.dia)}">${fmt(r.dia)}</td>
+      <td class="perf-cell ${perfClass(r.mes)}">${fmt(r.mes)}</td>
+      <td class="perf-cell ${perfClass(r.ano)}">${fmt(r.ano)}</td>`;
+    tbody.appendChild(tr);
+  });
+}
+
+buildCards();
+buildYTD();
+buildAlloc();
+buildAlerts();
+buildTabs();
 renderTable();
 </script>
 </body>
