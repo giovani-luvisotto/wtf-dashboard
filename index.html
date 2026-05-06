@@ -50,6 +50,11 @@ body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-s
 .filter-meta{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink4);align-self:flex-end;padding-bottom:1px;}
 .reset-btn{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:4px 12px;border-radius:100px;border:1.5px solid var(--dn);background:var(--dn-bg);color:var(--dn);cursor:pointer;transition:all .15s;}
 .reset-btn:hover{background:var(--dn);color:#fff;}
+.chip.on-nominal{background:#374151;border-color:#374151;color:#fff;}
+.chip.on-real{background:#15803d;border-color:#15803d;color:#fff;}
+.perf-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 8px;border-radius:100px;margin-left:6px;font-weight:600;}
+.perf-badge.nominal{background:#f1f5f9;color:#374151;border:1px solid #cbd5e1;}
+.perf-badge.real{background:#dcfce7;color:#15803d;border:1px solid #bbf7d0;}
 
 /* MAIN */
 .main{padding:22px 28px;max-width:1600px;margin:0 auto;}
@@ -194,6 +199,10 @@ td.r{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12px;}
     <div class="fg-label">Entidade</div>
     <div class="fg-chips" id="chips-e"></div>
   </div>
+  <div class="fg">
+    <div class="fg-label">Perspectiva Ano</div>
+    <div class="fg-chips" id="chips-perf"></div>
+  </div>
   <div class="fg" style="margin-left:auto;justify-content:flex-end;align-self:flex-end;">
     <div style="display:flex;align-items:center;gap:10px;">
       <span class="filter-meta" id="fmeta"></span>
@@ -204,12 +213,12 @@ td.r{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12px;}
 
 <div class="main">
 
-  <div class="sec-title">Containers</div>
+  <div class="sec-title">Containers <span class="perf-badge" id="perf-badge">Ano Real</span></div>
   <div class="cg" id="cg"></div>
 
   <div class="sec-title">Visão Analítica</div>
   <div class="arow">
-    <div class="panel"><div class="panel-title">YTD por Container</div><div id="ytd-bars"></div></div>
+    <div class="panel"><div class="panel-title" id="ytd-panel-title">Ano Real por Container</div><div id="ytd-bars"></div></div>
     <div class="panel"><div class="panel-title">Alocação Atual vs Alvo</div><div id="alloc-bars"></div></div>
   </div>
 
@@ -238,30 +247,138 @@ td.r{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12px;}
           <th>Container</th><th>Subclasse</th><th>Ativo</th>
           <th>Titular</th><th>Entidade</th>
           <th class="r">Valor</th><th class="r">Concentração</th>
-          <th class="r">Dia</th><th class="r">Mês</th><th class="r">YTD</th>
+          <th class="r">Mês</th><th class="r" id="th-ano">Ano Real</th>
         </tr></thead>
         <tbody id="tbody"></tbody>
       </table>
     </div>
   </div>
 
+  <!-- ═══════════════════ DEEP DIVE: TODOS OS CONTAINERS ═══════════════════ -->
+
+  <!-- IMOBILIZADO -->
+  <div class="sec-title" style="color:var(--imob)">Imobilizado — Análise Detalhada</div>
+  <div class="prov-dd">
+    <div class="prov-grid">
+      <div class="pp" style="border-top:3px solid var(--imob)">
+        <div class="pp-title" style="color:var(--imob)">Distribuição por Tipo</div>
+        <div class="pp-sub">Imobilizado: % por tipo de ativo</div>
+        <div class="pie-wrap">
+          <svg id="pie-imob-tipo" width="180" height="180" viewBox="0 0 180 180" style="flex-shrink:0"></svg>
+          <div class="legend" id="leg-imob-tipo"></div>
+        </div>
+      </div>
+      <div class="pp" style="border-top:3px solid var(--imob)">
+        <div class="pp-title" style="color:var(--imob)">Distribuição por Titular</div>
+        <div class="pp-sub">Imobilizado: % por titular</div>
+        <div class="pie-wrap">
+          <svg id="pie-imob-tit" width="180" height="180" viewBox="0 0 180 180" style="flex-shrink:0"></svg>
+          <div class="legend" id="leg-imob-tit"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PREVIDÊNCIA -->
+  <div class="sec-title" style="color:var(--prev)">Previdência — Análise Detalhada</div>
+  <div class="prov-dd">
+    <div class="prov-grid">
+      <div class="pp" style="border-top:3px solid var(--prev)">
+        <div class="pp-title" style="color:var(--prev)">Distribuição por Titular</div>
+        <div class="pp-sub">Previdência: % por titular</div>
+        <div class="pie-wrap">
+          <svg id="pie-prev-tit" width="180" height="180" viewBox="0 0 180 180" style="flex-shrink:0"></svg>
+          <div class="legend" id="leg-prev-tit"></div>
+        </div>
+      </div>
+      <div class="pp" style="border-top:3px solid var(--prev)">
+        <div class="pp-title" style="color:var(--prev)">Distribuição por Tipo</div>
+        <div class="pp-sub">Previdência: % por tipo de plano</div>
+        <div class="pie-wrap">
+          <svg id="pie-prev-tipo" width="180" height="180" viewBox="0 0 180 180" style="flex-shrink:0"></svg>
+          <div class="legend" id="leg-prev-tipo"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PROVENTOS -->
   <div class="sec-title" style="color:var(--prov)">Proventos — Análise Detalhada</div>
   <div class="prov-dd">
     <div class="prov-grid">
-      <div class="pp">
-        <div class="pp-title">Exposição Cambial</div>
+      <div class="pp" style="border-top:3px solid var(--prov)">
+        <div class="pp-title" style="color:var(--prov)">Exposição Cambial</div>
         <div class="pp-sub">Proventos: distribuição Real vs Dólar</div>
         <div class="pie-wrap">
           <svg id="pie-moeda" width="180" height="180" viewBox="0 0 180 180" style="flex-shrink:0"></svg>
           <div class="legend" id="leg-moeda"></div>
         </div>
       </div>
-      <div class="pp">
-        <div class="pp-title">Distribuição por Tipo</div>
+      <div class="pp" style="border-top:3px solid var(--prov)">
+        <div class="pp-title" style="color:var(--prov)">Distribuição por Tipo</div>
         <div class="pp-sub">Proventos: % por tipo de ativo</div>
         <div class="pie-wrap">
           <svg id="pie-tipo" width="180" height="180" viewBox="0 0 180 180" style="flex-shrink:0"></svg>
           <div class="legend" id="leg-tipo"></div>
+        </div>
+      </div>
+    </div>
+    <div class="prov-grid" style="margin-top:12px">
+      <div class="pp" style="border-top:3px solid var(--prov)">
+        <div class="pp-title" style="color:var(--prov)">Distribuição por Titular</div>
+        <div class="pp-sub">Proventos: % por titular</div>
+        <div class="pie-wrap">
+          <svg id="pie-prov-tit" width="180" height="180" viewBox="0 0 180 180" style="flex-shrink:0"></svg>
+          <div class="legend" id="leg-prov-tit"></div>
+        </div>
+      </div>
+      <div class="pp" style="border-top:3px solid var(--prov)">
+        <div class="pp-title" style="color:var(--prov)">Distribuição por Entidade</div>
+        <div class="pp-sub">Proventos: % por instituição</div>
+        <div class="pie-wrap">
+          <svg id="pie-prov-ent" width="180" height="180" viewBox="0 0 180 180" style="flex-shrink:0"></svg>
+          <div class="legend" id="leg-prov-ent"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CRESCIMENTO -->
+  <div class="sec-title" style="color:var(--cresc)">Crescimento — Análise Detalhada</div>
+  <div class="prov-dd">
+    <div class="prov-grid">
+      <div class="pp" style="border-top:3px solid var(--cresc)">
+        <div class="pp-title" style="color:var(--cresc)">Distribuição por Subclasse</div>
+        <div class="pp-sub">Crescimento: % por subclasse de ativo</div>
+        <div class="pie-wrap">
+          <svg id="pie-cresc-sub" width="180" height="180" viewBox="0 0 180 180" style="flex-shrink:0"></svg>
+          <div class="legend" id="leg-cresc-sub"></div>
+        </div>
+      </div>
+      <div class="pp" style="border-top:3px solid var(--cresc)">
+        <div class="pp-title" style="color:var(--cresc)">Exposição Cambial</div>
+        <div class="pp-sub">Crescimento: % Real vs Dólar</div>
+        <div class="pie-wrap">
+          <svg id="pie-cresc-moeda" width="180" height="180" viewBox="0 0 180 180" style="flex-shrink:0"></svg>
+          <div class="legend" id="leg-cresc-moeda"></div>
+        </div>
+      </div>
+    </div>
+    <div class="prov-grid" style="margin-top:12px">
+      <div class="pp" style="border-top:3px solid var(--cresc)">
+        <div class="pp-title" style="color:var(--cresc)">Distribuição por Titular</div>
+        <div class="pp-sub">Crescimento: % por titular</div>
+        <div class="pie-wrap">
+          <svg id="pie-cresc-tit" width="180" height="180" viewBox="0 0 180 180" style="flex-shrink:0"></svg>
+          <div class="legend" id="leg-cresc-tit"></div>
+        </div>
+      </div>
+      <div class="pp" style="border-top:3px solid var(--cresc)">
+        <div class="pp-title" style="color:var(--cresc)">Distribuição por Entidade</div>
+        <div class="pp-sub">Crescimento: % por instituição</div>
+        <div class="pie-wrap">
+          <svg id="pie-cresc-ent" width="180" height="180" viewBox="0 0 180 180" style="flex-shrink:0"></svg>
+          <div class="legend" id="leg-cresc-ent"></div>
         </div>
       </div>
     </div>
@@ -272,7 +389,7 @@ td.r{text-align:right;font-family:'IBM Plex Mono',monospace;font-size:12px;}
 
 <script>
 /* ─── DATA ─── */
-const RAW=[{"container":"Imobilizado","subcat":"Imóveis","tipo":"Apartamento","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Indaia 501","valor":967595.04,"dia":0,"mes":0,"ano":0.01737},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Apartamento","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Orlando 113","valor":1084087.79,"dia":0,"mes":0,"ano":0.02298},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Apartamento","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Arizona 62","valor":673711.03,"dia":0,"mes":0,"ano":0.03618},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Sitio","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Vista do Morro","valor":155031.22,"dia":0,"mes":0,"ano":0.02298},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Apartamento","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Itanhaem 806","valor":244595.72,"dia":0,"mes":0,"ano":0.02298},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Terreno","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Terreno Canela","valor":343164.69,"dia":0,"mes":0,"ano":0.01055},{"container":"Imobilizado","subcat":"Joias","tipo":"Uso Pessoal","titular":"Ellen","moeda_ref":"Dólar","entidade":"Ativo Fixo","ticker":"Joias","valor":157584.9,"dia":0,"mes":0,"ano":0.02298},{"container":"Imobilizado","subcat":"Metais","tipo":"Moedas Prata","titular":"Giovani","moeda_ref":"Dólar","entidade":"Ativo Fixo","ticker":"Silver Coin (oz)","valor":7107.36,"dia":0.00209,"mes":-0.01335,"ano":-0.09088},{"container":"Previdência","subcat":"Prev Gigio","tipo":"Fechada","titular":"Giovani","moeda_ref":"Real","entidade":"Gerdau","ticker":"Prev Gerdau","valor":1388288.91,"dia":0.00026,"mes":0.00611,"ano":0.06043},{"container":"Previdência","subcat":"Prev Gigio","tipo":"PGBL","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"35420532000162","valor":258997.29,"dia":0,"mes":0,"ano":0.04574},{"container":"Previdência","subcat":"Prev Gigio","tipo":"PGBL","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"41498482000139","valor":484998.32,"dia":0,"mes":0,"ano":0.02309},{"container":"Previdência","subcat":"Prev Ellen","tipo":"PGBL","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"33784231000192","valor":289824.32,"dia":0,"mes":0,"ano":0.05683},{"container":"Previdência","subcat":"Prev Ellen","tipo":"PGBL","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"35420532000162","valor":241067.48,"dia":0,"mes":0,"ano":0.04590},{"container":"Previdência","subcat":"Prev Ellen","tipo":"PGBL","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"41498482000139","valor":204907.75,"dia":0,"mes":0,"ano":0.02309},{"container":"Previdência","subcat":"Prev Bryan","tipo":"PGBL","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"41498482000139","valor":61231.49,"dia":0,"mes":0,"ano":0.02309},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"ISAE4","valor":89280,"dia":0.01501,"mes":0.00847,"ano":0.05110},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"ISAE4","valor":5952,"dia":0.01501,"mes":0.00847,"ano":0.05110},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"BBSE3","valor":72093,"dia":0.01418,"mes":0.01328,"ano":0.02307},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"TAEE11","valor":87549,"dia":0.00458,"mes":-0.01952,"ano":0.01105},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"EGIE3","valor":85950,"dia":-0.02191,"mes":-0.02634,"ano":0.15121},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"FESA4","valor":45300,"dia":-0.00132,"mes":-0.01821,"ano":0},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"KLBN3","valor":69600,"dia":-0.00287,"mes":-0.01695,"ano":-0.09956},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"VISC11","valor":24162.6,"dia":-0.00182,"mes":-0.00345,"ano":0.03897},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"PMLL11","valor":22808.1,"dia":0.00009,"mes":-0.01719,"ano":0.07129},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"RBRX11","valor":35040,"dia":0,"mes":0,"ano":0.10606},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"RBRX11","valor":8760,"dia":0,"mes":0,"ano":0.10650},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"JSRE11","valor":25180,"dia":-0.00079,"mes":-0.02855,"ano":-0.02494},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"HGRU11","valor":26028,"dia":-0.00169,"mes":-0.01803,"ano":0.16486},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"RVBI11 / PSEC11","valor":5921,"dia":-0.00604,"mes":-0.04346,"ano":-0.04423},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"HSML11","valor":34477.74,"dia":0.00137,"mes":-0.00825,"ano":0.05839},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"VGIR11","valor":29340,"dia":-0.00102,"mes":0.00308,"ano":0.08759},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"HSLG11","valor":37152,"dia":-0.00129,"mes":-0.00247,"ano":0.03927},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2029","valor":21387.47,"dia":0,"mes":0,"ano":0.04844},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2032","valor":32574.88,"dia":0,"mes":0,"ano":0.14715},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2040","valor":134820.28,"dia":0,"mes":0,"ano":0.33027},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2040","valor":3601.24,"dia":0,"mes":0,"ano":0.04207},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"CRI BELENUS ABR/2029","valor":15719.15,"dia":0,"mes":0,"ano":0.03557},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"CRA PLANAGRI JUN/2028","valor":7677.38,"dia":0,"mes":0,"ano":0.07256},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"CRA FS Bioenergia MAI/2029","valor":25303.38,"dia":0,"mes":0,"ano":0.02032},{"container":"Proventos","subcat":"BDR BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"AURA33","valor":412260,"dia":0.02361,"mes":-0.00420,"ano":0.61143},{"container":"Proventos","subcat":"BDR BR Renda","tipo":"Dividendos","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"SPYI11","valor":10281,"dia":-0.00126,"mes":-0.00019,"ano":-0.07586},{"container":"Proventos","subcat":"BDR BR Renda","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"SPYI11","valor":102810,"dia":-0.00126,"mes":-0.00019,"ano":-0.07586},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"AMBIBZ 10.875 05/02/33","valor":6113.92,"dia":-0.00753,"mes":-0.00434,"ano":-0.21960},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MOVIBZ 5.25 08/02/31","valor":47968.49,"dia":-0.00753,"mes":-0.00434,"ano":-0.10120},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 8 15/10/34","valor":25563.84,"dia":-0.00753,"mes":-0.00434,"ano":0.36379},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CLOPAR 5.5 14/01/32","valor":39290.99,"dia":-0.00753,"mes":-0.00434,"ano":-0.09059},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"RRRPBZ 9.75 05/02/31","valor":31944.09,"dia":-0.00753,"mes":-0.00434,"ano":-0.05554},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 4.5 31/01/30","valor":20273.44,"dia":-0.00753,"mes":-0.00434,"ano":0.39058},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"SIMHBZ 5.2 26/01/31","valor":30674.35,"dia":-0.00753,"mes":-0.00434,"ano":-0.01010},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"PRIOBZ 6.125 09/06/26","valor":25239.62,"dia":-0.00753,"mes":-0.00434,"ano":-0.08494},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CSNABZ 6.75 28/01/28","valor":21447.44,"dia":-0.00753,"mes":-0.00434,"ano":-0.15453},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"AEGEBZ 6.75 20/05/29","valor":21606.35,"dia":-0.00753,"mes":-0.00434,"ano":-0.22616},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MRFGBZ 6.625 06/08/29","valor":25209.61,"dia":-0.00753,"mes":-0.00434,"ano":-0.05466},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"ECOPET 6.875 29/04/30","valor":24823.8,"dia":-0.00753,"mes":-0.00434,"ano":-0.12055},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRFSBZ 4.35 29/09/26","valor":24665.73,"dia":-0.00753,"mes":-0.00434,"ano":-0.11852},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"ELEBRA 4.625 04/02/30","valor":24047.63,"dia":-0.00753,"mes":-0.00434,"ano":-0.09177},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"RDEDOR 4.5 22/01/30","valor":23779.04,"dia":-0.00753,"mes":-0.00434,"ano":-0.10707},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MOVIBZ 7.85 11/04/29","valor":14834.82,"dia":-0.00753,"mes":-0.00434,"ano":0.01920},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRAZIL 6.125 15/03/34","valor":30242.21,"dia":-0.00753,"mes":-0.00434,"ano":0.14447},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"AMBIBZ 10.875 05/02/33","valor":8406.64,"dia":-0.00753,"mes":-0.00434,"ano":-0.21960},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MOVIBZ 7.85 11/04/29","valor":49449.42,"dia":-0.00753,"mes":-0.00434,"ano":-0.02971},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CSNABZ 8.875 05/12/30","valor":29169.47,"dia":-0.00753,"mes":-0.00434,"ano":-0.18945},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"RRRPBZ 9.75 05/02/31","valor":26620.07,"dia":-0.00753,"mes":-0.00434,"ano":-0.09618},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 4.5 31/01/30","valor":14481.03,"dia":-0.00753,"mes":-0.00434,"ano":0.31762},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 4.5 10/01/28","valor":15227.54,"dia":-0.00753,"mes":-0.00434,"ano":0.38554},{"container":"Proventos","subcat":"FGTS","tipo":"FGTS","titular":"Ellen","moeda_ref":"Real","entidade":"Tivit","ticker":"Ellen FGTS","valor":334891.45,"dia":0,"mes":0,"ano":0.02067},{"container":"Proventos","subcat":"FGTS","tipo":"FGTS","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Fundo Privatização FGTS","valor":101514.26,"dia":0,"mes":0,"ano":0.12563},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Tita","titular":"Giovani","moeda_ref":"Real","entidade":"Tita","ticker":"Apartamento Osasco - Tita","valor":146705.25,"dia":0,"mes":0,"ano":0.02355},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Caixa Brasil","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro Selic","valor":147573.89,"dia":0,"mes":0,"ano":0.03783},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Caixa Brasil","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro Selic 2031","valor":2255,"dia":0,"mes":0,"ano":0.05331},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Caixa Brasil","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Trend DI FIC RF","valor":100064.92,"dia":0,"mes":0,"ano":0.03128},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Caixa US","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"JPM USD Standard mny mkt VNAC A","valor":105147.71,"dia":-0.00753,"mes":-0.00434,"ano":-0.09034},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Caixa US","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"JPM USD Standard mny mkt VNAC A","valor":11367.32,"dia":-0.00753,"mes":-0.00434,"ano":-0.09033},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Caixa US","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"Saldo Avenue Investimento","valor":897.58,"dia":-0.00753,"mes":-0.00434,"ano":-0.33110},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Caixa US","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"Saldo Avenue Investimento","valor":6445.29,"dia":-0.00753,"mes":-0.00434,"ano":7.18580},{"container":"Crescimento","subcat":"Ações BR Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"PRIO3","valor":130131,"dia":-0.02380,"mes":0.03132,"ano":0.91863},{"container":"Crescimento","subcat":"Ações BR Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"BPAC11","valor":40705,"dia":0.00069,"mes":-0.02005,"ano":0.11756},{"container":"Crescimento","subcat":"Ações BR Cresc","tipo":"","titular":"","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"BPAC3","valor":12850,"dia":-0.00155,"mes":-0.02281,"ano":-0.42621},{"container":"Crescimento","subcat":"BDR BR Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"INBR32","valor":36140,"dia":0.00837,"mes":-0.03369,"ano":-0.21589},{"container":"Crescimento","subcat":"BDR BR Cresc","tipo":"Ganho Capital","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"IVVB11","valor":5234.06,"dia":0.00017,"mes":0.00030,"ano":0.03864},{"container":"Crescimento","subcat":"Stocks","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"VT","valor":51964.02,"dia":0.00025,"mes":-0.00079,"ano":-0.03460},{"container":"Crescimento","subcat":"Stocks","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"VWRA","valor":7176.66,"dia":-0.00702,"mes":0.00359,"ano":-0.00701},{"container":"Crescimento","subcat":"Stocks","tipo":"Ação US","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRK.B","valor":56193.03,"dia":-0.00994,"mes":-0.01741,"ano":-0.16818},{"container":"Crescimento","subcat":"Stocks","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"QQQ","valor":67043.19,"dia":0.00343,"mes":0.01440,"ano":-0.00783},{"container":"Crescimento","subcat":"Stocks","tipo":"UCIT","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CSPX","valor":233871.6,"dia":-0.00254,"mes":0.00566,"ano":-0.03023},{"container":"Crescimento","subcat":"REITs","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"VNQ","valor":70518.49,"dia":-0.00805,"mes":-0.01385,"ano":-0.02615},{"container":"Crescimento","subcat":"Fundos USD Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"JPM Global Div A USD","valor":188208.94,"dia":-0.00753,"mes":-0.00434,"ano":-0.07296},{"container":"Crescimento","subcat":"Fundos USD Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"Schroder ISF US Large Cap A USD","valor":173067.88,"dia":-0.00753,"mes":-0.00434,"ano":-0.09110},{"container":"Crescimento","subcat":"Fundos USD Cresc","tipo":"Ganho Capital","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BGF US Growth A2","valor":60475.46,"dia":-0.00753,"mes":-0.00434,"ano":-0.07585},{"container":"Crescimento","subcat":"BTC","tipo":"Bitcoin","titular":"Familia","moeda_ref":"Dólar","entidade":"Familia","ticker":"BTC","valor":518718.06,"dia":0.00830,"mes":0.05972,"ano":-0.15748},{"container":"Crescimento","subcat":"ETH","tipo":"Etherium","titular":"Familia","moeda_ref":"Dólar","entidade":"Familia","ticker":"stETH","valor":99928.75,"dia":0.00607,"mes":0.05246,"ano":-0.27419},{"container":"Crescimento","subcat":"ETH","tipo":"Etherium","titular":"Familia","moeda_ref":"Dólar","entidade":"Familia","ticker":"ETH","valor":4717.2,"dia":0.00607,"mes":0.05246,"ano":-0.27926},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"HASH11","valor":2605,"dia":0.01008,"mes":0.05253,"ano":-0.20760},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"NCIQ","valor":8591.75,"dia":0.00827,"mes":0.05251,"ano":-0.18525},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"OBTC3","valor":7470,"dia":0.00403,"mes":0.02893,"ano":0.16856},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"HASH11","valor":2813.4,"dia":0.01008,"mes":0.05253,"ano":-0.14421},{"container":"Crescimento","subcat":"USDC","tipo":"StableCoins","titular":"Giovani","moeda_ref":"Dólar","entidade":"Coinbase BR","ticker":"USDC","valor":28421.39,"dia":-0.00753,"mes":-0.00434,"ano":-0.04978}];
+const RAW=[{"container":"Imobilizado","subcat":"Imóveis","tipo":"Apartamento","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Indaia 501","valor":967595.04,"mes":0.0,"ano":0.01737026483234594,"ano_real":-0.006272024477283613},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Apartamento","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Orlando 113","valor":1084087.79,"mes":0.0,"ano":0.02298416798477443,"ano_real":-0.0006581213248551231},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Apartamento","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Arizona 62","valor":673711.03,"mes":0.0,"ano":0.036181603665569106,"ano_real":0.012539314355939555},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Sitio","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Vista do Morro","valor":155031.22,"mes":0.0,"ano":0.02298416798477443,"ano_real":-0.0006581213248551231},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Apartamento","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Itanhaem 806","valor":244595.72,"mes":0.0,"ano":0.02298416798477443,"ano_real":-0.0006581213248551231},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Terreno","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Terreno Canela","valor":343164.69,"mes":0.0,"ano":0.01055040163846166,"ano_real":-0.013091887671167892},{"container":"Imobilizado","subcat":"Joias","tipo":"Uso Pessoal","titular":"Ellen","moeda_ref":"Dólar","entidade":"Ativo Fixo","ticker":"Joias","valor":157584.9,"mes":0.0,"ano":0.022984167984774206,"ano_real":-0.0006581213248553451},{"container":"Imobilizado","subcat":"Metais","tipo":"Moedas Prata","titular":"Giovani","moeda_ref":"Dólar","entidade":"Ativo Fixo","ticker":"Silver Coin (oz)","valor":7413.33,"mes":0.02912746499515073,"ano":-0.05174586023420358,"ano_real":-0.07538814954383313},{"container":"Previdência","subcat":"Prev Gigio","tipo":"Fechada","titular":"Giovani","moeda_ref":"Real","entidade":"Gerdau","ticker":"Prev Gerdau","valor":1390478.6,"mes":0.00770117643040269,"ano":0.06209936149940343,"ano_real":0.03845707218977387},{"container":"Previdência","subcat":"Prev Gigio","tipo":"PGBL","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"35420532000162","valor":258997.29,"mes":0.0,"ano":0.04573988970922227,"ano_real":0.02209760039959272},{"container":"Previdência","subcat":"Prev Gigio","tipo":"PGBL","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"41498482000139","valor":484998.32,"mes":0.0,"ano":0.02308656624886063,"ano_real":-0.0005557230607689222},{"container":"Previdência","subcat":"Prev Ellen","tipo":"PGBL","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"33784231000192","valor":289824.32,"mes":0.0,"ano":0.056831691882090585,"ano_real":0.03318940257246103},{"container":"Previdência","subcat":"Prev Ellen","tipo":"PGBL","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"35420532000162","valor":241067.48,"mes":0.0,"ano":0.04590035056054975,"ano_real":0.0222580612509202},{"container":"Previdência","subcat":"Prev Ellen","tipo":"PGBL","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"41498482000139","valor":204907.75,"mes":0.0,"ano":0.023086580907060394,"ano_real":-0.0005557084025691571},{"container":"Previdência","subcat":"Prev Bryan","tipo":"PGBL","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"41498482000139","valor":61231.49,"mes":0.0,"ano":0.02308647134316466,"ano_real":-0.0005558179664648909},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"ISAE4","valor":87810.0,"mes":-0.008132836326668946,"ano":0.03379488548787912,"ano_real":0.010152596178249571},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"ISAE4","valor":5854.0,"mes":-0.008132836326668946,"ano":0.033797076265050574,"ano_real":0.010154786955421023},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"BBSE3","valor":72345.0,"mes":0.016824085005903155,"ano":0.026642468301375954,"ano_real":0.003000178991746403},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"TAEE11","valor":86919.0,"mes":-0.02657572906867356,"ano":0.003769838886851229,"ano_real":-0.019872450422778323},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"EGIE3","valor":85100.0,"mes":-0.03596714811668078,"ano":0.13982475361837432,"ano_real":0.11618246430874477},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"FESA4","valor":45180.0,"mes":-0.020806241872561748,"ano":-0.0026490066225165476,"ano_real":-0.0262912959321461},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"KLBN3","valor":70200.0,"mes":-0.008474576271186418,"ano":-0.09180047192738428,"ano_real":-0.11544276123701383},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"VISC11","valor":24235.2,"mes":-0.0004536793394427363,"ano":0.042096301201399955,"ano_real":0.018454011891770403},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"PMLL11","valor":22780.8,"mes":-0.01836937833680219,"ano":0.0700033818058845,"ano_real":0.046361092496254946},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"RBRX11","valor":35040.0,"mes":0.0,"ano":0.10606060606060597,"ano_real":0.08241831675097641},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"RBRX11","valor":8760.0,"mes":0.0,"ano":0.10650488453697315,"ano_real":0.0828625952273436},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"JSRE11","valor":24772.0,"mes":-0.044290123456790176,"ano":-0.04073729863692688,"ano_real":-0.06437958794655643},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"HGRU11","valor":25992.0,"mes":-0.019391835810759872,"ano":0.16325281146281978,"ano_real":0.13961052215319023},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"RVBI11 / PSEC11","valor":5920.0,"mes":-0.043618739903069415,"ano":-0.04439063761097661,"ano_real":-0.06803292692060617},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"HSML11","valor":33831.6,"mes":-0.026835125822282646,"ano":0.03855582794740342,"ano_real":0.014913538637773869},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"VGIR11","valor":29370.0,"mes":0.004102564102564044,"ano":0.088705193312822,"ano_real":0.06506290400319245},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"HSLG11","valor":36880.0,"mes":-0.009773386317259103,"ano":0.03166610719480811,"ano_real":0.008023817885178561},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2029","valor":21387.47,"mes":0.0,"ano":0.04844290996687639,"ano_real":0.02480062065724684},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2032","valor":32574.88,"mes":0.0,"ano":0.14715226983797192,"ano_real":0.12350998052834236},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2040","valor":134820.28,"mes":0.0,"ano":0.3302706190284346,"ano_real":0.30662832971880505},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2040","valor":3601.24,"mes":0.0,"ano":0.04207370711607017,"ano_real":0.018431417806440618},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"CRI BELENUS ABR/2029","valor":15719.15,"mes":0.0,"ano":0.0355717033835774,"ano_real":0.01192941407394785},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"CRA PLANAGRI JUN/2028","valor":7677.38,"mes":0.0,"ano":0.07255787572244232,"ano_real":0.04891558641281277},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"CRA FS Bioenergia MAI/2029","valor":25303.38,"mes":0.0,"ano":0.02031527159543489,"ano_real":-0.00332701771419466},{"container":"Proventos","subcat":"BDR BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"AURA33","valor":396000.0,"mes":-0.04347826086956519,"ano":0.5478707162091616,"ano_real":0.5242284268995321},{"container":"Proventos","subcat":"BDR BR Renda","tipo":"Dividendos","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"SPYI11","valor":10246.0,"mes":-0.003598171739764622,"ano":-0.0790099113850411,"ano_real":-0.1026502138325042},{"container":"Proventos","subcat":"BDR BR Renda","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"SPYI11","valor":102460.0,"mes":-0.003598171739764622,"ano":-0.0790099113850411,"ano_real":-0.10265220069467065},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"AMBIBZ 10.875 05/02/33","valor":6095.31,"mes":-0.007375376346258844,"ano":-0.22197193143260485,"ano_real":-0.2456142207422344},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MOVIBZ 5.25 08/02/31","valor":47822.46,"mes":-0.007375376346258844,"ano":-0.10393793074914015,"ano_real":-0.1275802200587697},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 8 15/10/34","valor":25486.02,"mes":-0.007375376346258844,"ano":0.35964138835370507,"ano_real":0.33599909904407554},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CLOPAR 5.5 14/01/32","valor":39171.38,"mes":-0.007375376346258733,"ano":-0.09336164620383336,"ano_real":-0.11700393551346291},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"RRRPBZ 9.75 05/02/31","valor":31846.84,"mes":-0.007375376346258844,"ano":-0.05841149796831846,"ano_real":-0.08205378727794801},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 4.5 31/01/30","valor":20211.73,"mes":-0.007375376346258844,"ano":0.3863448482871952,"ano_real":0.36270255897756565},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"SIMHBZ 5.2 26/01/31","valor":30580.97,"mes":-0.007375376346258844,"ano":-0.013116473727320499,"ano_real":-0.036758763036950054},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"PRIOBZ 6.125 09/06/26","valor":25162.79,"mes":-0.007375376346258844,"ano":-0.0877282338705021,"ano_real":-0.11137052318013166},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CSNABZ 6.75 28/01/28","valor":21382.15,"mes":-0.007375376346258733,"ano":-0.15710860309109986,"ano_real":-0.18075089240072942},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"AEGEBZ 6.75 20/05/29","valor":21540.58,"mes":-0.007375376346258844,"ano":-0.22851936609079437,"ano_real":-0.2521616554004239},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MRFGBZ 6.625 06/08/29","valor":25132.87,"mes":-0.007375376346258844,"ano":-0.05753504477202109,"ano_real":-0.08117733408165065},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"ECOPET 6.875 29/04/30","valor":24748.23,"mes":-0.007375376346258733,"ano":-0.12323011808371875,"ano_real":-0.1468724073933483},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRFSBZ 4.35 29/09/26","valor":24590.64,"mes":-0.007375376346258733,"ano":-0.1212082449388242,"ano_real":-0.14485053424845376},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"ELEBRA 4.625 04/02/30","valor":23974.43,"mes":-0.007375376346258622,"ano":-0.09453224220632062,"ano_real":-0.11817453151595017},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"RDEDOR 4.5 22/01/30","valor":23706.65,"mes":-0.007375376346258733,"ano":-0.10978357882454781,"ano_real":-0.13342586813417737},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MOVIBZ 7.85 11/04/29","valor":14789.66,"mes":-0.007375376346258733,"ano":0.016098792753126423,"ano_real":-0.0075434965565031285},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRAZIL 6.125 15/03/34","valor":30150.15,"mes":-0.007375376346258844,"ano":0.14098213272709104,"ano_real":0.11733984341746148},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"AMBIBZ 10.875 05/02/33","valor":8381.05,"mes":-0.007375376346258844,"ano":-0.22197193143260485,"ano_real":-0.2456142207422344},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MOVIBZ 7.85 11/04/29","valor":49298.88,"mes":-0.007375376346258844,"ano":-0.03266066901378473,"ano_real":-0.05630295832341428},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CSNABZ 8.875 05/12/30","valor":29080.67,"mes":-0.007375376346258733,"ano":-0.19191449650770243,"ano_real":-0.21555678581733198},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"RRRPBZ 9.75 05/02/31","valor":26539.04,"mes":-0.007375376346258844,"ano":-0.09893287884021296,"ano_real":-0.12257516814984251},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 4.5 31/01/30","valor":14436.95,"mes":-0.007375376346258844,"ano":0.31360679892666643,"ano_real":0.2899645096170369},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 4.5 10/01/28","valor":15181.18,"mes":-0.007375376346258844,"ano":0.38132422983834635,"ano_real":0.3576819405287168},{"container":"Proventos","subcat":"FGTS","tipo":"FGTS","titular":"Ellen","moeda_ref":"Real","entidade":"Tivit","ticker":"Ellen FGTS","valor":334891.45,"mes":0.0,"ano":0.020672140583636978,"ano_real":-0.002970148725992574},{"container":"Proventos","subcat":"FGTS","tipo":"FGTS","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Fundo Privatização FGTS","valor":101514.26,"mes":0.0,"ano":0.1256291826773701,"ano_real":0.10198689336774056},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Tita","titular":"Giovani","moeda_ref":"Real","entidade":"Tita","ticker":"Apartamento Osasco - Tita","valor":146705.25,"mes":0.0,"ano":0.02354826619172279,"ano_real":-9.402311790676285e-05},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Caixa Brasil","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro Selic","valor":147573.89,"mes":0.0,"ano":0.0378297503352798,"ano_real":0.014187461025650248},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Caixa Brasil","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro Selic 2031","valor":2255.0,"mes":0.0,"ano":0.05330518291543651,"ano_real":0.02966289360580696},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Caixa Brasil","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Trend DI FIC RF","valor":100064.92,"mes":0.0,"ano":0.03128421964346284,"ano_real":0.007641930333833289},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Caixa US","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"JPM USD Standard mny mkt VNAC A","valor":104827.62,"mes":-0.007375376346258844,"ano":-0.09310525358084198,"ano_real":-0.11674754289047154},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Caixa US","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"JPM USD Standard mny mkt VNAC A","valor":11332.72,"mes":-0.007375376346258733,"ano":-0.09310407186230163,"ano_real":-0.11674636117193118},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Caixa US","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"Saldo Avenue Investimento","valor":894.84,"mes":-0.007375376346258844,"ano":-0.3331350143270747,"ano_real":-0.35677730363670423},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Caixa US","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"Saldo Avenue Investimento","valor":6425.66,"mes":-0.007375376346258733,"ano":7.160885090471419,"ano_real":7.13724280116179},{"container":"Crescimento","subcat":"Ações BR Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"PRIO3","valor":132050.0,"mes":0.04652913717813578,"ano":0.9469222263177295,"ano_real":0.9232799370081},{"container":"Crescimento","subcat":"Ações BR Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"BPAC11","valor":40558.0,"mes":-0.02359285473542294,"ano":0.11352196966930661,"ano_real":0.08987968035967706},{"container":"Crescimento","subcat":"Ações BR Cresc","tipo":"","titular":"","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"BPAC3","valor":12695.0,"mes":-0.034600760456273805,"ano":-0.43313239562402317,"ano_real":-0.4567746849336527},{"container":"Crescimento","subcat":"BDR BR Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"INBR32","valor":37280.0,"mes":-0.0032085561497325887,"ano":-0.1911531946736743,"ano_real":-0.21479548398330386},{"container":"Crescimento","subcat":"BDR BR Cresc","tipo":"Ganho Capital","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"IVVB11","valor":5223.4,"mes":-0.0017391304347824654,"ano":0.03652873800433398,"ano_real":0.012886448694704431},{"container":"Crescimento","subcat":"Stocks","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"VT","valor":51935.56,"mes":-0.0013355968901646031,"ano":-0.03512775302258897,"ano_real":-0.058770042332218525},{"container":"Crescimento","subcat":"Stocks","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"VWRA","valor":7278.21,"mes":0.017794708784591107,"ano":0.007040304976348333,"ano_real":-0.01660198433328122},{"container":"Crescimento","subcat":"Stocks","tipo":"Ação US","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRK.B","valor":55798.42,"mes":-0.024310357256567827,"ano":-0.1740225971498114,"ano_real":-0.19766488645944094},{"container":"Crescimento","subcat":"Stocks","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"QQQ","valor":66966.82,"mes":0.013242983389682328,"ano":-0.008961305445562284,"ano_real":-0.03260359475519184},{"container":"Crescimento","subcat":"Stocks","tipo":"UCIT","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CSPX","valor":235356.13,"mes":0.012042879094075865,"ano":-0.024071529809664427,"ano_real":-0.04771381911929398},{"container":"Crescimento","subcat":"REITs","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"VNQ","valor":70561.71,"mes":-0.013248894829416935,"ano":-0.02555159788722594,"ano_real":-0.049193887196855496},{"container":"Crescimento","subcat":"Fundos USD Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"JPM Global Div A USD","valor":187636.0,"mes":-0.007375376346258733,"ano":-0.07578035101632619,"ano_real":-0.09942264032595574},{"container":"Crescimento","subcat":"Fundos USD Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"Schroder ISF US Large Cap A USD","valor":172541.03,"mes":-0.007375376346258733,"ano":-0.09386812077947704,"ano_real":-0.11751041008910659},{"container":"Crescimento","subcat":"Fundos USD Cresc","tipo":"Ganho Capital","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BGF US Growth A2","valor":60291.36,"mes":-0.007375376346258844,"ano":-0.07866056067792115,"ano_real":-0.10230284998755071},{"container":"Crescimento","subcat":"BTC","tipo":"Bitcoin","titular":"Familia","moeda_ref":"Dólar","entidade":"Familia","ticker":"BTC","valor":518677.72,"mes":0.059640036292722964,"ano":-0.1575406371520749,"ano_real":-0.18118292646170445},{"container":"Crescimento","subcat":"ETH","tipo":"Etherium","titular":"Familia","moeda_ref":"Dólar","entidade":"Familia","ticker":"stETH","valor":99498.42,"mes":0.04792947985884921,"ano":-0.2773155466663403,"ano_real":-0.3009578359759698},{"container":"Crescimento","subcat":"ETH","tipo":"Etherium","titular":"Familia","moeda_ref":"Dólar","entidade":"Familia","ticker":"ETH","valor":4696.88,"mes":0.04792947985884921,"ano":-0.2823628249620631,"ano_real":-0.30600511427169264},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"HASH11","valor":2597.0,"mes":0.04929292929292939,"ano":-0.21003802281368822,"ano_real":-0.23368031212331777},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"NCIQ","valor":8571.84,"mes":0.050070574240584254,"ano":-0.18713874710598433,"ano_real":-0.21078103641561388},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"OBTC3","valor":7300.0,"mes":0.005509641873278293,"ano":0.14196323816973022,"ano_real":0.11832094886010067},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"HASH11","valor":2804.76,"mes":0.04929292929292939,"ano":-0.14684106463878333,"ano_real":-0.17048335394841288},{"container":"Crescimento","subcat":"USDC","tipo":"StableCoins","titular":"Giovani","moeda_ref":"Dólar","entidade":"Coinbase BR","ticker":"USDC","valor":28334.87,"mes":-0.007375376346258733,"ano":-0.05267196131901697,"ano_real":-0.07631425062864652}];
 
 const TARGETS={Imobilizado:.20,Previdência:.30,Proventos:.30,Crescimento:.20};
 const LIMITS={Imobilizado:.50,Previdência:.50,Proventos:.10,Crescimento:.10};
@@ -284,6 +401,36 @@ const PIE_C_TIPO=['#5c3d9e','#1a4f8a','#1a7a58','#b83a10','#0e7490','#7c3aed','#
 /* ─── STATE ─── */
 let ST={t:new Set(['Todos']),m:new Set(['Todos']),e:new Set(['Todos'])};
 let curTab='all',curSort='valor',posOnly=false;
+let perfMode='real'; // 'real' = ANO Real (col V) | 'nominal' = ANO nominal (col U)
+
+/* ─── PERF SELECTOR ─── */
+function buildPerfChips(){
+  const el=document.getElementById('chips-perf');
+  el.innerHTML='';
+  [{v:'real',l:'Ano Real'},{v:'nominal',l:'Nominal'}].forEach(({v,l})=>{
+    const c=document.createElement('span');
+    const isOn=perfMode===v;
+    c.className='chip'+(isOn?(v==='real'?' on-real':' on-nominal'):'');
+    c.textContent=l;
+    c.onclick=()=>{perfMode=v;buildPerfChips();updatePerfBadge();renderAll();};
+    el.appendChild(c);
+  });
+}
+
+function updatePerfBadge(){
+  const badge=document.getElementById('perf-badge');
+  const th=document.getElementById('th-ano');
+  if(perfMode==='real'){
+    badge.textContent='Ano Real';badge.className='perf-badge real';
+    if(th)th.textContent='Ano Real';
+  } else {
+    badge.textContent='Nominal';badge.className='perf-badge nominal';
+    if(th)th.textContent='Nominal';
+  }
+}
+
+function perfVal(r){ return perfMode==='real' ? r.ano_real : r.ano; }
+function perfKey(){ return perfMode==='real' ? '_voa_real' : '_voa_nom'; }
 
 /* ─── FILTER HELPERS ─── */
 const matches=r=>
@@ -324,7 +471,7 @@ function buildAllChips(){
 }
 buildAllChips();
 
-function resetFilters(){ST={t:new Set(['Todos']),m:new Set(['Todos']),e:new Set(['Todos'])};buildAllChips();renderAll();}
+function resetFilters(){ST={t:new Set(['Todos']),m:new Set(['Todos']),e:new Set(['Todos'])};perfMode='real';buildAllChips();buildPerfChips();updatePerfBadge();renderAll();}
 
 /* ─── DATE ─── */
 const NOW=new Date();
@@ -351,21 +498,37 @@ function togglePos(){posOnly=!posOnly;document.getElementById('pos-btn').classLi
 
 /* ─── AGGREGATE ─── */
 function agg(data){
-  const total=data.reduce((s,r)=>s+r.valor,0);
+  // Agrupa ativos por chave unica
   const G={};
   data.forEach(r=>{
     const k=[r.container,r.subcat,r.ticker||r.subcat,r.titular,r.entidade].join('||');
-    if(!G[k])G[k]={...r,valor:0,_d:0,_m:0,_a:0};
-    G[k].valor+=r.valor;G[k]._d+=r.dia*r.valor;G[k]._m+=r.mes*r.valor;G[k]._a+=r.ano*r.valor;
+    if(!G[k])G[k]={...r,valor:0,_vom:0,_voa_real:0,_voa_nom:0};
+    G[k].valor+=r.valor;
+    // Acumula valor original para cada perspectiva: VO = VA / (1 + perf%)
+    G[k]._vom      += r.valor / (1 + r.mes);
+    G[k]._voa_real += r.valor / (1 + r.ano_real); // ANO Real — descontado inflação (col V)
+    G[k]._voa_nom  += r.valor / (1 + r.ano);      // ANO Nominal (col U)
   });
-  const assets=Object.values(G).map(a=>({...a,dia:a._d/a.valor,mes:a._m/a.valor,ano:a._a/a.valor}));
-  const ctT={},ctY={};
+  // Reconstroi perf% para cada perspectiva
+  const assets=Object.values(G).map(a=>({
+    ...a,
+    mes:      a._vom      > 0 ? (a.valor - a._vom)      / a._vom      : 0,
+    ano_real: a._voa_real > 0 ? (a.valor - a._voa_real) / a._voa_real : 0,
+    ano:      a._voa_nom  > 0 ? (a.valor - a._voa_nom)  / a._voa_nom  : 0,
+  }));
+  // Totais por container — YTD usa a perspectiva ativa (perfMode)
+  const ctT={}, ctVO={};
   assets.forEach(a=>{
     ctT[a.container]=(ctT[a.container]||0)+a.valor;
+    const vo=perfMode==='real' ? a._voa_real : a._voa_nom;
+    ctVO[a.container]=(ctVO[a.container]||0)+vo;
   });
-  assets.forEach(a=>{
-    ctY[a.container]=(ctY[a.container]||0)+a.ano*(a.valor/(ctT[a.container]||1));
+  // YTD correto: (ValorAtual - ValorOriginal) / ValorOriginal
+  const ctY={};
+  Object.keys(ctT).forEach(ct=>{
+    ctY[ct] = ctVO[ct] > 0 ? (ctT[ct] - ctVO[ct]) / ctVO[ct] : 0;
   });
+  const total=data.reduce((s,r)=>s+r.valor,0);
   return{total,assets,ctT,ctY};
 }
 
@@ -399,13 +562,15 @@ function renderCards(total,assets,ctT,ctY){
       <div class="cc-val" style="color:${COLORS[ct]}">R$ ${(v/1e6).toFixed(3)}M</div>
       <div class="cc-foot">
         <span class="cc-pct">${(p*100).toFixed(1)}% · alvo ${(tgt*100).toFixed(0)}%</span>
-        <span class="cc-ytd ${yc}">${ys}${(ytd*100).toFixed(1)}% YTD</span>
+        <span class="cc-ytd ${yc}">${ys}${(ytd*100).toFixed(1)}% ${perfMode==='real'?'real':'nom'}</span>
       </div></div></div>`;
   }).join('');
 }
 
 /* ─── YTD BARS ─── */
 function renderYTD(ctY){
+  const t=document.getElementById('ytd-panel-title');
+  if(t)t.textContent=(perfMode==='real'?'Ano Real':'Nominal')+' por Container';
   const mx=Math.max(...CTS.map(c=>Math.abs(ctY[c]||0)));
   document.getElementById('ytd-bars').innerHTML=CTS.map(ct=>{
     const y=ctY[ct]||0,w=mx>0?Math.abs(y)/mx*45:0,pos=y>=0,s=y>=0?'+':'';
@@ -446,8 +611,9 @@ function renderAlerts(total,assets,ctT){
     if(Math.abs(dev)>.02)als.push({l:Math.abs(dev)>.05?'crit':'warn',t:'DESVIO DE ALOCAÇÃO',h:`${ct} ${dev>0?'sobreponderado':'subponderado'}`,d:`Atual ${(a*100).toFixed(1)}% vs alvo ${(TARGETS[ct]*100).toFixed(0)}% — ${dev>0?'+':''}${(dev*100).toFixed(1)}pp.`});
   });
   assets.forEach(a=>{
-    if(a.ano<-.20&&a.valor>10000&&Math.abs(a.ano)<5)als.push({l:'warn',t:'REVISÃO DE TESE',h:`${a.ticker||a.subcat} em queda relevante`,d:`YTD ${(a.ano*100).toFixed(1)}% · R$ ${(a.valor/1e3).toFixed(0)}k. Verificar tese.`});
-    if(a.ano>2)als.push({l:'info',t:'ANOMALIA DE DADOS',h:`YTD suspeito: ${a.ticker||a.subcat}`,d:`YTD ${(a.ano*100).toFixed(0)}% — provável distorção de custo. Verificar planilha.`});
+    const pv=perfVal(a),lbl=perfMode==='real'?'Ano Real':'Nominal';
+    if(pv<-.20&&a.valor>10000&&Math.abs(pv)<5)als.push({l:'warn',t:'REVISÃO DE TESE',h:`${a.ticker||a.subcat} em queda relevante`,d:`${lbl} ${(pv*100).toFixed(1)}% · R$ ${(a.valor/1e3).toFixed(0)}k. Verificar tese.`});
+    if(pv>2)als.push({l:'info',t:'ANOMALIA DE DADOS',h:`YTD suspeito: ${a.ticker||a.subcat}`,d:`${lbl} ${(pv*100).toFixed(0)}% — provável distorção de custo. Verificar planilha.`});
   });
   document.getElementById('alerts-grid').innerHTML=als.length?als.map(al=>`<div class="ac ac-${al.l}"><div class="ac-top"></div><div class="ac-body"><div class="ac-type">${al.t}</div><div class="ac-title">${al.h}</div><div class="ac-desc">${al.d}</div></div></div>`).join(''):`<div class="ac ac-info" style="grid-column:1/-1"><div class="ac-top" style="background:var(--up)"></div><div class="ac-body"><div class="ac-type" style="color:var(--up)">STATUS</div><div class="ac-title">Sem alertas para a seleção atual</div><div class="ac-desc">Portfólio dentro dos limites de governança WTF.</div></div></div>`;
 }
@@ -457,14 +623,14 @@ function renderTable(assets,ctT){
   if(!assets){const d=RAW.filter(matches);const ag=agg(d);assets=ag.assets;ctT=ag.ctT;}
   let data=[...assets];
   if(curTab!=='all')data=data.filter(a=>a.container===curTab);
-  if(posOnly)data=data.filter(a=>a.ano>0);
-  const SF={valor:(a,b)=>b.valor-a.valor,ytd:(a,b)=>b.ano-a.ano,mes:(a,b)=>b.mes-a.mes,dia:(a,b)=>b.dia-a.dia,conc:(a,b)=>(b.valor/(ctT[b.container]||1))-(a.valor/(ctT[a.container]||1))};
+  if(posOnly)data=data.filter(a=>perfVal(a)>0);
+  const SF={valor:(a,b)=>b.valor-a.valor,ytd:(a,b)=>perfVal(b)-perfVal(a),mes:(a,b)=>b.mes-a.mes,conc:(a,b)=>(b.valor/(ctT[b.container]||1))-(a.valor/(ctT[a.container]||1))};
   data.sort(SF[curSort]||SF.valor);
   document.getElementById('ac-count').textContent=`${data.length} ativo${data.length!==1?'s':''}`;
   const p=v=>Math.abs(v)<.00001?`<span class="flat">0.00%</span>`:`<span class="${v>0?'pos':'neg'}">${v>0?'+':''}${(v*100).toFixed(2)}%</span>`;
   const TC={Imobilizado:'ti-tag',Previdência:'tp-tag',Proventos:'tpr-tag',Crescimento:'tc-tag'};
   document.getElementById('tbody').innerHTML=data.map(a=>{
-    const ct=ctT[a.container]||1,conc=a.valor/ct,btcX=a.container==='Crescimento'&&a.ticker==='BTC',lim=btcX?.50:LIMITS[a.container],over=conc>lim,anom=Math.abs(a.ano)>2;
+    const ct=ctT[a.container]||1,conc=a.valor/ct,btcX=a.container==='Crescimento'&&a.ticker==='BTC',lim=btcX?.50:LIMITS[a.container],over=conc>lim,anom=Math.abs(perfVal(a))>2;
     return`<tr class="${anom?'ano-row':''}">
       <td><span class="tag ${TC[a.container]}">${a.container}</span></td>
       <td><span class="tag ts-tag">${a.subcat}</span></td>
@@ -477,9 +643,8 @@ function renderTable(assets,ctT){
         <span class="cv ${over?'cw':'cok'}">${(conc*100).toFixed(1)}%</span>
         ${over?'<span class="abadge">!</span>':''}
       </div></td>
-      <td class="r">${anom?'<span class="flat">—</span>':p(a.dia)}</td>
       <td class="r">${anom?'<span class="flat">—</span>':p(a.mes)}</td>
-      <td class="r">${anom?'<span class="flat" title="Anomalia">⚠</span>':p(a.ano)}</td>
+      <td class="r">${anom?'<span class="flat" title="Anomalia">⚠</span>':p(perfVal(a))}</td>
     </tr>`;
   }).join('');
 }
@@ -525,21 +690,59 @@ function buildLegend(legId,slices,colors,tot){
   }).join('');
 }
 
+function slicesBy(data, key){
+  const T={};
+  data.forEach(r=>{const k=r[key]||'Outros';T[k]=(T[k]||0)+r.valor;});
+  const S=Object.entries(T).sort((a,b)=>b[1]-a[1]).map(([l,v])=>({l,v}));
+  return{slices:S,tot:S.reduce((s,sl)=>s+sl.v,0)};
+}
+
+// Paletas extras
+const PIE_C_TIT=['#1a4f8a','#5c3d9e','#1a7a58','#b83a10','#0e7490'];
+const PIE_C_SUB=['#b83a10','#7c2d12','#c2410c','#ea580c','#f97316','#fb923c','#374151','#6b7280','#9ca3af','#1a4f8a','#0369a1','#0e7490'];
+const PIE_C_ENT=['#374151','#1a4f8a','#5c3d9e','#0e7490','#1a7a58','#b83a10','#78350f','#064e3b'];
+
 function renderPies(){
+  // ── IMOBILIZADO ─────────────────────────────────────────────────────────
+  const imob=RAW.filter(r=>r.container==='Imobilizado');
+  const{slices:itiS,tot:itiTot}=slicesBy(imob,'tipo');
+  drawDonut('pie-imob-tipo',itiS,PIE_C_TIPO);buildLegend('leg-imob-tipo',itiS,PIE_C_TIPO,itiTot);
+  const{slices:ititS,tot:ititTot}=slicesBy(imob,'titular');
+  drawDonut('pie-imob-tit',ititS,PIE_C_TIT);buildLegend('leg-imob-tit',ititS,PIE_C_TIT,ititTot);
+
+  // ── PREVIDÊNCIA ─────────────────────────────────────────────────────────
+  const prev=RAW.filter(r=>r.container==='Previdência');
+  const{slices:ptitS,tot:ptitTot}=slicesBy(prev,'titular');
+  drawDonut('pie-prev-tit',ptitS,PIE_C_TIT);buildLegend('leg-prev-tit',ptitS,PIE_C_TIT,ptitTot);
+  const{slices:ptipoS,tot:ptipoTot}=slicesBy(prev,'tipo');
+  drawDonut('pie-prev-tipo',ptipoS,PIE_C_TIPO);buildLegend('leg-prev-tipo',ptipoS,PIE_C_TIPO,ptipoTot);
+
+  // ── PROVENTOS ───────────────────────────────────────────────────────────
   const prov=RAW.filter(r=>r.container==='Proventos');
-  // moeda
-  const moT={};prov.forEach(r=>{moT[r.moeda_ref]=(moT[r.moeda_ref]||0)+r.valor;});
-  const moS=Object.entries(moT).sort((a,b)=>b[1]-a[1]).map(([l,v])=>({l,v}));
-  const moTot=moS.reduce((s,sl)=>s+sl.v,0);
+  const{slices:moS,tot:moTot}=slicesBy(prov,'moeda_ref');
   drawDonut('pie-moeda',moS,PIE_C_MOEDA);buildLegend('leg-moeda',moS,PIE_C_MOEDA,moTot);
-  // tipo
-  const tiT={};prov.forEach(r=>{const k=r.tipo||'Outros';tiT[k]=(tiT[k]||0)+r.valor;});
-  const tiS=Object.entries(tiT).sort((a,b)=>b[1]-a[1]).map(([l,v])=>({l,v}));
-  const tiTot=tiS.reduce((s,sl)=>s+sl.v,0);
+  const{slices:tiS,tot:tiTot}=slicesBy(prov,'tipo');
   drawDonut('pie-tipo',tiS,PIE_C_TIPO);buildLegend('leg-tipo',tiS,PIE_C_TIPO,tiTot);
+  const{slices:provTitS,tot:provTitTot}=slicesBy(prov,'titular');
+  drawDonut('pie-prov-tit',provTitS,PIE_C_TIT);buildLegend('leg-prov-tit',provTitS,PIE_C_TIT,provTitTot);
+  const{slices:provEntS,tot:provEntTot}=slicesBy(prov,'entidade');
+  drawDonut('pie-prov-ent',provEntS,PIE_C_ENT);buildLegend('leg-prov-ent',provEntS,PIE_C_ENT,provEntTot);
+
+  // ── CRESCIMENTO ─────────────────────────────────────────────────────────
+  const cresc=RAW.filter(r=>r.container==='Crescimento');
+  const{slices:csubS,tot:csubTot}=slicesBy(cresc,'subcat');
+  drawDonut('pie-cresc-sub',csubS,PIE_C_SUB);buildLegend('leg-cresc-sub',csubS,PIE_C_SUB,csubTot);
+  const{slices:cmoS,tot:cmoTot}=slicesBy(cresc,'moeda_ref');
+  drawDonut('pie-cresc-moeda',cmoS,PIE_C_MOEDA);buildLegend('leg-cresc-moeda',cmoS,PIE_C_MOEDA,cmoTot);
+  const{slices:ctitS,tot:ctitTot}=slicesBy(cresc,'titular');
+  drawDonut('pie-cresc-tit',ctitS,PIE_C_TIT);buildLegend('leg-cresc-tit',ctitS,PIE_C_TIT,ctitTot);
+  const{slices:centS,tot:centTot}=slicesBy(cresc,'entidade');
+  drawDonut('pie-cresc-ent',centS,PIE_C_ENT);buildLegend('leg-cresc-ent',centS,PIE_C_ENT,centTot);
 }
 
 /* ─── BOOT ─── */
+buildPerfChips();
+updatePerfBadge();
 renderAll();
 </script>
 </body>
