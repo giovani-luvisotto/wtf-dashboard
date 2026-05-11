@@ -4,840 +4,791 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>WTF Investments — CIO Dashboard</title>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,300;9..144,400;9..144,600;9..144,700&family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,700;1,9..144,300&family=IBM+Plex+Mono:wght@300;400;500;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-:root {
-  --ink:#0f0f0f; --ink2:#2a2a2a; --ink3:#555; --ink4:#888;
-  --paper:#fafaf8; --paper2:#f3f2ef; --paper3:#eceae5;
-  --rule:#dddbd5; --rule2:#ccc9c0;
-  --imob:#1a7a58; --imob-pale:#e8f5f0;
-  --prev:#1a4f8a; --prev-pale:#e8f0fa;
-  --prov:#5c3d9e; --prov-pale:#f0ecfb;
-  --cresc:#b83a10; --cresc-pale:#fdf0eb;
-  --up:#15803d; --up-bg:#dcfce7;
-  --dn:#b91c1c; --dn-bg:#fee2e2;
-  --warn:#92400e; --warn-bg:#fef3c7;
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --ink:#0f0f0f;--ink2:#2a2a2a;--ink3:#555;--ink4:#888;
+  --paper:#fafaf8;--paper2:#f3f2ef;--paper3:#eceae5;
+  --rule:#dddbd5;--rule2:#ccc9c0;
+  --imob:#1a7a58;--imob-pale:#e8f5f0;
+  --prev:#1a4f8a;--prev-pale:#e8f0fa;
+  --prov:#5c3d9e;--prov-pale:#f0ecfb;
+  --cresc:#b83a10;--cresc-pale:#fdf0eb;
+  --up:#15803d;--up-bg:#dcfce7;
+  --dn:#b91c1c;--dn-bg:#fee2e2;
+  --warn:#92400e;--warn-bg:#fef3c7;
 }
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:var(--paper);color:var(--ink);font-family:'IBM Plex Sans',sans-serif;font-size:14px;line-height:1.5}
+html{scroll-behavior:smooth}
+body{font-family:'IBM Plex Sans',sans-serif;background:var(--paper);color:var(--ink);font-size:14px;line-height:1.5}
 
 /* HEADER */
-#header{position:fixed;top:0;left:0;right:0;z-index:200;background:#0f0f0f;color:#fff;padding:0 24px;height:52px;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #2a2a2a}
-.header-logo{display:flex;align-items:center;gap:12px}
-.header-logo .brand{font-family:'Fraunces',serif;font-size:20px;font-weight:600;color:#fff;letter-spacing:-0.5px}
-.header-logo .sep{color:#444;font-size:18px}
-.header-logo .sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#888;letter-spacing:2px;text-transform:uppercase}
-.header-right{display:flex;align-items:center;gap:16px}
-.partners-pill{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#aaa;letter-spacing:0.5px}
-.date-pill{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#666}
-.total-pill{font-family:'IBM Plex Mono',monospace;font-size:13px;color:#7dd3a8;font-weight:600;letter-spacing:-0.5px}
+#header{position:sticky;top:0;z-index:200;background:#0f0f0f;display:flex;align-items:center;justify-content:space-between;padding:0 24px;height:52px;border-bottom:1px solid #2a2a2a}
+.hd-left{display:flex;align-items:center;gap:12px}
+.hd-logo{font-family:'Fraunces',serif;font-size:20px;color:#fff;font-weight:700;letter-spacing:-0.5px}
+.hd-sep{color:#555;font-size:18px}
+.hd-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#888;letter-spacing:2px;text-transform:uppercase}
+.hd-right{display:flex;align-items:center;gap:16px}
+.hd-partners{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#888}
+.hd-date{font-family:'IBM Plex Mono',monospace;font-size:11px;color:#888}
+.hd-total{font-family:'Fraunces',serif;font-size:18px;color:#7dd3a8;font-weight:700}
 
 /* FILTER BAR */
-#filterbar{position:sticky;top:52px;z-index:190;background:var(--paper2);border-bottom:1px solid var(--rule);padding:10px 24px;display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-.filter-group{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
-.filter-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink4);text-transform:uppercase;letter-spacing:1px;margin-right:2px;white-space:nowrap}
-.chip{cursor:pointer;font-family:'IBM Plex Mono',monospace;font-size:11px;padding:3px 10px;border-radius:20px;border:1.5px solid var(--rule2);background:var(--paper);color:var(--ink3);transition:all .15s;white-space:nowrap;user-select:none}
-.chip:hover{border-color:var(--ink4)}
-.chip.active{border-color:transparent;color:#fff;font-weight:500}
-.chip.active.all{background:#0f0f0f}
-.chip.active.giov{background:#1a4f8a}
-.chip.active.ellen{background:#5c3d9e}
-.chip.active.bryan{background:#1a7a58}
-.chip.active.familia{background:#b83a10}
-.chip.active.real-c{background:#15803d}
-.chip.active.dolar-c{background:#0369a1}
-.chip.active.ent{background:#0f0f0f}
-.chip.active.ano-real{background:#15803d}
-.chip.active.nominal{background:#374151}
-.filter-sep{width:1px;height:24px;background:var(--rule2);margin:0 4px}
-#filter-counter{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink4);margin-left:auto}
-.btn-clear{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 10px;border-radius:20px;border:1.5px solid var(--rule2);background:transparent;color:var(--ink3);cursor:pointer;text-transform:uppercase;letter-spacing:0.5px}
-.btn-clear:hover{background:var(--paper3)}
+#filters{position:sticky;top:52px;z-index:190;background:var(--paper2);border-bottom:1px solid var(--rule);padding:10px 24px;display:flex;flex-wrap:wrap;gap:16px;align-items:center}
+.fg{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+.fg-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink4);text-transform:uppercase;letter-spacing:1px;white-space:nowrap}
+.chip{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:3px 10px;border-radius:20px;border:1px solid var(--rule2);background:var(--paper);color:var(--ink3);cursor:pointer;transition:all .15s;white-space:nowrap}
+.chip:hover{border-color:var(--ink4);color:var(--ink)}
+.chip.active{color:#fff;border-color:transparent}
+.chip-all.active{background:#0f0f0f}
+.chip-gi.active{background:#1a4f8a}
+.chip-el.active{background:#5c3d9e}
+.chip-br.active{background:#1a7a58}
+.chip-fa.active{background:#b83a10}
+.chip-real.active{background:#15803d}
+.chip-dolar.active{background:#0369a1}
+.chip-ent.active{background:#374151}
+.chip-ano-real.active{background:#15803d}
+.chip-nom.active{background:#374151}
+.filter-info{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink4);margin-left:auto}
+.btn-clear{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 10px;border-radius:4px;border:1px solid var(--rule2);background:transparent;color:var(--ink3);cursor:pointer}
+.btn-clear:hover{background:var(--dn-bg);border-color:var(--dn);color:var(--dn)}
 
 /* MAIN */
-#main{margin-top:52px;padding:24px;max-width:1600px;margin-left:auto;margin-right:auto}
-.section-title{font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(--ink4);margin-bottom:14px;display:flex;align-items:center;gap:8px}
-.persp-badge{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600;letter-spacing:0.5px}
-.persp-badge.real{background:var(--up-bg);color:var(--up)}
-.persp-badge.nom{background:#e0e7ff;color:#3730a3}
+main{padding:24px;max-width:1600px;margin:0 auto}
+.section-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--ink4);margin-bottom:14px;display:flex;align-items:center;gap:8px}
+.section-title span{background:var(--paper3);border:1px solid var(--rule);border-radius:4px;padding:2px 8px;font-size:9px}
 
 /* CONTAINER CARDS */
-#containers-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
-.ct-card{background:#fff;border:1px solid var(--rule);border-radius:10px;overflow:hidden;position:relative}
-.ct-card-top{height:4px}
-.ct-card-body{padding:16px}
-.ct-card-name{display:flex;align-items:center;gap:8px;margin-bottom:10px}
-.ct-card-name span{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:1px}
-.badge-ok{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 6px;border-radius:8px;background:var(--up-bg);color:var(--up);font-weight:600}
-.badge-dev{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 6px;border-radius:8px;background:var(--warn-bg);color:var(--warn);font-weight:600}
-.badge-crit{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 6px;border-radius:8px;background:var(--dn-bg);color:var(--dn);font-weight:600}
-.ct-value{font-family:'Fraunces',serif;font-size:27px;font-weight:600;letter-spacing:-1px;margin-bottom:8px}
-.ct-footer{display:flex;justify-content:space-between;align-items:center;font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink3);border-top:1px solid var(--rule);padding-top:8px;margin-top:4px}
-.perf-val{font-weight:600}
-.perf-val.up{color:var(--up)}
-.perf-val.dn{color:var(--dn)}
-.perf-suffix{font-size:9px;color:var(--ink4)}
+#ct-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:32px}
+.ct-card{background:#fff;border:1px solid var(--rule);border-radius:8px;overflow:hidden}
+.ct-bar{height:4px}
+.ct-body{padding:14px 16px}
+.ct-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+.ct-name{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1px;text-transform:uppercase;font-weight:500}
+.badge{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:12px;font-weight:600}
+.badge-ok{background:var(--up-bg);color:var(--up)}
+.badge-warn{background:var(--warn-bg);color:var(--warn)}
+.badge-crit{background:var(--dn-bg);color:var(--dn)}
+.ct-val{font-family:'Fraunces',serif;font-size:28px;font-weight:700;line-height:1;margin-bottom:10px}
+.ct-foot{display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--rule);padding-top:10px;margin-top:4px}
+.ct-alloc{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink3)}
+.ct-perf{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600}
+.ct-perf-suf{font-size:9px;margin-left:2px;opacity:.7}
 
-/* ANALYTIC PANELS */
-#analytic-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px}
-.panel{background:#fff;border:1px solid var(--rule);border-radius:10px;padding:20px}
-.panel-title{font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:var(--ink4);margin-bottom:16px}
-.bar-chart-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
-.bar-label{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink2);width:90px;text-align:right;flex-shrink:0}
-.bar-track{flex:1;height:18px;background:var(--paper2);border-radius:4px;position:relative;overflow:hidden}
-.bar-fill{height:100%;border-radius:4px;transition:width .3s}
-.bar-val{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;width:60px;flex-shrink:0}
-/* diverging */
-.diverg-track{flex:1;height:18px;position:relative;display:flex;align-items:center}
-.diverg-zero{position:absolute;left:50%;top:0;bottom:0;width:1.5px;background:var(--ink2);z-index:2}
-.diverg-bar{position:absolute;height:14px;border-radius:3px}
-/* alloc bars */
-.alloc-bar-wrap{flex:1;height:18px;background:var(--paper2);border-radius:4px;position:relative;overflow:visible}
-.alloc-bar-fill{height:100%;border-radius:4px}
-.alloc-target-line{position:absolute;top:-2px;bottom:-2px;width:2px;background:#0f0f0f;border-radius:1px;z-index:3}
+/* CHARTS SECTION */
+#charts-row{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:32px}
+.chart-card{background:#fff;border:1px solid var(--rule);border-radius:8px;padding:18px}
+.chart-title{font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink4);margin-bottom:16px}
+.bar-chart{display:flex;flex-direction:column;gap:10px}
+.bar-row{display:flex;align-items:center;gap:10px}
+.bar-label{font-family:'IBM Plex Mono',monospace;font-size:10px;width:90px;text-align:right;color:var(--ink3)}
+.bar-track{flex:1;position:relative;height:20px;background:var(--paper3);border-radius:3px;overflow:visible}
+.bar-fill{height:100%;border-radius:3px;transition:width .5s ease}
+.bar-val{font-family:'IBM Plex Mono',monospace;font-size:10px;margin-left:6px;font-weight:500;white-space:nowrap}
+/* divergent */
+.bar-divtrack{flex:1;position:relative;height:20px;display:flex;align-items:center}
+.bar-div-center{position:absolute;left:50%;top:0;bottom:0;width:1px;background:var(--ink2);z-index:2}
+.bar-div-fill{position:absolute;height:16px;border-radius:2px;top:2px}
+.alloc-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.alloc-track{flex:1;height:20px;background:var(--paper3);border-radius:3px;position:relative;overflow:visible}
+.alloc-fill{height:100%;border-radius:3px}
+.alloc-target-line{position:absolute;top:-3px;bottom:-3px;width:2px;background:var(--ink2);z-index:2}
+.alloc-val{font-family:'IBM Plex Mono',monospace;font-size:10px;margin-left:6px;color:var(--ink3)}
 
 /* ALERTS */
-#alerts-section{margin-bottom:28px}
-#alerts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+#alerts-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:32px}
 .alert-card{background:#fff;border:1px solid var(--rule);border-radius:8px;overflow:hidden}
-.alert-top{height:3px}
-.alert-top.crit{background:var(--dn)}
-.alert-top.warn{background:#f59e0b}
-.alert-top.info{background:#3b82f6}
+.alert-strip{height:3px}
 .alert-body{padding:12px 14px}
-.alert-type{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--ink4);margin-bottom:4px}
-.alert-msg{font-family:'IBM Plex Sans',sans-serif;font-size:12px;color:var(--ink2);line-height:1.4}
-.alert-detail{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink3);margin-top:4px}
+.alert-level{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:1.5px;font-weight:600;margin-bottom:4px}
+.alert-title{font-family:'IBM Plex Sans',sans-serif;font-size:12px;font-weight:600;margin-bottom:4px}
+.alert-desc{font-family:'IBM Plex Sans',sans-serif;font-size:11px;color:var(--ink3);line-height:1.4}
+.no-alerts{grid-column:1/-1;text-align:center;padding:32px;color:var(--ink4);font-family:'IBM Plex Mono',monospace;font-size:12px}
 
 /* TABLE */
-#table-section{margin-bottom:40px}
-.table-toolbar{display:flex;align-items:center;gap:10px;margin-bottom:12px;flex-wrap:wrap}
-.table-counter{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink4);margin-right:8px}
-.sort-btn{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 10px;border-radius:20px;border:1.5px solid var(--rule2);background:var(--paper);color:var(--ink3);cursor:pointer;text-transform:uppercase;letter-spacing:0.5px}
-.sort-btn.active{background:#0f0f0f;color:#fff;border-color:#0f0f0f}
-.sort-btn:hover:not(.active){background:var(--paper3)}
-.btn-pos{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:3px 10px;border-radius:20px;border:1.5px solid var(--rule2);background:var(--paper);color:var(--ink3);cursor:pointer;text-transform:uppercase;letter-spacing:0.5px;margin-left:auto}
-.btn-pos.active{background:var(--up);color:#fff;border-color:var(--up)}
-
-.tab-bar{display:flex;gap:2px;margin-bottom:0;border-bottom:2px solid var(--rule)}
-.tab-btn{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:7px 16px;cursor:pointer;border:none;background:none;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;text-transform:uppercase;letter-spacing:0.5px;transition:all .15s}
-.tab-btn:hover{color:var(--ink2)}
-.tab-btn.active{color:#fff;border-radius:6px 6px 0 0;font-weight:600}
-
-.data-table{width:100%;border-collapse:collapse;background:#fff;border:1px solid var(--rule);border-radius:0 0 10px 10px;overflow:hidden}
-.data-table th{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.8px;color:var(--ink4);padding:10px 12px;background:var(--paper2);border-bottom:1px solid var(--rule);text-align:left;white-space:nowrap}
-.data-table td{padding:8px 12px;border-bottom:1px solid var(--rule);font-size:12px;vertical-align:middle}
-.data-table tr:last-child td{border-bottom:none}
-.data-table tr:hover td{background:var(--paper2)}
-.data-table tr.anomaly td{background:#fefce8}
-.tag-ct{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:12px;font-weight:600;white-space:nowrap;color:#fff}
-.tag-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:12px;background:var(--paper3);color:var(--ink3)}
-.ticker-cell{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--ink)}
-.small-txt{font-size:11px;color:var(--ink4)}
-.val-cell{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500;white-space:nowrap}
-.conc-wrap{display:flex;align-items:center;gap:5px}
-.conc-bar-bg{width:50px;height:6px;background:var(--paper3);border-radius:3px;overflow:hidden;flex-shrink:0}
-.conc-bar-fill{height:100%;border-radius:3px}
-.conc-pct{font-family:'IBM Plex Mono',monospace;font-size:11px}
-.conc-warn{color:var(--dn);font-weight:600;font-size:10px}
-.pct-cell{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:500}
-.pct-cell.up{color:var(--up)}
-.pct-cell.dn{color:var(--dn)}
-.pct-cell.neutral{color:var(--ink3)}
+#table-section{margin-bottom:32px}
+.table-tabs{display:flex;gap:2px;margin-bottom:0;border-bottom:2px solid var(--rule)}
+.tab-btn{font-family:'IBM Plex Mono',monospace;font-size:11px;padding:8px 16px;border:none;background:none;cursor:pointer;color:var(--ink3);border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.tab-btn.active{color:var(--ink);border-bottom-color:var(--ink2)}
+.table-toolbar{display:flex;align-items:center;gap:12px;padding:12px 0;flex-wrap:wrap}
+.table-count{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink4)}
+.sort-btns{display:flex;gap:6px;margin-left:auto}
+.sort-btn{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:4px 10px;border:1px solid var(--rule2);border-radius:4px;background:var(--paper);color:var(--ink3);cursor:pointer}
+.sort-btn.active{background:var(--ink2);color:#fff;border-color:var(--ink2)}
+.pos-btn{font-family:'IBM Plex Mono',monospace;font-size:10px;padding:4px 10px;border:1px solid var(--rule2);border-radius:4px;background:var(--paper);color:var(--ink3);cursor:pointer}
+.pos-btn.active{background:var(--up-bg);color:var(--up);border-color:var(--up)}
+.table-wrap{overflow-x:auto;border:1px solid var(--rule);border-radius:8px;background:#fff}
+table{width:100%;border-collapse:collapse;font-size:12px}
+thead th{font-family:'IBM Plex Mono',monospace;font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--ink4);padding:10px 12px;text-align:left;background:var(--paper2);border-bottom:1px solid var(--rule);white-space:nowrap}
+tbody tr{border-bottom:1px solid var(--paper3)}
+tbody tr:hover{background:var(--paper2)}
+tbody tr.anomaly{background:#fefce8}
+td{padding:8px 12px;vertical-align:middle}
+.tag-ct{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:10px;font-weight:600;white-space:nowrap}
+.tag-imob{background:var(--imob-pale);color:var(--imob)}
+.tag-prev{background:var(--prev-pale);color:var(--prev)}
+.tag-prov{background:var(--prov-pale);color:var(--prov)}
+.tag-cresc{background:var(--cresc-pale);color:var(--cresc)}
+.tag-sub{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 6px;border-radius:4px;background:var(--paper3);color:var(--ink3)}
+.td-ticker{font-family:'IBM Plex Mono',monospace;font-size:12px;font-weight:600;color:var(--ink)}
+.td-small{font-size:10px;color:var(--ink4)}
+.td-val{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500}
+.conc-wrap{display:flex;align-items:center;gap:6px}
+.conc-bar-bg{width:48px;height:6px;background:var(--paper3);border-radius:3px;overflow:visible}
+.conc-bar-fg{height:100%;border-radius:3px}
+.conc-pct{font-family:'IBM Plex Mono',monospace;font-size:10px}
+.conc-warn{color:var(--dn);font-weight:700}
+.td-perf{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500}
+.up-c{color:var(--up)}
+.dn-c{color:var(--dn)}
+.neu-c{color:var(--ink4)}
 
 /* DONUT SECTION */
-#detail-section{margin-bottom:40px}
-.ct-block{background:#fff;border:1px solid var(--rule);border-radius:10px;overflow:hidden;margin-bottom:20px}
-.ct-block-header{height:5px}
-.ct-block-body{padding:20px}
-.ct-block-title{font-family:'IBM Plex Mono',monospace;font-size:12px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:16px}
-.donuts-row{display:flex;flex-wrap:wrap;gap:20px}
-.donut-wrap{flex:1;min-width:200px;max-width:300px}
-.donut-label{font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink4);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-.donut-container{position:relative;display:inline-block}
-.donut-center{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;pointer-events:none}
-.donut-center-val{font-family:'Fraunces',serif;font-size:14px;font-weight:600;color:var(--ink)}
-.donut-legend{margin-top:8px;display:flex;flex-direction:column;gap:4px}
-.donut-leg-item{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink2)}
-.donut-leg-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
-.donut-leg-pct{margin-left:auto;color:var(--ink4)}
+#donut-section{display:flex;flex-direction:column;gap:32px;margin-bottom:32px}
+.donut-container{background:#fff;border:1px solid var(--rule);border-radius:8px;overflow:hidden}
+.donut-header{height:4px}
+.donut-body{padding:20px}
+.donut-ct-title{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;font-weight:600;margin-bottom:16px}
+.donut-grid{display:grid;gap:20px}
+.donut-grid-2{grid-template-columns:repeat(2,1fr)}
+.donut-grid-4{grid-template-columns:repeat(4,1fr)}
+.donut-item{}
+.donut-subtitle{font-family:'IBM Plex Sans',sans-serif;font-size:11px;color:var(--ink3);margin-bottom:10px;font-weight:500}
+.donut-wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}
+svg.donut{overflow:visible;flex-shrink:0}
+.donut-legend{flex:1;min-width:100px}
+.legend-item{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.legend-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.legend-txt{font-family:'IBM Plex Mono',monospace;font-size:9px;color:var(--ink3);line-height:1.2}
+.legend-pct{font-weight:600;color:var(--ink)}
 
-@media(max-width:1100px){#containers-grid{grid-template-columns:repeat(2,1fr)}#alerts-grid{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:700px){#containers-grid{grid-template-columns:1fr}#analytic-row{grid-template-columns:1fr}#alerts-grid{grid-template-columns:1fr}.header-right .date-pill,.header-right .partners-pill{display:none}}
+@media(max-width:1200px){
+  #ct-grid{grid-template-columns:repeat(2,1fr)}
+  #charts-row{grid-template-columns:1fr}
+  #alerts-grid{grid-template-columns:repeat(2,1fr)}
+  .donut-grid-4{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:768px){
+  #ct-grid{grid-template-columns:1fr}
+  #alerts-grid{grid-template-columns:1fr}
+  .donut-grid-2,.donut-grid-4{grid-template-columns:1fr}
+}
 </style>
 </head>
 <body>
 
-<!-- HEADER -->
 <div id="header">
-  <div class="header-logo">
-    <span class="brand">WTF Investments</span>
-    <span class="sep">·</span>
-    <span class="sub">CIO Dashboard</span>
+  <div class="hd-left">
+    <div class="hd-logo">WTF Investments</div>
+    <div class="hd-sep">·</div>
+    <div class="hd-sub">CIO Dashboard</div>
   </div>
-  <div class="header-right">
-    <span class="partners-pill">Giovani · Ellen · Bryan</span>
-    <span class="date-pill" id="hdr-date"></span>
-    <span class="total-pill" id="hdr-total">R$ —</span>
+  <div class="hd-right">
+    <div class="hd-partners">Giovani · Ellen · Bryan</div>
+    <div class="hd-date" id="hd-date">11/05/2026 18:13</div>
+    <div class="hd-total" id="hd-total">—</div>
   </div>
 </div>
 
-<!-- FILTER BAR -->
-<div id="filterbar">
-  <div class="filter-group">
-    <span class="filter-label">Titular</span>
-    <span class="chip active all" data-group="titular" data-val="Todos">Todos</span>
-    <span class="chip" data-group="titular" data-val="Giovani" data-cls="giov">Giovani</span>
-    <span class="chip" data-group="titular" data-val="Ellen" data-cls="ellen">Ellen</span>
-    <span class="chip" data-group="titular" data-val="Bryan" data-cls="bryan">Bryan</span>
-    <span class="chip" data-group="titular" data-val="Familia" data-cls="familia">Familia</span>
+<div id="filters">
+  <div class="fg">
+    <span class="fg-label">Titular</span>
+    <button class="chip chip-all active" data-group="titular" data-val="Todos">Todos</button>
+    <button class="chip chip-gi" data-group="titular" data-val="Giovani">Giovani</button>
+    <button class="chip chip-el" data-group="titular" data-val="Ellen">Ellen</button>
+    <button class="chip chip-br" data-group="titular" data-val="Bryan">Bryan</button>
+    <button class="chip chip-fa" data-group="titular" data-val="Familia">Família</button>
   </div>
-  <div class="filter-sep"></div>
-  <div class="filter-group">
-    <span class="filter-label">Moeda</span>
-    <span class="chip active all" data-group="moeda" data-val="Todos">Todos</span>
-    <span class="chip" data-group="moeda" data-val="Real" data-cls="real-c">Real</span>
-    <span class="chip" data-group="moeda" data-val="Dólar" data-cls="dolar-c">Dólar</span>
+  <div class="fg">
+    <span class="fg-label">Moeda</span>
+    <button class="chip chip-all active" data-group="moeda" data-val="Todos">Todos</button>
+    <button class="chip chip-real" data-group="moeda" data-val="Real">Real</button>
+    <button class="chip chip-dolar" data-group="moeda" data-val="Dólar">Dólar</button>
   </div>
-  <div class="filter-sep"></div>
-  <div class="filter-group" id="entidade-group">
-    <span class="filter-label">Entidade</span>
+  <div class="fg" id="fg-entidade">
+    <span class="fg-label">Entidade</span>
   </div>
-  <div class="filter-sep"></div>
-  <div class="filter-group">
-    <span class="filter-label">Perspectiva Ano</span>
-    <span class="chip active ano-real" data-group="persp" data-val="real">Ano Real</span>
-    <span class="chip" data-group="persp" data-val="nominal" data-cls="nominal">Nominal</span>
+  <div class="fg">
+    <span class="fg-label">Perspectiva</span>
+    <button class="chip chip-ano-real active" data-group="perspectiva" data-val="real">Ano Real</button>
+    <button class="chip chip-nom" data-group="perspectiva" data-val="nominal">Nominal</button>
   </div>
-  <div class="filter-sep"></div>
-  <span id="filter-counter">97 ativos</span>
-  <button class="btn-clear" onclick="resetFilters()">✕ Limpar</button>
+  <div class="filter-info" id="filter-info"></div>
+  <button class="btn-clear" id="btn-clear">✕ Limpar</button>
 </div>
 
-<!-- MAIN -->
-<div id="main">
+<main>
+  <div class="section-title">Containers <span id="persp-badge">ANO REAL</span></div>
+  <div id="ct-grid"></div>
 
-  <!-- CONTAINERS -->
-  <div class="section-title">
-    Containers
-    <span class="persp-badge real" id="persp-badge-main">Ano Real</span>
-  </div>
-  <div id="containers-grid"></div>
-
-  <!-- ANALYTIC ROW -->
-  <div id="analytic-row">
-    <div class="panel">
-      <div class="panel-title" id="perf-panel-title">Ano Real por Container</div>
-      <div id="perf-chart"></div>
+  <div class="section-title">Visão Analítica</div>
+  <div id="charts-row">
+    <div class="chart-card">
+      <div class="chart-title" id="perf-chart-title">Ano Real por Container</div>
+      <div class="bar-chart" id="perf-bars"></div>
     </div>
-    <div class="panel">
-      <div class="panel-title">Alocação Atual vs Alvo</div>
-      <div id="alloc-chart"></div>
+    <div class="chart-card">
+      <div class="chart-title">Alocação Atual vs Alvo</div>
+      <div class="bar-chart" id="alloc-bars"></div>
     </div>
   </div>
 
-  <!-- ALERTS -->
-  <div id="alerts-section">
-    <div class="section-title">Alertas de Compliance</div>
-    <div id="alerts-grid"></div>
-  </div>
+  <div class="section-title">Alertas de Compliance</div>
+  <div id="alerts-grid"></div>
 
-  <!-- TABLE -->
-  <div id="table-section">
-    <div class="section-title">Carteira Detalhada</div>
-    <div class="table-toolbar">
-      <span class="table-counter" id="tbl-counter">— ativos</span>
-      <button class="sort-btn active" onclick="setSort('valor')">Valor</button>
-      <button class="sort-btn" onclick="setSort('ytd')">YTD</button>
-      <button class="sort-btn" onclick="setSort('mes')">Mês</button>
-      <button class="sort-btn" onclick="setSort('conc')">Conc.</button>
-      <button class="btn-pos" id="btn-pos" onclick="togglePos()">Só Positivos</button>
+  <div class="section-title" id="table-section">Carteira Detalhada</div>
+  <div class="table-tabs" id="table-tabs"></div>
+  <div class="table-toolbar">
+    <span class="table-count" id="table-count"></span>
+    <div class="sort-btns">
+      <button class="sort-btn active" data-sort="valor">Valor</button>
+      <button class="sort-btn" data-sort="ytd">YTD</button>
+      <button class="sort-btn" data-sort="mes">Mês</button>
+      <button class="sort-btn" data-sort="conc">Conc.</button>
     </div>
-    <div class="tab-bar" id="tab-bar"></div>
-    <table class="data-table" id="data-table">
-      <thead id="table-head"></thead>
+    <button class="pos-btn" id="pos-btn">Só positivos</button>
+  </div>
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Container</th><th>Subclasse</th><th>Ativo</th><th>Titular</th><th>Entidade</th>
+          <th>Valor</th><th>Concentração</th><th>Mês</th><th id="ytd-col-head">Ano Real</th>
+        </tr>
+      </thead>
       <tbody id="table-body"></tbody>
     </table>
   </div>
 
-  <!-- DETAIL DONUTS -->
-  <div id="detail-section">
-    <div class="section-title">Análise Detalhada por Container</div>
-    <div id="detail-blocks"></div>
-  </div>
-
-</div>
+  <div class="section-title" style="margin-top:32px">Análise por Container</div>
+  <div id="donut-section"></div>
+</main>
 
 <script>
-// ============================================================
-// DATA
-// ============================================================
-const RAW = [{"container":"Imobilizado","subcat":"Imóveis","tipo":"Indaia 501","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Indaia 501","valor":967595.04,"mes":0.0,"ano":0.01737026483234594,"ano_real":-0.006272024477283613},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Orlando 113","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Orlando 113","valor":1084087.79,"mes":0.0,"ano":0.02298416798477443,"ano_real":-0.0006581213248551231},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Arizona 62","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Arizona 62","valor":673711.03,"mes":0.0,"ano":0.036181603665569106,"ano_real":0.012539314355939555},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Vista do Morro","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Vista do Morro","valor":155031.22,"mes":0.0,"ano":0.02298416798477443,"ano_real":-0.0006581213248551231},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Itanhaem 806","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Itanhaem 806","valor":244595.72,"mes":0.0,"ano":0.02298416798477443,"ano_real":-0.0006581213248551231},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Terreno Canela","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Terreno Canela","valor":343164.69,"mes":0.0,"ano":0.01055040163846166,"ano_real":-0.013091887671167892},{"container":"Imobilizado","subcat":"Joias","tipo":"Joias ","titular":"Ellen","moeda_ref":"Dólar","entidade":"Ativo Fixo","ticker":"Joias ","valor":157584.9,"mes":0.0,"ano":0.022984167984774206,"ano_real":-0.0006581213248553451},{"container":"Imobilizado","subcat":"Metais","tipo":"Silver Coin (oz)","titular":"Giovani","moeda_ref":"Dólar","entidade":"Ativo Fixo","ticker":"Silver Coin (oz)","valor":7517.77,"mes":0.043626779342865296,"ano":-0.03838596525360405,"ano_real":-0.062028254563233604},{"container":"Previdência","subcat":"Prev Gigio","tipo":"Gerdau Previdência 70/30","titular":"Giovani","moeda_ref":"Real","entidade":"Gerdau","ticker":"","valor":1392549.38,"mes":0.009201900014150555,"ano":0.06368109782894882,"ano_real":0.04003880851931926},{"container":"Previdência","subcat":"Prev Gigio","tipo":"Trend Pós II XP Seg FIC FIM RL","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"35420532000162","valor":258997.29,"mes":0.0,"ano":0.04573988970922227,"ano_real":0.02209760039959272},{"container":"Previdência","subcat":"Prev Gigio","tipo":"Kapitalo K10","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"41498482000139","valor":484998.32,"mes":0.0,"ano":0.02308656624886063,"ano_real":-0.0005557230607689222},{"container":"Previdência","subcat":"Prev Ellen","tipo":"Trend Pós-Fixado XP Seg Prev FIC FIRF","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"33784231000192","valor":289824.32,"mes":0.0,"ano":0.056831691882090585,"ano_real":0.03318940257246103},{"container":"Previdência","subcat":"Prev Ellen","tipo":"Trend Pós II XP Seg FIC FIM RL","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"35420532000162","valor":241067.48,"mes":0.0,"ano":0.04590035056054975,"ano_real":0.0222580612509202},{"container":"Previdência","subcat":"Prev Ellen","tipo":"Kapitalo K10","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"41498482000139","valor":204907.75,"mes":0.0,"ano":0.023086580907060394,"ano_real":-0.0005557084025691571},{"container":"Previdência","subcat":"Prev Bryan","tipo":"Kapitalo K10","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"41498482000139","valor":61231.49,"mes":0.0,"ano":0.02308647134316466,"ano_real":-0.0005558179664648909},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"ISAE4","valor":91530.0,"mes":0.03388681802778715,"ano":0.07759077404288339,"ano_real":0.05394848473325384},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"ISAE4","valor":6102.0,"mes":0.03388681802778715,"ano":0.07759305763056679,"ano_real":0.05395076832093723},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"BBSE3","valor":73143.0,"mes":0.02804014167650526,"ano":0.03796682644229099,"ano_real":0.01432453713266144},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"TAEE11","valor":88662.0,"mes":-0.00705550329256821,"ano":0.02389858897808317,"ano_real":0.0002562996684536169},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"EGIE3","valor":84550.0,"mes":-0.04219767771169636,"ano":0.1324580836478677,"ano_real":0.10881579433823815},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"FESA4","valor":46620.0,"mes":0.01040312093628093,"ano":0.029139072847682135,"ano_real":0.005496783538052583},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"KLBN3","valor":69800.0,"mes":-0.01412429378531077,"ano":-0.09697539801326815,"ano_real":-0.12061768732289771},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"VISC11","valor":24371.6,"mes":0.00517194446964897,"ano":0.047961403840695915,"ano_real":0.024319114531066364},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"PMLL11","valor":22650.6,"mes":-0.023979730341145755,"ano":0.06388794949836551,"ano_real":0.04024566018873596},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"RBRX11","valor":35040.0,"mes":0.0,"ano":0.10606060606060597,"ano_real":0.08241831675097641},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"RBRX11","valor":8760.0,"mes":0.0,"ano":0.10650488453697315,"ano_real":0.0828625952273436},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"JSRE11","valor":24976.0,"mes":-0.03641975308641976,"ano":-0.03283767038413876,"ano_real":-0.05647995969376832},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"HGRU11","valor":26308.0,"mes":-0.007470006790915251,"ano":0.1773951586628142,"ano_real":0.15375286935318463},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"RVBI11 / PSEC11","valor":5945.0,"mes":-0.039579967689822304,"ano":-0.04035512510088779,"ano_real":-0.06399741441051734},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"HSML11","valor":34434.18,"mes":-0.009501931711391909,"ano":0.05705371071985721,"ano_real":0.033411421410227654},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"VGIR11","valor":29670.0,"mes":0.014358974358974264,"ano":0.09982577751417865,"ano_real":0.0761834882045491},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"HSLG11","valor":38000.0,"mes":0.02029857158199988,"ano":0.06299653127447691,"ano_real":0.03935424196484735},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"Juros","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2029","valor":21387.47,"mes":0.0,"ano":0.04844290996687639,"ano_real":0.02480062065724684},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"Juros","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2032","valor":32574.88,"mes":0.0,"ano":0.14715226983797192,"ano_real":0.12350998052834236},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"Juros","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2040","valor":134820.28,"mes":0.0,"ano":0.3302706190284346,"ano_real":0.30662832971880505},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"Juros","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2040","valor":3601.24,"mes":0.0,"ano":0.04207370711607017,"ano_real":0.018431417806440618},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"Juros","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"CRI BELENUS ABR/2029","valor":15719.15,"mes":0.0,"ano":0.0355717033835774,"ano_real":0.01192941407394785},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"Juros","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"CRA PLANAGRI JUN/2028","valor":7677.38,"mes":0.0,"ano":0.07255787572244232,"ano_real":0.04891558641281277},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"Juros","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"CRA FS Bioenergia MAI/2029","valor":25303.38,"mes":0.0,"ano":0.02031527159543489,"ano_real":-0.00332701771419466},{"container":"Proventos","subcat":"BDR BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"AURA33","valor":438930.0,"mes":0.06021739130434778,"ano":0.7156739733982003,"ano_real":0.6920316840885707},{"container":"Proventos","subcat":"BDR BR Renda","tipo":"Dividendos","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"SPYI11","valor":10355.0,"mes":0.007001847709812381,"ano":-0.06921013648588392,"ano_real":-0.09285242579551348},{"container":"Proventos","subcat":"BDR BR Renda","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"SPYI11","valor":103550.0,"mes":0.007001847709812381,"ano":-0.06921214448488189,"ano_real":-0.09285443379451144},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"AMBIBZ 10.875 05/02/33","valor":6187.73,"mes":0.007675803253414992,"ano":-0.21017468208522205,"ano_real":-0.2338169713948516},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MOVIBZ 5.25 08/02/31","valor":48103.98,"mes":-0.0015319863077207785,"ano":-0.10128017685353219,"ano_real":-0.12492246616316174},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 8 15/10/34","valor":27353.43,"mes":0.0653558818319695,"ano":0.4848277138952597,"ano_real":0.46118542458563017},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CLOPAR 5.5 14/01/32","valor":39517.82,"mes":0.0014035674065320247,"ano":-0.10893707375855599,"ano_real":-0.13257936306818555},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"RRRPBZ 9.75 05/02/31","valor":31968.28,"mes":-0.0035904784767343267,"ano":-0.055233773731589,"ano_real":-0.07887606304121855},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 4.5 31/01/30","valor":21793.18,"mes":0.0702921200056279,"ano":0.461265626002074,"ano_real":0.43762333669244446},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"SIMHBZ 5.2 26/01/31","valor":30742.84,"mes":-0.0021210994111366954,"ano":-0.007717104980707656,"ano_real":-0.03135939429033721},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"PRIOBZ 6.125 09/06/26","valor":25263.2,"mes":-0.003414401262151867,"ano":-0.08408789929742622,"ano_real":-0.10773018860705577},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CSNABZ 6.75 28/01/28","valor":21898.05,"mes":0.01657417726802768,"ano":-0.13659883775804216,"ano_real":-0.1602411270676717},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"AEGEBZ 6.75 20/05/29","valor":22147.91,"mes":0.02061162938336114,"ano":-0.20676750500756624,"ano_real":-0.2304097943171958},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MRFGBZ 6.625 06/08/29","valor":25218.39,"mes":-0.003997626832639378,"ano":-0.054624563273434346,"ano_real":-0.0782668525830639},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"ECOPET 6.875 29/04/30","valor":24910.39,"mes":-0.0008714621650864895,"ano":-0.08983727631830196,"ano_real":-0.11347956562793152},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRFSBZ 4.35 29/09/26","valor":24673.91,"mes":-0.004013892938298791,"ano":-0.11747974369889114,"ano_real":-0.1411220330085207},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"ELEBRA 4.625 04/02/30","valor":24047.76,"mes":-0.004339315170453051,"ano":-0.09196290521101702,"ano_real":-0.11560519452064658},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"RDEDOR 4.5 22/01/30","valor":23756.64,"mes":-0.005282533665955991,"ano":-0.10779307580179587,"ano_real":-0.13143536511142542},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MOVIBZ 7.85 11/04/29","valor":14892.6,"mes":-0.00046702927364861146,"ano":0.033071533743435744,"ano_real":0.009429244433806192},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRAZIL 6.125 15/03/34","valor":30412.33,"mes":0.0012564443782525636,"ano":0.15266240976474532,"ano_real":0.12902012045511577},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"AMBIBZ 10.875 05/02/33","valor":8508.13,"mes":0.007675803253414992,"ano":-0.21017468208522194,"ano_real":-0.2338169713948515},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MOVIBZ 7.85 11/04/29","valor":49641.99,"mes":-0.00046702927364850044,"ano":-0.02751154150715951,"ano_real":-0.051153830816789064},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CSNABZ 8.875 05/12/30","valor":29601.6,"mes":0.010405667594820978,"ano":-0.1774391313965118,"ano_real":-0.20108142070614135},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"RRRPBZ 9.75 05/02/31","valor":26640.23,"mes":-0.0035904784767343267,"ano":-0.055234135418861574,"ano_real":-0.07887642472849113},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 4.5 31/01/30","valor":15566.56,"mes":0.07029212000562812,"ano":0.41565777198971254,"ano_real":0.392015482680083},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Cupom","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 4.5 10/01/28","valor":16617.71,"mes":0.08655197215340804,"ano":0.5124989095215908,"ano_real":0.4888566202119613},{"container":"Proventos","subcat":"FGTS","tipo":"Nada","titular":"Ellen","moeda_ref":"Real","entidade":"Tivit","ticker":"Ellen FGTS","valor":334891.45,"mes":0.0,"ano":0.020672140583636978,"ano_real":-0.002970148725992574},{"container":"Proventos","subcat":"FGTS","tipo":"Nada","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Fundo Privatização FGTS","valor":101514.26,"mes":0.0,"ano":0.1256291826773701,"ano_real":0.10198689336774056},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Nada","titular":"Giovani","moeda_ref":"Real","entidade":"Tita","ticker":"Apartamento Osasco - Tita","valor":146705.25,"mes":0.0,"ano":0.02354826619172279,"ano_real":-9.402311790676285e-05},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Juros","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro Selic","valor":147573.89,"mes":0.0,"ano":0.0378297503352798,"ano_real":0.014187461025650248},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Juros","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro Selic 2031","valor":2255.0,"mes":0.0,"ano":0.05330518291543651,"ano_real":0.02966289360580696},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Juros","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Trend DI FIC RF","valor":100064.92,"mes":0.0,"ano":0.03128421964346284,"ano_real":0.007641930333833289},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Juros","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"JPM USD Standard mny mkt VNAC A","valor":105126.8,"mes":-0.0045424013335017,"ano":-0.09051695373960966,"ano_real":-0.11415924304923922},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Juros","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"JPM USD Standard mny mkt VNAC A","valor":11365.06,"mes":-0.004542401333501589,"ano":-0.0905157686484156,"ano_real":-0.11415805795804515},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Nada","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"Saldo Avenue Investimento","valor":896.85,"mes":-0.005152660187112246,"ano":-0.3316417493563063,"ano_real":-0.35528403866593583},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Nada","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"Saldo Avenue Investimento","valor":6440.05,"mes":-0.005152660187112246,"ano":7.179159200070634,"ano_real":7.155516910761005},{"container":"Crescimento","subcat":"Ações BR Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"PRIO3","valor":126426.0,"mes":0.0019575365155850566,"ano":0.8640029487652048,"ano_real":0.8403606594555753},{"container":"Crescimento","subcat":"Ações BR Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"BPAC11","valor":41314.0,"mes":-0.005392652510953777,"ano":0.13427798843428507,"ano_real":0.11063569912465551},{"container":"Crescimento","subcat":"Ações BR Cresc","tipo":"","titular":"","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"BPAC3","valor":12900.0,"mes":-0.019011406844106515,"ano":-0.4239785666443403,"ano_real":-0.44762085595396983},{"container":"Crescimento","subcat":"BDR BR Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"INBR32","valor":38720.0,"mes":0.03529411764705892,"ano":-0.15991018502587628,"ano_real":-0.18355247433550584},{"container":"Crescimento","subcat":"BDR BR Cresc","tipo":"Ganho Capital","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"IVVB11","valor":5310.5,"mes":0.014906832298136719,"ano":0.05381281601485921,"ano_real":0.03017052670522966},{"container":"Crescimento","subcat":"Stocks","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"VT","valor":53057.86,"mes":0.020244897562079256,"ano":-0.014277485296835368,"ano_real":-0.03791977460646492},{"container":"Crescimento","subcat":"Stocks","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"VWRA","valor":7317.35,"mes":0.023268402117363918,"ano":0.012456161195295579,"ano_real":-0.011186128114333973},{"container":"Crescimento","subcat":"Stocks","tipo":"Ação US","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRK.B","valor":56441.13,"mes":-0.013071947499389891,"ano":-0.1645086368731612,"ano_real":-0.18815092618279075},{"container":"Crescimento","subcat":"Stocks","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"QQQ","valor":68511.08,"mes":0.03660846081051439,"ano":0.013892139009899385,"ano_real":-0.009750150299730167},{"container":"Crescimento","subcat":"Stocks","tipo":"UCIT","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CSPX","valor":237024.39,"mes":0.019216482802787427,"ano":-0.0171539137305301,"ano_real":-0.040796203040159656},{"container":"Crescimento","subcat":"REITs","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"VNQ","valor":71701.94,"mes":0.002696234012594889,"ano":-0.009805271138603078,"ano_real":-0.03344756044823263},{"container":"Crescimento","subcat":"Fundos USD Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"JPM Global Div A USD","valor":188737.46,"mes":-0.0015484730154599058,"ano":-0.07035499844827287,"ano_real":-0.09399728775790242},{"container":"Crescimento","subcat":"Fundos USD Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"Schroder ISF US Large Cap A USD","valor":173036.54,"mes":-0.00452471247212638,"ano":-0.09126585064458392,"ano_real":-0.11490813995421348},{"container":"Crescimento","subcat":"Fundos USD Cresc","tipo":"Ganho Capital","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BGF US Growth A2","valor":62398.83,"mes":0.02732154721833191,"ano":-0.046455391330487816,"ano_real":-0.07009768064011737},{"container":"Crescimento","subcat":"BTC","tipo":"Bitcoin","titular":"Familia","moeda_ref":"Dólar","entidade":"Familia","ticker":"BTC","valor":515039.38,"mes":0.052207027798355954,"ano":-0.16345019831032992,"ano_real":-0.18709248761995947},{"container":"Crescimento","subcat":"ETH","tipo":"Etherium","titular":"Familia","moeda_ref":"Dólar","entidade":"Familia","ticker":"stETH","valor":96785.89,"mes":0.01936075227227052,"ano":-0.29701742133936304,"ano_real":-0.32065971064899257},{"container":"Crescimento","subcat":"ETH","tipo":"Etherium","titular":"Familia","moeda_ref":"Dólar","entidade":"Familia","ticker":"ETH","valor":4568.84,"mes":0.01936075227227052,"ano":-0.30192710037725823,"ano_real":-0.32556938968688776},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"HASH11","valor":2585.0,"mes":0.04444444444444451,"ano":-0.21368821292775664,"ano_real":-0.2373305022373862},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"NCIQ","valor":8592.27,"mes":0.0525723452601119,"ano":-0.1852021222968776,"ano_real":-0.20884441160650716},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"OBTC3","valor":6950.0,"mes":-0.04269972451790638,"ano":0.08721157606570196,"ano_real":0.0635692867560724},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"HASH11","valor":2791.8,"mes":0.04444444444444451,"ano":-0.1507832699619771,"ano_real":-0.17442555927160666},{"container":"Crescimento","subcat":"USDC","tipo":"StableCoins","titular":"Giovani","moeda_ref":"Dólar","entidade":"Coinbase BR","ticker":"USDC","valor":28398.32,"mes":-0.005152660187112246,"ano":-0.0505506746922173,"ano_real":-0.07419296400184686}];
+const RAW = [{"container":"Imobilizado","subcat":"Imóveis","tipo":"Apartamento","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Indaia 501","valor":967595.04,"mes":0.0,"ano":0.01737026483234594,"ano_real":-0.006820458914662885},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Apartamento","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Orlando 113","valor":1084087.79,"mes":0.0,"ano":0.02298416798477443,"ano_real":-0.0012065557622343952},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Apartamento","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Arizona 62","valor":673711.03,"mes":0.0,"ano":0.036181603665569106,"ano_real":0.011990879918560283},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Sitio","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Vista do Morro","valor":155031.22,"mes":0.0,"ano":0.02298416798477443,"ano_real":-0.0012065557622343952},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Apartamento","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Itanhaem 806","valor":244595.72,"mes":0.0,"ano":0.02298416798477443,"ano_real":-0.0012065557622343952},{"container":"Imobilizado","subcat":"Imóveis","tipo":"Terreno","titular":"Familia","moeda_ref":"Real","entidade":"Ativo Fixo","ticker":"Terreno Canela","valor":343164.69,"mes":0.0,"ano":0.01055040163846166,"ano_real":-0.013640322108547164},{"container":"Imobilizado","subcat":"Joias","tipo":"Uso Pessoal","titular":"Ellen","moeda_ref":"Dólar","entidade":"Ativo Fixo","ticker":"Joias","valor":157584.9,"mes":0.0,"ano":0.022984167984774206,"ano_real":-0.0012065557622346172},{"container":"Imobilizado","subcat":"Metais","tipo":"Moedas Prata","titular":"Giovani","moeda_ref":"Dólar","entidade":"Ativo Fixo","ticker":"Silver Coin (oz)","valor":8236.32,"mes":0.14337596347607118,"ano":0.05352449288679617,"ano_real":0.029333769139787347},{"container":"Previdência","subcat":"Prev Gigio","tipo":"Fechada","titular":"Giovani","moeda_ref":"Real","entidade":"Gerdau","ticker":"","valor":1379844.17,"mes":-5.759232463820041e-06,"ano":0.053976386516240815,"ano_real":0.02978566276923199},{"container":"Previdência","subcat":"Prev Gigio","tipo":"PGBL","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"35420532000162","valor":258997.29,"mes":0.0,"ano":0.04573988970922227,"ano_real":0.021549165962213446},{"container":"Previdência","subcat":"Prev Gigio","tipo":"PGBL","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"41498482000139","valor":484998.32,"mes":0.0,"ano":0.02308656624886063,"ano_real":-0.0011041574981481943},{"container":"Previdência","subcat":"Prev Ellen","tipo":"PGBL","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"33784231000192","valor":289824.32,"mes":0.0,"ano":0.056831691882090585,"ano_real":0.03264096813508176},{"container":"Previdência","subcat":"Prev Ellen","tipo":"PGBL","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"35420532000162","valor":241067.48,"mes":0.0,"ano":0.04590035056054975,"ano_real":0.02170962681354093},{"container":"Previdência","subcat":"Prev Ellen","tipo":"PGBL","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"41498482000139","valor":204907.75,"mes":0.0,"ano":0.023086580907060394,"ano_real":-0.0011041428399484292},{"container":"Previdência","subcat":"Prev Bryan","tipo":"PGBL","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"41498482000139","valor":61231.49,"mes":0.0,"ano":0.02308647134316466,"ano_real":-0.001104252403844163},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"ISAE4","valor":89160.0,"mes":0.007116231785835314,"ano":0.04968855472154998,"ano_real":0.02549783097454116},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"ISAE4","valor":5944.0,"mes":0.007116231785835314,"ano":0.04969077917995568,"ano_real":0.025500055432946856},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"BBSE3","valor":72345.0,"mes":0.016824085005903155,"ano":0.026642468301375954,"ano_real":0.002451744554367131},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"TAEE11","valor":86646.0,"mes":-0.029633113828786417,"ano":0.000617143089429506,"ano_real":-0.023573580657579318},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"EGIE3","valor":84150.0,"mes":-0.04672897196261694,"ano":0.12710050548749918,"ano_real":0.10290978174049036},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"FESA4","valor":43560.0,"mes":-0.0559167750325098,"ano":-0.03841059602649011,"ano_real":-0.06260131977349893},{"container":"Proventos","subcat":"Ações BR Renda","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"KLBN3","valor":68400.0,"mes":-0.03389830508474578,"ano":-0.11508763931386168,"ano_real":-0.1392783630608705},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"VISC11","valor":24217.6,"mes":-0.0011795662825514475,"ano":0.0413395137640713,"ano_real":0.017148790017062477},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"PMLL11","valor":22644.3,"mes":-0.024251198986517175,"ano":0.06359204148348563,"ano_real":0.0394013177364768},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"RBRX11","valor":35040.0,"mes":0.0,"ano":0.10606060606060597,"ano_real":0.08186988231359714},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"RBRX11","valor":8760.0,"mes":0.0,"ano":0.10650488453697315,"ano_real":0.08231416078996433},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"JSRE11","valor":24340.0,"mes":-0.06095679012345678,"ano":-0.05746592317224286,"ano_real":-0.08165664691925169},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"HGRU11","valor":25992.0,"mes":-0.019391835810759872,"ano":0.16325281146281978,"ano_real":0.13906208771581097},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"RVBI11 / PSEC11","valor":5838.0,"mes":-0.05686591276252018,"ano":-0.057627118644067776,"ano_real":-0.0818178423910766},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"HSML11","valor":32699.04,"mes":-0.059413177404197604,"ano":0.003788722977490444,"ano_real":-0.02040200076951838},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"VGIR11","valor":29670.0,"mes":0.014358974358974264,"ano":0.09982577751417865,"ano_real":0.07563505376716982},{"container":"Proventos","subcat":"FIIs BR","tipo":"Dividendos","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"HSLG11","valor":36872.0,"mes":-0.009988186016539613,"ano":0.0314423184513819,"ano_real":0.007251594704373077},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2029","valor":21387.47,"mes":0.0,"ano":0.04844290996687639,"ano_real":0.024252186219867567},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2032","valor":32574.88,"mes":0.0,"ano":0.14715226983797192,"ano_real":0.12296154609096309},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2040","valor":134820.28,"mes":0.0,"ano":0.3302706190284346,"ano_real":0.30607989528142576},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro IPCA+ 2040","valor":3601.24,"mes":0.0,"ano":0.04207370711607017,"ano_real":0.017882983369061346},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"CRI BELENUS ABR/2029","valor":15719.15,"mes":0.0,"ano":0.0355717033835774,"ano_real":0.011380979636568579},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"CRA PLANAGRI JUN/2028","valor":7677.38,"mes":0.0,"ano":0.07255787572244232,"ano_real":0.048367151975433495},{"container":"Proventos","subcat":"RF BR Renda (IPCA+)","tipo":"IPCA+","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"CRA FS Bioenergia MAI/2029","valor":25303.38,"mes":0.0,"ano":0.02031527159543489,"ano_real":-0.003875452151573932},{"container":"Proventos","subcat":"BDR BR Renda","tipo":"Ellen","titular":"Ellen","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"AURA33","valor":392760.0,"mes":-0.05130434782608706,"ano":0.5352063194401773,"ano_real":0.5110155956931685},{"container":"Proventos","subcat":"BDR BR Renda","tipo":"Bryan","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"SPYI11","valor":10367.0,"mes":0.008168822328114445,"ano":-0.06813148092217858,"ano_real":-0.0923222046691874},{"container":"Proventos","subcat":"BDR BR Renda","tipo":"Gigio","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"SPYI11","valor":103670.0,"mes":0.008168822328114445,"ano":-0.06813349124816714,"ano_real":-0.09232421499517597},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"AMBIBZ 10.875 05/02/33","valor":6072.1,"mes":-0.011153993816807928,"ano":-0.22493364564199547,"ano_real":-0.24912436938900429},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MOVIBZ 5.25 08/02/31","valor":47640.41,"mes":-0.011153993816807928,"ano":-0.1073489641940939,"ano_real":-0.1315396879411027},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 8 15/10/34","valor":25389.0,"mes":-0.011153993816807817,"ano":0.3544656506364561,"ano_real":0.33027492688944726},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CLOPAR 5.5 14/01/32","valor":39022.27,"mes":-0.011153993816807706,"ano":-0.09681294031994514,"ano_real":-0.12100366406695397},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"RRRPBZ 9.75 05/02/31","valor":31725.61,"mes":-0.011153993816807817,"ano":-0.06199583657836483,"ano_real":-0.08618656032537365},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 4.5 31/01/30","valor":20134.79,"mes":-0.011153993816807817,"ano":0.38106745868883785,"ano_real":0.35687673494182903},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"SIMHBZ 5.2 26/01/31","valor":30464.55,"mes":-0.011153993816807817,"ano":-0.016873236601129382,"ano_real":-0.04106396034813821},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"PRIOBZ 6.125 09/06/26","valor":25067.0,"mes":-0.011153993816807817,"ano":-0.09120097265940807,"ano_real":-0.1153916964064169},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CSNABZ 6.75 28/01/28","valor":21300.76,"mes":-0.011153993816807817,"ano":-0.1603172320956998,"ano_real":-0.18450795584270863},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"AEGEBZ 6.75 20/05/29","valor":21458.58,"mes":-0.011153993816807928,"ano":-0.2314561562247619,"ano_real":-0.2556468799717707},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MRFGBZ 6.625 06/08/29","valor":25037.2,"mes":-0.011153993816807928,"ano":-0.06112271977054795,"ano_real":-0.08531344351755678},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"ECOPET 6.875 29/04/30","valor":24654.02,"mes":-0.011153993816807817,"ano":-0.12656771208905926,"ano_real":-0.15075843583606807},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRFSBZ 4.35 29/09/26","valor":24497.03,"mes":-0.011153993816807817,"ano":-0.12455353559505011,"ano_real":-0.14874425934205893},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"ELEBRA 4.625 04/02/30","valor":23883.16,"mes":-0.011153993816807706,"ano":-0.09797908022251256,"ano_real":-0.12216980396952139},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"RDEDOR 4.5 22/01/30","valor":23616.41,"mes":-0.011153993816807817,"ano":-0.11317235968033756,"ano_real":-0.13736308342734638},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MOVIBZ 7.85 11/04/29","valor":14733.36,"mes":-0.011153993816807928,"ano":0.012230816321141313,"ano_real":-0.01195990742586751},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRAZIL 6.125 15/03/34","valor":30035.38,"mes":-0.011153993816807817,"ano":0.13663876372578887,"ano_real":0.11244803997878004},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"AMBIBZ 10.875 05/02/33","valor":8349.14,"mes":-0.011153993816807706,"ano":-0.22493364564199525,"ano_real":-0.24912436938900406},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"MOVIBZ 7.85 11/04/29","valor":49111.22,"mes":-0.011153993816807817,"ano":-0.03634303313100684,"ano_real":-0.06053375687801567},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CSNABZ 8.875 05/12/30","valor":28969.97,"mes":-0.011153993816807817,"ano":-0.19499063015221552,"ano_real":-0.21918135389922433},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"RRRPBZ 9.75 05/02/31","valor":26438.01,"mes":-0.011153993816807817,"ano":-0.10236296498256459,"ano_real":-0.1265536887295734},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 4.5 31/01/30","valor":14381.99,"mes":-0.011153993816807706,"ano":0.3086063007709934,"ano_real":0.28441557702398457},{"container":"Proventos","subcat":"RF USD Renda (Bonds)","tipo":"Bonds","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRASKM 4.5 10/01/28","valor":15123.39,"mes":-0.011153993816807706,"ano":0.3760659521944296,"ano_real":0.3518752284474208},{"container":"Proventos","subcat":"FGTS","tipo":"FGTS","titular":"Ellen","moeda_ref":"Real","entidade":"Tivit","ticker":"Ellen FGTS","valor":334891.45,"mes":0.0,"ano":0.020672140583636978,"ano_real":-0.003518583163371846},{"container":"Proventos","subcat":"FGTS","tipo":"FGTS","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Fundo Privatização FGTS","valor":101514.26,"mes":0.0,"ano":0.1256291826773701,"ano_real":0.10143845893036128},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Tita","titular":"Giovani","moeda_ref":"Real","entidade":"Tita","ticker":"Apartamento Osasco - Tita","valor":146705.25,"mes":0.0,"ano":0.02354826619172279,"ano_real":-0.000642457555286035},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Caixa Brasil","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro Selic","valor":147573.89,"mes":0.0,"ano":0.0378297503352798,"ano_real":0.013639026588270976},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Caixa Brasil","titular":"Bryan","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Tesouro Selic 2031","valor":2255.0,"mes":0.0,"ano":0.05330518291543651,"ano_real":0.029114459168427687},{"container":"Proventos","subcat":"RF BR Caixa (Selic)","tipo":"Caixa Brasil","titular":"Ellen","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"Trend DI FIC RF","valor":100064.92,"mes":0.0,"ano":0.03128421964346284,"ano_real":0.007093495896454017},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Caixa US","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"JPM USD Standard mny mkt VNAC A","valor":104428.57,"mes":-0.011153993816807817,"ano":-0.09655752370502524,"ano_real":-0.12074824745203407},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Caixa US","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"JPM USD Standard mny mkt VNAC A","valor":11289.58,"mes":-0.011153993816807706,"ano":-0.09655634648492484,"ano_real":-0.12074707023193366},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Caixa US","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"Saldo Avenue Investimento","valor":891.44,"mes":-0.011153993816807817,"ano":-0.33567356477738075,"ano_real":-0.35986428852438956},{"container":"Proventos","subcat":"RF USD Caixa (MM)","tipo":"Caixa US","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"Saldo Avenue Investimento","valor":6401.2,"mes":-0.011153993816807706,"ano":7.129819104152753,"ano_real":7.1056283804057445},{"container":"Crescimento","subcat":"Ações BR Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"PRIO3","valor":121258.0,"mes":-0.03900015057973194,"ano":0.7878068558791007,"ano_real":0.7636161321320919},{"container":"Crescimento","subcat":"Ações BR Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"BPAC11","valor":39844.0,"mes":-0.0407819346140883,"ano":0.09391906305793807,"ano_real":0.06972833931092924},{"container":"Crescimento","subcat":"Ações BR Cresc","tipo":"","titular":"","moeda_ref":"Real","entidade":"XP Investimentos","ticker":"BPAC3","valor":12870.0,"mes":-0.02129277566539922,"ano":-0.4253181513730744,"ano_real":-0.4495088751200832},{"container":"Crescimento","subcat":"BDR BR Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"INBR32","valor":29510.0,"mes":-0.21096256684491976,"ano":-0.3597352675649176,"ano_real":-0.3839259913119264},{"container":"Crescimento","subcat":"BDR BR Cresc","tipo":"Ganho Capital","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"IVVB11","valor":5320.25,"mes":0.016770186335403725,"ano":0.05574760086678365,"ano_real":0.031556877119774826},{"container":"Crescimento","subcat":"Stocks","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"VT","valor":52916.35,"mes":0.017523848359867644,"ano":-0.016906461407026452,"ano_real":-0.04109718515403528},{"container":"Crescimento","subcat":"Stocks","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"VWRA","valor":7316.28,"mes":0.023117825465147623,"ano":0.012307175592932262,"ano_real":-0.011883548154076561},{"container":"Crescimento","subcat":"Stocks","tipo":"Ação US","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BRK.B","valor":57135.06,"mes":-0.0009379367567282637,"ano":-0.15423649884861568,"ano_real":-0.1784272225956245},{"container":"Crescimento","subcat":"Stocks","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"QQQ","valor":69905.53,"mes":0.05770714867505777,"ano":0.03452846851907432,"ano_real":0.010337744772065494},{"container":"Crescimento","subcat":"Stocks","tipo":"UCIT","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"CSPX","valor":238102.09,"mes":0.023850654185549214,"ano":-0.012685111191029996,"ano_real":-0.03687583493803882},{"container":"Crescimento","subcat":"REITs","tipo":"ETF","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"VNQ","valor":70986.79,"mes":-0.007304546580031213,"ano":-0.019681363110833683,"ano_real":-0.04387208685784251},{"container":"Crescimento","subcat":"Fundos USD Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"JPM Global Div A USD","valor":186921.72,"mes":-0.011153993816807817,"ano":-0.0792985717304363,"ano_real":-0.10348929547744513},{"container":"Crescimento","subcat":"Fundos USD Cresc","tipo":"Ganho Capital","titular":"Giovani","moeda_ref":"Dólar","entidade":"Avenue","ticker":"Schroder ISF US Large Cap A USD","valor":171884.21,"mes":-0.011153993816807928,"ano":-0.09731748690223252,"ano_real":-0.12150821064924135},{"container":"Crescimento","subcat":"Fundos USD Cresc","tipo":"Ganho Capital","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"BGF US Growth A2","valor":60061.85,"mes":-0.011153993816807817,"ano":-0.08216781731730771,"ano_real":-0.10635854106431654},{"container":"Crescimento","subcat":"BTC","tipo":"Bitcoin","titular":"Familia","moeda_ref":"Dólar","entidade":"Familia","ticker":"BTC","valor":518640.59,"mes":0.05956417944933534,"ano":-0.1576009466022269,"ano_real":-0.1817916703492357},{"container":"Crescimento","subcat":"ETH","tipo":"Etherium","titular":"Familia","moeda_ref":"Dólar","entidade":"Familia","ticker":"stETH","valor":97148.31,"mes":0.023177873731150767,"ano":-0.2943850167855847,"ano_real":-0.3185757405325935},{"container":"Crescimento","subcat":"ETH","tipo":"Etherium","titular":"Familia","moeda_ref":"Dólar","entidade":"Familia","ticker":"ETH","valor":4585.94,"mes":0.023177873731150545,"ano":-0.29931308071927876,"ano_real":-0.32350380446628757},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Giovani","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"HASH11","valor":2606.0,"mes":0.052929292929292826,"ano":-0.2073003802281369,"ano_real":-0.23149110397514572},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Ellen","moeda_ref":"Dólar","entidade":"Avenue","ticker":"NCIQ","valor":8593.92,"mes":0.05277557071224126,"ano":-0.18504480516059163,"ano_real":-0.20923552890760044},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"OBTC3","valor":7320.0,"mes":0.008264462809917328,"ano":0.14509190457567467,"ano_real":0.12090118082866584},{"container":"Crescimento","subcat":"Altcoins","tipo":"Altcoins","titular":"Bryan","moeda_ref":"Dólar","entidade":"XP Investimentos","ticker":"HASH11","valor":2814.48,"mes":0.052929292929292826,"ano":-0.1438844106463878,"ano_real":-0.1680751343933966},{"container":"Crescimento","subcat":"USDC","tipo":"StableCoins","titular":"Giovani","moeda_ref":"Dólar","entidade":"Coinbase BR","ticker":"USDC","valor":28227.01,"mes":-0.011153993816807817,"ano":-0.05627814858457647,"ano_real":-0.0804688723315853}];
 
-// ============================================================
-// CONFIG
-// ============================================================
+const CT_TARGETS = {Imobilizado:0.20,Previdência:0.30,Proventos:0.30,Crescimento:0.20};
 const CT_COLORS = {Imobilizado:'#1a7a58',Previdência:'#1a4f8a',Proventos:'#5c3d9e',Crescimento:'#b83a10'};
-const CT_PALE = {Imobilizado:'#e8f5f0',Previdência:'#e8f0fa',Proventos:'#f0ecfb',Crescimento:'#fdf0eb'};
-const CT_TARGET = {Imobilizado:0.20,Previdência:0.30,Proventos:0.30,Crescimento:0.20};
-const CT_CONC_LIMIT = {Imobilizado:0.50,Previdência:0.50,Proventos:0.10,Crescimento:0.10};
-const CONTAINERS = ['Imobilizado','Previdência','Proventos','Crescimento'];
+const CT_LIMITS = {Imobilizado:0.50,Previdência:0.50,Proventos:0.10,Crescimento:0.10};
 
-// STATE
+// State
 let perfMode = 'real';
-let filterTitular = new Set(['Todos']);
-let filterMoeda = new Set(['Todos']);
-let filterEntidade = new Set(['Todos']);
+let filterTitular = ['Todos'];
+let filterMoeda = ['Todos'];
+let filterEntidade = ['Todos'];
 let sortBy = 'valor';
 let onlyPositive = false;
 let activeTab = 'Todos';
 
-// ============================================================
-// HELPERS
-// ============================================================
-function perfVal(r){ return perfMode==='real' ? r.ano_real : r.ano; }
-function fmtM(v){
+const PALETTE = ['#1a7a58','#1a4f8a','#5c3d9e','#b83a10','#0369a1','#92400e','#374151','#15803d','#b45309','#7c3aed','#0891b2','#be185d','#166534','#1d4ed8'];
+
+function fmtVal(v){
   if(v>=1e6) return 'R$ '+(v/1e6).toFixed(3)+'M';
   if(v>=1e3) return 'R$ '+(v/1e3).toFixed(1)+'k';
   return 'R$ '+v.toFixed(0);
 }
-function fmtPct(v,dec=1){ return (v>=0?'+':'')+( v*100).toFixed(dec)+'%'; }
-function fmtDate(){
-  const d=new Date();
-  return d.toLocaleDateString('pt-BR',{day:'2-digit',month:'short',year:'numeric'});
-}
+function fmtPct(v,decimals=1){return(v>=0?'+':'')+( v*100).toFixed(decimals)+'%'}
+function perfVal(r){return perfMode==='real'?r.ano_real:r.ano;}
 
-// ============================================================
-// AGG
-// ============================================================
 function agg(data){
   const G={};
   data.forEach(r=>{
     const k=[r.container,r.subcat,r.ticker||r.subcat,r.titular,r.entidade].join('||');
     if(!G[k])G[k]={...r,valor:0,_vom:0,_voa_real:0,_voa_nom:0};
     G[k].valor+=r.valor;
-    G[k]._vom      += r.valor / (1 + r.mes);
-    G[k]._voa_real += r.valor / (1 + r.ano_real);
-    G[k]._voa_nom  += r.valor / (1 + r.ano);
+    G[k]._vom      += r.valor/(1+r.mes);
+    G[k]._voa_real += r.valor/(1+r.ano_real);
+    G[k]._voa_nom  += r.valor/(1+r.ano);
   });
   const assets=Object.values(G).map(a=>({
     ...a,
-    mes:      a._vom      > 0 ? (a.valor - a._vom)      / a._vom      : 0,
-    ano_real: a._voa_real > 0 ? (a.valor - a._voa_real) / a._voa_real : 0,
-    ano:      a._voa_nom  > 0 ? (a.valor - a._voa_nom)  / a._voa_nom  : 0,
+    mes:      a._vom>0?(a.valor-a._vom)/a._vom:0,
+    ano_real: a._voa_real>0?(a.valor-a._voa_real)/a._voa_real:0,
+    ano:      a._voa_nom>0?(a.valor-a._voa_nom)/a._voa_nom:0,
   }));
-  const ctT={}, ctVO={};
+  const ctT={},ctVO_real={},ctVO_nom={};
   assets.forEach(a=>{
     ctT[a.container]=(ctT[a.container]||0)+a.valor;
-    const vo = perfMode==='real' ? a._voa_real : a._voa_nom;
-    ctVO[a.container]=(ctVO[a.container]||0)+vo;
+    ctVO_real[a.container]=(ctVO_real[a.container]||0)+a._voa_real;
+    ctVO_nom[a.container]=(ctVO_nom[a.container]||0)+a._voa_nom;
   });
   const ctY={};
   Object.keys(ctT).forEach(ct=>{
-    ctY[ct] = ctVO[ct] > 0 ? (ctT[ct] - ctVO[ct]) / ctVO[ct] : 0;
+    const vo=perfMode==='real'?ctVO_real[ct]:ctVO_nom[ct];
+    ctY[ct]=vo>0?(ctT[ct]-vo)/vo:0;
   });
   const total=data.reduce((s,r)=>s+r.valor,0);
-  return{total,assets,ctT,ctY};
+  return{total,assets,ctT,ctY,ctVO_real,ctVO_nom};
 }
 
-// ============================================================
-// FILTER
-// ============================================================
-function getFiltered(){
+function applyFilters(){
   return RAW.filter(r=>{
-    if(!filterTitular.has('Todos') && !filterTitular.has(r.titular)) return false;
-    if(!filterMoeda.has('Todos') && !filterMoeda.has(r.moeda_ref)) return false;
-    if(!filterEntidade.has('Todos') && !filterEntidade.has(r.entidade)) return false;
-    return true;
+    const tOk=filterTitular.includes('Todos')||filterTitular.includes(r.titular)||(filterTitular.includes('Familia')&&r.titular==='Familia');
+    const mOk=filterMoeda.includes('Todos')||filterMoeda.includes(r.moeda_ref);
+    const eOk=filterEntidade.includes('Todos')||filterEntidade.includes(r.entidade);
+    return tOk&&mOk&&eOk;
   });
 }
 
-// ============================================================
-// RENDER ALL
-// ============================================================
-function renderAll(){
-  const filtered = getFiltered();
-  const {total, assets, ctT, ctY} = agg(filtered);
-  const fullAgg = agg(RAW); // for donuts — always full
+function render(){
+  const filtered=applyFilters();
+  const {total,assets,ctT,ctY}=agg(filtered);
+  const fullAgg=agg(RAW);
+  const grandTotal=fullAgg.total;
 
-  updateHeader(total);
-  updatePerspBadge();
-  renderContainerCards(ctT, ctY, total);
-  renderPerfChart(ctY);
-  renderAllocChart(ctT, total);
-  renderAlerts(assets, ctT, total);
-  renderTable(assets);
-  renderDetailBlocks(fullAgg.assets, fullAgg.total);
-  updateFilterCounter(filtered.length);
+  // Header total
+  document.getElementById('hd-total').textContent=fmtVal(grandTotal);
+
+  // Persp badge
+  document.getElementById('persp-badge').textContent=perfMode==='real'?'ANO REAL':'NOMINAL';
+  document.getElementById('perf-chart-title').textContent=perfMode==='real'?'Ano Real por Container':'Nominal por Container';
+  document.getElementById('ytd-col-head').textContent=perfMode==='real'?'Ano Real':'Nominal';
+
+  // Filter info
+  const active=[];
+  if(!filterTitular.includes('Todos'))active.push('Titular:'+filterTitular.join('+'));
+  if(!filterMoeda.includes('Todos'))active.push('Moeda:'+filterMoeda.join('+'));
+  if(!filterEntidade.includes('Todos'))active.push('Entidade:'+filterEntidade.join('+'));
+  document.getElementById('filter-info').textContent=active.length?`${filtered.length} linhas · ${active.join(' · ')}`:`${filtered.length} linhas`;
+
+  renderContainers(filtered,ctT,ctY,grandTotal);
+  renderCharts(ctT,ctY,grandTotal);
+  renderAlerts(fullAgg.assets,fullAgg.ctT,grandTotal);
+  renderTable(assets,ctT);
+  renderDonuts(fullAgg.assets);
 }
 
-function updateHeader(total){
-  document.getElementById('hdr-date').textContent = fmtDate();
-  document.getElementById('hdr-total').textContent = (total/1e6).toFixed(3)+'M';
-}
-
-function updatePerspBadge(){
-  const b = document.getElementById('persp-badge-main');
-  if(perfMode==='real'){
-    b.textContent='Ano Real'; b.className='persp-badge real';
-  } else {
-    b.textContent='Nominal'; b.className='persp-badge nom';
-  }
-  document.getElementById('perf-panel-title').textContent = perfMode==='real' ? 'Ano Real por Container' : 'Nominal por Container';
-}
-
-// ============================================================
-// CONTAINER CARDS
-// ============================================================
-function renderContainerCards(ctT, ctY, total){
-  const g = document.getElementById('containers-grid');
-  g.innerHTML = '';
-  CONTAINERS.forEach(ct=>{
-    const val = ctT[ct]||0;
-    const pct = total>0 ? val/total : 0;
-    const tgt = CT_TARGET[ct];
-    const dev = Math.abs(pct - tgt)*100;
-    const perf = ctY[ct]||0;
-    const perfSufx = perfMode==='real' ? 'real' : 'nom';
-
-    let badge = dev<=2 ? '<span class="badge-ok">OK</span>'
-              : dev<=5 ? '<span class="badge-dev">Desvio</span>'
-              : '<span class="badge-crit">Crítico</span>';
-
-    const perfCls = perf>=0 ? 'up' : 'dn';
-    const valStr = (val/1e6).toFixed(3)+'M';
-
-    g.innerHTML += `<div class="ct-card">
-      <div class="ct-card-top" style="background:${CT_COLORS[ct]}"></div>
-      <div class="ct-card-body">
-        <div class="ct-card-name">
-          <span style="color:${CT_COLORS[ct]}">${ct.toUpperCase()}</span>
-          ${badge}
+function renderContainers(filtered,ctT,ctY,grandTotal){
+  const grid=document.getElementById('ct-grid');
+  grid.innerHTML='';
+  ['Imobilizado','Previdência','Proventos','Crescimento'].forEach(ct=>{
+    const val=ctT[ct]||0;
+    const pct=grandTotal>0?val/grandTotal:0;
+    const target=CT_TARGETS[ct];
+    const dev=Math.abs(pct-target);
+    const perf=ctY[ct]||0;
+    let badgeCls='badge-ok',badgeTxt='OK';
+    if(dev>0.05){badgeCls='badge-crit';badgeTxt='Crítico';}
+    else if(dev>0.02){badgeCls='badge-warn';badgeTxt='Desvio';}
+    const perfSuf=perfMode==='real'?' real':' nom';
+    const perfCls=perf>=0?'up-c':'dn-c';
+    grid.innerHTML+=`
+    <div class="ct-card">
+      <div class="ct-bar" style="background:${CT_COLORS[ct]}"></div>
+      <div class="ct-body">
+        <div class="ct-head">
+          <div class="ct-name" style="color:${CT_COLORS[ct]}">${ct}</div>
+          <span class="badge ${badgeCls}">${badgeTxt}</span>
         </div>
-        <div class="ct-value" style="color:${CT_COLORS[ct]}">R$ ${valStr}</div>
-        <div class="ct-footer">
-          <span>${(pct*100).toFixed(1)}% · alvo ${(tgt*100).toFixed(0)}%</span>
-          <span class="perf-val ${perfCls}">${fmtPct(perf)} <span class="perf-suffix">${perfSufx}</span></span>
+        <div class="ct-val" style="color:${CT_COLORS[ct]}">${fmtVal(val)}</div>
+        <div class="ct-foot">
+          <div class="ct-alloc">${(pct*100).toFixed(1)}% · alvo ${(target*100).toFixed(0)}%</div>
+          <div class="ct-perf ${perfCls}">${fmtPct(perf)}<span class="ct-perf-suf">${perfSuf}</span></div>
         </div>
       </div>
     </div>`;
   });
 }
 
-// ============================================================
-// PERF CHART (diverging)
-// ============================================================
-function renderPerfChart(ctY){
-  const el = document.getElementById('perf-chart');
-  el.innerHTML='';
-  const maxAbs = Math.max(...CONTAINERS.map(ct=>Math.abs(ctY[ct]||0)),0.01);
-  CONTAINERS.forEach(ct=>{
-    const v = ctY[ct]||0;
-    const pct50 = 50 + (v/maxAbs)*45;
-    const left50 = 50;
-    const isPos = v>=0;
-    const barLeft = isPos ? left50 : pct50;
-    const barWidth = Math.abs(pct50-left50);
-    const color = CT_COLORS[ct];
-    const valCls = v>=0?'up':'dn';
-
-    el.innerHTML += `<div class="bar-chart-row">
-      <span class="bar-label" style="color:${color};font-weight:600">${ct}</span>
-      <div class="diverg-track">
-        <div class="diverg-zero"></div>
-        <div class="diverg-bar" style="left:${barLeft}%;width:${barWidth}%;background:${color};opacity:.85"></div>
+function renderCharts(ctT,ctY,grandTotal){
+  // Performance bars (divergent)
+  const pb=document.getElementById('perf-bars');
+  pb.innerHTML='';
+  const maxPerf=Math.max(...Object.values(ctY).map(Math.abs),0.15);
+  ['Imobilizado','Previdência','Proventos','Crescimento'].forEach(ct=>{
+    const p=ctY[ct]||0;
+    const halfW=200;
+    const barW=Math.min(Math.abs(p)/maxPerf*halfW,halfW);
+    const barLeft=p>=0?halfW:halfW-barW;
+    const cl=p>=0?'up-c':'dn-c';
+    pb.innerHTML+=`
+    <div class="bar-row">
+      <div class="bar-label">${ct.substring(0,10)}</div>
+      <div class="bar-divtrack" style="width:${halfW*2}px">
+        <div class="bar-div-center"></div>
+        <div class="bar-div-fill" style="left:${barLeft}px;width:${barW}px;background:${CT_COLORS[ct]}"></div>
       </div>
-      <span class="bar-val pct-cell ${valCls}">${fmtPct(v)}</span>
+      <div class="bar-val ${cl}">${fmtPct(p)}</div>
+    </div>`;
+  });
+
+  // Allocation bars
+  const ab=document.getElementById('alloc-bars');
+  ab.innerHTML='';
+  const total=Object.values(ctT).reduce((a,b)=>a+b,0)||1;
+  ['Imobilizado','Previdência','Proventos','Crescimento'].forEach(ct=>{
+    const val=ctT[ct]||0;
+    const pct=val/total;
+    const target=CT_TARGETS[ct];
+    const W=300;
+    ab.innerHTML+=`
+    <div class="alloc-row">
+      <div class="bar-label">${ct.substring(0,10)}</div>
+      <div class="alloc-track" style="width:${W}px">
+        <div class="alloc-fill" style="width:${Math.min(pct,1)*W}px;background:${CT_COLORS[ct]}"></div>
+        <div class="alloc-target-line" style="left:${target*W}px"></div>
+      </div>
+      <div class="alloc-val">${(pct*100).toFixed(1)}% / ${(target*100).toFixed(0)}%</div>
     </div>`;
   });
 }
 
-// ============================================================
-// ALLOC CHART
-// ============================================================
-function renderAllocChart(ctT, total){
-  const el = document.getElementById('alloc-chart');
-  el.innerHTML='';
-  CONTAINERS.forEach(ct=>{
-    const val = ctT[ct]||0;
-    const pct = total>0 ? val/total : 0;
-    const tgt = CT_TARGET[ct];
-    const color = CT_COLORS[ct];
-    const tgtPct = tgt*100;
-    el.innerHTML += `<div class="bar-chart-row">
-      <span class="bar-label" style="color:${color};font-weight:600">${ct}</span>
-      <div class="alloc-bar-wrap">
-        <div class="alloc-bar-fill" style="width:${(pct*100).toFixed(1)}%;background:${color};height:18px;border-radius:4px"></div>
-        <div class="alloc-target-line" style="left:${tgtPct}%"></div>
-      </div>
-      <span class="bar-val" style="font-family:'IBM Plex Mono',monospace;font-size:11px;color:#555">${(pct*100).toFixed(1)}% / ${(tgt*100).toFixed(0)}%</span>
-    </div>`;
-  });
-}
-
-// ============================================================
-// ALERTS
-// ============================================================
-function renderAlerts(assets, ctT, total){
-  const g = document.getElementById('alerts-grid');
+function renderAlerts(assets,ctT,grandTotal){
+  const grid=document.getElementById('alerts-grid');
+  grid.innerHTML='';
   const alerts=[];
 
-  // Concentration
-  CONTAINERS.forEach(ct=>{
-    const ctAssets = assets.filter(a=>a.container===ct);
-    const ctTotal = ctT[ct]||0;
-    const limit = CT_CONC_LIMIT[ct];
-    ctAssets.forEach(a=>{
-      const conc = ctTotal>0 ? a.valor/ctTotal : 0;
-      let effectiveLimit = limit;
-      if(ct==='Crescimento' && (a.ticker||'').toLowerCase()==='btc') effectiveLimit=0.50;
-      if(conc>effectiveLimit){
-        alerts.push({level:'crit',type:'CONCENTRAÇÃO CRÍTICA',msg:`<strong>${a.ticker||a.tipo}</strong> (${ct}) excede o limite de ${(effectiveLimit*100).toFixed(0)}%`,detail:`${(conc*100).toFixed(1)}% · ${fmtM(a.valor)}`});
-      }
-    });
-  });
-
-  // Alloc deviation
-  CONTAINERS.forEach(ct=>{
-    const val=ctT[ct]||0;
-    const pct=total>0?val/total:0;
-    const dev=(pct-CT_TARGET[ct])*100;
-    const devAbs=Math.abs(dev);
-    if(devAbs>5) alerts.push({level:'crit',type:'DESVIO DE ALOCAÇÃO',msg:`<strong>${ct}</strong> com desvio crítico de ${dev>=0?'+':''}${dev.toFixed(1)}pp do alvo ${(CT_TARGET[ct]*100).toFixed(0)}%`,detail:`Atual ${(pct*100).toFixed(1)}% | Alvo ${(CT_TARGET[ct]*100).toFixed(0)}%`});
-    else if(devAbs>2) alerts.push({level:'warn',type:'DESVIO DE ALOCAÇÃO',msg:`<strong>${ct}</strong> com desvio de ${dev>=0?'+':''}${dev.toFixed(1)}pp do alvo ${(CT_TARGET[ct]*100).toFixed(0)}%`,detail:`Atual ${(pct*100).toFixed(1)}% | Alvo ${(CT_TARGET[ct]*100).toFixed(0)}%`});
-  });
-
-  // Tese review
+  // Concentration alerts
   assets.forEach(a=>{
-    if(perfVal(a)<-0.20 && a.valor>10000){
-      alerts.push({level:'warn',type:'REVISÃO DE TESE',msg:`<strong>${a.ticker||a.tipo}</strong> (${a.container}) com queda expressiva`,detail:`${fmtPct(perfVal(a))} · ${fmtM(a.valor)}`});
+    const ctVal=ctT[a.container]||1;
+    const conc=a.valor/ctVal;
+    const limit=CT_LIMITS[a.container];
+    // BTC exception
+    const isbtc=a.ticker==='BTC';
+    const effectiveLimit=isbtc?0.50:limit;
+    if(conc>effectiveLimit){
+      alerts.push({level:'CRÍTICO',color:'#b91c1c',title:`CONCENTRAÇÃO — ${a.ticker||a.subcat}`,
+        desc:`${a.container}: ${(conc*100).toFixed(1)}% do container (limite ${(effectiveLimit*100).toFixed(0)}%). Valor: ${fmtVal(a.valor)}.`});
+    }
+  });
+
+  // Allocation deviation
+  const total=Object.values(ctT).reduce((a,b)=>a+b,0)||1;
+  ['Imobilizado','Previdência','Proventos','Crescimento'].forEach(ct=>{
+    const val=ctT[ct]||0;
+    const pct=val/total;
+    const dev=pct-CT_TARGETS[ct];
+    if(Math.abs(dev)>0.05){
+      alerts.push({level:'CRÍTICO',color:'#b91c1c',title:`DESVIO CRÍTICO — ${ct}`,
+        desc:`Alocação atual: ${(pct*100).toFixed(1)}%. Alvo: ${(CT_TARGETS[ct]*100).toFixed(0)}%. Desvio: ${(dev*100).toFixed(1)}pp.`});
+    } else if(Math.abs(dev)>0.02){
+      alerts.push({level:'WARNING',color:'#92400e',title:`DESVIO — ${ct}`,
+        desc:`Alocação atual: ${(pct*100).toFixed(1)}%. Alvo: ${(CT_TARGETS[ct]*100).toFixed(0)}%. Desvio: ${(dev*100).toFixed(1)}pp.`});
+    }
+  });
+
+  // Revisão de tese
+  assets.forEach(a=>{
+    const pv=a.ano_real; // always use real for analysis
+    if(pv<-0.20&&a.valor>10000){
+      alerts.push({level:'WARNING',color:'#92400e',title:`REVISÃO DE TESE — ${a.ticker||a.subcat}`,
+        desc:`Ano Real: ${(pv*100).toFixed(1)}%. Valor: ${fmtVal(a.valor)}. Tese precisa ser revalidada.`});
     }
   });
 
   // Anomalias
   assets.forEach(a=>{
-    if(perfVal(a)>2.0){
-      alerts.push({level:'info',type:'ANOMALIA DE DADOS',msg:`<strong>${a.ticker||a.tipo}</strong> apresenta variação anual acima de 200%`,detail:`${fmtPct(perfVal(a))} · ${fmtM(a.valor)} — verificar fonte`});
+    const pv=a.ano_real;
+    if(pv>2.0){
+      alerts.push({level:'INFO',color:'#1a4f8a',title:`ANOMALIA — ${a.ticker||a.subcat}`,
+        desc:`Ano Real: ${(pv*100).toFixed(0)}% — provável distorção de dados. Verificar planilha.`});
     }
   });
 
   if(alerts.length===0){
-    g.innerHTML='<div style="padding:20px;color:var(--ink4);font-family:\'IBM Plex Mono\',monospace;font-size:12px">✓ Nenhum alerta de compliance gerado com os filtros atuais.</div>';
+    grid.innerHTML='<div class="no-alerts">✓ Nenhum alerta ativo com os filtros atuais</div>';
     return;
   }
-
-  g.innerHTML = alerts.map(al=>`<div class="alert-card">
-    <div class="alert-top ${al.level}"></div>
-    <div class="alert-body">
-      <div class="alert-type">${al.type}</div>
-      <div class="alert-msg">${al.msg}</div>
-      <div class="alert-detail">${al.detail}</div>
-    </div>
-  </div>`).join('');
-}
-
-// ============================================================
-// TABLE
-// ============================================================
-function renderTable(assets){
-  // Build tab bar
-  const tabBar = document.getElementById('tab-bar');
-  const tabs = ['Todos',...CONTAINERS];
-  tabBar.innerHTML = tabs.map(t=>{
-    const cls = t===activeTab ? 'tab-btn active' : 'tab-btn';
-    const style = t===activeTab && t!=='Todos' ? `style="background:${CT_COLORS[t]}"` : '';
-    return `<button class="${cls}" ${style} onclick="setTab('${t}')">${t}</button>`;
-  }).join('');
-
-  let filtered = assets;
-  if(activeTab!=='Todos') filtered = filtered.filter(a=>a.container===activeTab);
-
-  // Sort
-  if(sortBy==='valor') filtered.sort((a,b)=>b.valor-a.valor);
-  else if(sortBy==='ytd') filtered.sort((a,b)=>perfVal(b)-perfVal(a));
-  else if(sortBy==='mes') filtered.sort((a,b)=>b.mes-a.mes);
-  else if(sortBy==='conc') filtered.sort((a,b)=>{
-    // need ct totals
-    const ctT={};
-    assets.forEach(a=>{ctT[a.container]=(ctT[a.container]||0)+a.valor;});
-    const ca = ctT[a.container]>0?a.valor/ctT[a.container]:0;
-    const cb = ctT[b.container]>0?b.valor/ctT[b.container]:0;
-    return cb-ca;
-  });
-
-  // Only positive filter
-  if(onlyPositive) filtered = filtered.filter(a=>perfVal(a)>=0);
-
-  document.getElementById('tbl-counter').textContent = `${filtered.length} ativo${filtered.length!==1?'s':''}`;
-
-  // Compute ct totals for conc
-  const ctT={};
-  assets.forEach(a=>{ctT[a.container]=(ctT[a.container]||0)+a.valor;});
-
-  const ytdHeader = perfMode==='real' ? 'Ano Real' : 'Nominal';
-  document.getElementById('table-head').innerHTML=`<tr>
-    <th>Container</th><th>Subclasse</th><th>Ativo</th><th>Titular</th><th>Entidade</th>
-    <th>Valor</th><th>Conc.</th><th>Mês</th><th>${ytdHeader}</th>
-  </tr>`;
-
-  const tbody = document.getElementById('table-body');
-  tbody.innerHTML = filtered.map(a=>{
-    const pv = perfVal(a);
-    const isAnomaly = pv > 2.0;
-    const conc = ctT[a.container]>0 ? a.valor/ctT[a.container] : 0;
-    let concLimit = CT_CONC_LIMIT[a.container];
-    if(a.container==='Crescimento' && (a.ticker||'').toLowerCase()==='btc') concLimit=0.50;
-    const concOver = conc>concLimit;
-    const color = CT_COLORS[a.container];
-
-    const ytdCell = isAnomaly
-      ? `<span style="color:#92400e">⚠ ${fmtPct(pv)}</span>`
-      : `<span class="pct-cell ${pv>=0?'up':'dn'}">${fmtPct(pv)}</span>`;
-
-    return `<tr class="${isAnomaly?'anomaly':''}">
-      <td><span class="tag-ct" style="background:${color}">${a.container}</span></td>
-      <td><span class="tag-sub">${a.subcat}</span></td>
-      <td><span class="ticker-cell">${a.ticker||a.tipo||'—'}</span><br><span class="small-txt">${a.tipo}</span></td>
-      <td><span class="small-txt">${a.titular||'—'}</span></td>
-      <td><span class="small-txt">${a.entidade}</span></td>
-      <td class="val-cell">${fmtM(a.valor)}</td>
-      <td>
-        <div class="conc-wrap">
-          <div class="conc-bar-bg"><div class="conc-bar-fill" style="width:${Math.min(conc/concLimit,1)*100}%;background:${concOver?'#b91c1c':color}"></div></div>
-          <span class="conc-pct ${concOver?'conc-warn':''}">${(conc*100).toFixed(1)}%${concOver?' !':''}</span>
-        </div>
-      </td>
-      <td class="pct-cell ${a.mes>=0?'up':'dn'}">${fmtPct(a.mes)}</td>
-      <td>${ytdCell}</td>
-    </tr>`;
-  }).join('');
-}
-
-// ============================================================
-// DONUT SVG
-// ============================================================
-const PALETTE=['#1a7a58','#1a4f8a','#5c3d9e','#b83a10','#0369a1','#92400e','#15803d','#b91c1c','#6b21a8','#0e7490','#854d0e','#166534','#1e40af','#7c3aed','#9a3412','#065f46','#1d4ed8','#6d28d9','#c2410c','#047857','#d97706','#7f1d1d','#134e4a','#1e3a5f'];
-
-function makeDonut(items, totalLabel){
-  const r=70, cx=90, cy=90, stroke=22;
-  const total = items.reduce((s,i)=>s+i.v,0);
-  if(total===0) return '<svg width="180" height="180"><text x="90" y="95" text-anchor="middle" font-size="12" fill="#888">Sem dados</text></svg>';
-  let angle=-Math.PI/2;
-  let paths='';
-  items.forEach((item,i)=>{
-    const frac=item.v/total;
-    const sweep=frac*2*Math.PI;
-    const x1=cx+r*Math.cos(angle), y1=cy+r*Math.sin(angle);
-    angle+=sweep;
-    const x2=cx+r*Math.cos(angle), y2=cy+r*Math.sin(angle);
-    const large=sweep>Math.PI?1:0;
-    const col=PALETTE[i%PALETTE.length];
-    paths+=`<path d="M${cx},${cy} L${x1},${y1} A${r},${r} 0 ${large},1 ${x2},${y2} Z" fill="${col}" opacity="0.88">
-      <title>${item.label}: ${(frac*100).toFixed(1)}%</title></path>`;
-  });
-  // donut hole
-  paths+=`<circle cx="${cx}" cy="${cy}" r="${r-stroke}" fill="white"/>`;
-  return `<svg width="180" height="180" viewBox="0 0 180 180">${paths}
-    <text x="${cx}" y="${cy-5}" text-anchor="middle" font-family="Fraunces,serif" font-size="12" font-weight="600" fill="#0f0f0f">${fmtM(total).replace('R$ ','')}</text>
-    <text x="${cx}" y="${cy+12}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="9" fill="#888">TOTAL</text>
-  </svg>`;
-}
-
-function groupBy(arr, key){
-  const m={};
-  arr.forEach(r=>{ const k=r[key]||'Outro'; m[k]=(m[k]||0)+r.valor; });
-  return Object.entries(m).map(([label,v])=>({label,v})).sort((a,b)=>b.v-a.v);
-}
-
-function donutBlock(label, items, total){
-  const svg=makeDonut(items, total);
-  const leg=items.map((it,i)=>`<div class="donut-leg-item">
-    <div class="donut-leg-dot" style="background:${PALETTE[i%PALETTE.length]}"></div>
-    <span>${it.label}</span>
-    <span class="donut-leg-pct">${((it.v/(items.reduce((s,x)=>s+x.v,0)))*100).toFixed(1)}%</span>
-  </div>`).join('');
-  return `<div class="donut-wrap">
-    <div class="donut-label">${label}</div>
-    <div>${svg}</div>
-    <div class="donut-legend">${leg}</div>
-  </div>`;
-}
-
-// ============================================================
-// DETAIL BLOCKS
-// ============================================================
-function renderDetailBlocks(allAssets, fullTotal){
-  const el = document.getElementById('detail-blocks');
-  el.innerHTML='';
-
-  const ctData={};
-  CONTAINERS.forEach(ct=>{ ctData[ct]=allAssets.filter(a=>a.container===ct); });
-
-  const blocks=[
-    {ct:'Imobilizado', donuts:[
-      {label:'Por Tipo', items: groupBy(ctData['Imobilizado'],'subcat')},
-      {label:'Por Titular', items: groupBy(ctData['Imobilizado'],'titular')},
-    ]},
-    {ct:'Previdência', donuts:[
-      {label:'Por Titular', items: groupBy(ctData['Previdência'],'titular')},
-      {label:'Por Tipo de Plano', items: groupBy(ctData['Previdência'],'subcat')},
-    ]},
-    {ct:'Proventos', donuts:[
-      {label:'Exposição Cambial', items: groupBy(ctData['Proventos'],'moeda_ref')},
-      {label:'Por Tipo', items: groupBy(ctData['Proventos'],'subcat')},
-      {label:'Por Titular', items: groupBy(ctData['Proventos'],'titular')},
-      {label:'Por Entidade', items: groupBy(ctData['Proventos'],'entidade')},
-    ]},
-    {ct:'Crescimento', donuts:[
-      {label:'Por Subclasse', items: groupBy(ctData['Crescimento'],'subcat')},
-      {label:'Exposição Cambial', items: groupBy(ctData['Crescimento'],'moeda_ref')},
-      {label:'Por Titular', items: groupBy(ctData['Crescimento'],'titular')},
-      {label:'Por Entidade', items: groupBy(ctData['Crescimento'],'entidade')},
-    ]},
-  ];
-
-  blocks.forEach(b=>{
-    const ctTotal = ctData[b.ct].reduce((s,r)=>s+r.valor,0);
-    const donutsHtml = b.donuts.map(d=>donutBlock(d.label, d.items, ctTotal)).join('');
-    el.innerHTML+=`<div class="ct-block">
-      <div class="ct-block-header" style="background:${CT_COLORS[b.ct]}"></div>
-      <div class="ct-block-body">
-        <div class="ct-block-title" style="color:${CT_COLORS[b.ct]}">${b.ct}</div>
-        <div class="donuts-row">${donutsHtml}</div>
+  alerts.forEach(al=>{
+    grid.innerHTML+=`
+    <div class="alert-card">
+      <div class="alert-strip" style="background:${al.color}"></div>
+      <div class="alert-body">
+        <div class="alert-level" style="color:${al.color}">${al.level}</div>
+        <div class="alert-title">${al.title}</div>
+        <div class="alert-desc">${al.desc}</div>
       </div>
     </div>`;
   });
 }
 
-// ============================================================
-// ENTIDADE CHIPS (dynamic)
-// ============================================================
-function buildEntidadeChips(){
-  const ents = [...new Set(RAW.map(r=>r.entidade).filter(Boolean))].sort();
-  const g = document.getElementById('entidade-group');
-  g.innerHTML=`<span class="filter-label">Entidade</span>
-    <span class="chip active all" data-group="entidade" data-val="Todos">Todos</span>
-    ${ents.map(e=>`<span class="chip" data-group="entidade" data-val="${e}" data-cls="ent">${e}</span>`).join('')}`;
-  attachChipListeners();
-}
+function renderTable(assets,ctT){
+  // Tabs
+  const tabs=document.getElementById('table-tabs');
+  const containers=['Todos','Imobilizado','Previdência','Proventos','Crescimento'];
+  tabs.innerHTML='';
+  containers.forEach(ct=>{
+    const btn=document.createElement('button');
+    btn.className='tab-btn'+(ct===activeTab?' active':'');
+    btn.textContent=ct;
+    if(CT_COLORS[ct])btn.style.cssText=ct===activeTab?`color:${CT_COLORS[ct]};border-bottom-color:${CT_COLORS[ct]}`:'';
+    btn.onclick=()=>{activeTab=ct;render();};
+    tabs.appendChild(btn);
+  });
 
-// ============================================================
-// CHIP LISTENERS
-// ============================================================
-function attachChipListeners(){
-  document.querySelectorAll('.chip').forEach(chip=>{
-    chip.addEventListener('click', ()=>{
-      const group = chip.dataset.group;
-      const val = chip.dataset.val;
-      const cls = chip.dataset.cls||'ent';
+  let rows=[...assets];
+  if(activeTab!=='Todos')rows=rows.filter(r=>r.container===activeTab);
+  if(onlyPositive)rows=rows.filter(r=>perfVal(r)>0);
 
-      if(group==='persp'){
-        // exclusive
-        document.querySelectorAll(`.chip[data-group="persp"]`).forEach(c=>{ c.classList.remove('active','ano-real','nominal'); });
-        chip.classList.add('active', cls);
-        perfMode = val;
-        renderAll();
-        return;
-      }
-
-      if(group==='titular'){
-        if(val==='Todos'){
-          filterTitular = new Set(['Todos']);
-          document.querySelectorAll(`.chip[data-group="titular"]`).forEach(c=>{ c.classList.remove('active','all','giov','ellen','bryan','familia'); });
-          chip.classList.add('active','all');
-        } else {
-          filterTitular.delete('Todos');
-          document.querySelector(`.chip[data-group="titular"][data-val="Todos"]`).classList.remove('active','all');
-          if(filterTitular.has(val)){ filterTitular.delete(val); chip.classList.remove('active',cls); }
-          else { filterTitular.add(val); chip.classList.add('active',cls); }
-          if(filterTitular.size===0){ filterTitular.add('Todos'); document.querySelector(`.chip[data-group="titular"][data-val="Todos"]`).classList.add('active','all'); }
-        }
-      } else if(group==='moeda'){
-        if(val==='Todos'){
-          filterMoeda = new Set(['Todos']);
-          document.querySelectorAll(`.chip[data-group="moeda"]`).forEach(c=>{ c.classList.remove('active','all','real-c','dolar-c'); });
-          chip.classList.add('active','all');
-        } else {
-          filterMoeda.delete('Todos');
-          document.querySelector(`.chip[data-group="moeda"][data-val="Todos"]`).classList.remove('active','all');
-          if(filterMoeda.has(val)){ filterMoeda.delete(val); chip.classList.remove('active',cls); }
-          else { filterMoeda.add(val); chip.classList.add('active',cls); }
-          if(filterMoeda.size===0){ filterMoeda.add('Todos'); document.querySelector(`.chip[data-group="moeda"][data-val="Todos"]`).classList.add('active','all'); }
-        }
-      } else if(group==='entidade'){
-        if(val==='Todos'){
-          filterEntidade = new Set(['Todos']);
-          document.querySelectorAll(`.chip[data-group="entidade"]`).forEach(c=>{ c.classList.remove('active','all','ent'); });
-          chip.classList.add('active','all');
-        } else {
-          filterEntidade.delete('Todos');
-          document.querySelector(`.chip[data-group="entidade"][data-val="Todos"]`).classList.remove('active','all');
-          if(filterEntidade.has(val)){ filterEntidade.delete(val); chip.classList.remove('active',cls); }
-          else { filterEntidade.add(val); chip.classList.add('active',cls); }
-          if(filterEntidade.size===0){ filterEntidade.add('Todos'); document.querySelector(`.chip[data-group="entidade"][data-val="Todos"]`).classList.add('active','all'); }
-        }
-      }
-      renderAll();
+  // Sort
+  if(sortBy==='valor')rows.sort((a,b)=>b.valor-a.valor);
+  else if(sortBy==='ytd')rows.sort((a,b)=>perfVal(b)-perfVal(a));
+  else if(sortBy==='mes')rows.sort((a,b)=>b.mes-a.mes);
+  else if(sortBy==='conc'){
+    rows.sort((a,b)=>{
+      const ca=a.valor/(ctT[a.container]||1);
+      const cb=b.valor/(ctT[b.container]||1);
+      return cb-ca;
     });
+  }
+
+  document.getElementById('table-count').textContent=`${rows.length} ativos`;
+
+  const tbody=document.getElementById('table-body');
+  tbody.innerHTML='';
+  rows.forEach(a=>{
+    const ctVal=ctT[a.container]||1;
+    const conc=a.valor/ctVal;
+    const limit=CT_LIMITS[a.container];
+    const isbtc=a.ticker==='BTC';
+    const effLimit=isbtc?0.50:limit;
+    const concOver=conc>effLimit;
+    const pv=perfVal(a);
+    const isAnomaly=a.ano_real>2.0;
+    const tagCls={Imobilizado:'tag-imob',Previdência:'tag-prev',Proventos:'tag-prov',Crescimento:'tag-cresc'}[a.container]||'';
+    const mesCls=a.mes>0?'up-c':a.mes<0?'dn-c':'neu-c';
+    const ytdCls=pv>0?'up-c':pv<0?'dn-c':'neu-c';
+    const concBarW=Math.min(conc/effLimit,1)*48;
+    const concColor=concOver?'#b91c1c':CT_COLORS[a.container];
+    tbody.innerHTML+=`
+    <tr class="${isAnomaly?'anomaly':''}">
+      <td><span class="tag-ct ${tagCls}">${a.container}</span></td>
+      <td><span class="tag-sub">${a.subcat}</span></td>
+      <td><div class="td-ticker">${a.ticker||a.subcat||'—'}</div></td>
+      <td class="td-small">${a.titular||'—'}</td>
+      <td class="td-small">${a.entidade||'—'}</td>
+      <td class="td-val">${fmtVal(a.valor)}</td>
+      <td>
+        <div class="conc-wrap">
+          <div class="conc-bar-bg"><div class="conc-bar-fg" style="width:${concBarW}px;background:${concColor}"></div></div>
+          <span class="conc-pct ${concOver?'conc-warn':''}">${(conc*100).toFixed(1)}%${concOver?' !':''}</span>
+        </div>
+      </td>
+      <td class="td-perf ${mesCls}">${fmtPct(a.mes)}</td>
+      <td class="td-perf ${isAnomaly?'':''+ytdCls}">${isAnomaly?`⚠ ${fmtPct(pv,0)}`:fmtPct(pv)}</td>
+    </tr>`;
   });
 }
 
-// ============================================================
-// CONTROLS
-// ============================================================
-function resetFilters(){
-  perfMode='real';
-  filterTitular=new Set(['Todos']);
-  filterMoeda=new Set(['Todos']);
-  filterEntidade=new Set(['Todos']);
-  onlyPositive=false;
-  sortBy='valor';
-  document.getElementById('btn-pos').classList.remove('active');
-  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
-  document.querySelector('.sort-btn').classList.add('active');
-  // reset chips
-  document.querySelectorAll('.chip').forEach(c=>{
-    c.classList.remove('active','all','giov','ellen','bryan','familia','real-c','dolar-c','ent','ano-real','nominal');
+function mkDonut(data,size=110){
+  const total=data.reduce((s,d)=>s+d.v,0)||1;
+  let cum=0;
+  const cx=size/2,cy=size/2,r=size*0.38,inner=r*0.58;
+  let paths='';
+  data.forEach((d,i)=>{
+    const start=cum/total*Math.PI*2-Math.PI/2;
+    const end=(cum+d.v)/total*Math.PI*2-Math.PI/2;
+    const large=d.v/total>0.5?1:0;
+    const x1=cx+r*Math.cos(start),y1=cy+r*Math.sin(start);
+    const x2=cx+r*Math.cos(end),y2=cy+r*Math.sin(end);
+    const xi1=cx+inner*Math.cos(start),yi1=cy+inner*Math.sin(start);
+    const xi2=cx+inner*Math.cos(end),yi2=cy+inner*Math.sin(end);
+    paths+=`<path d="M${xi1} ${yi1} L${x1} ${y1} A${r} ${r} 0 ${large} 1 ${x2} ${y2} L${xi2} ${yi2} A${inner} ${inner} 0 ${large} 0 ${xi1} ${yi1}Z" fill="${d.c}" opacity="0.88"/>`;
+    cum+=d.v;
   });
-  document.querySelectorAll('.chip[data-val="Todos"]').forEach(c=>c.classList.add('active','all'));
-  document.querySelector('.chip[data-group="persp"][data-val="real"]').classList.add('active','ano-real');
-  renderAll();
+  const totalFmt=fmtVal(total);
+  return `<svg class="donut" width="${size}" height="${size}" viewBox="0 0 ${size} ${size}">${paths}<text x="${cx}" y="${cy-4}" text-anchor="middle" font-family="Fraunces,serif" font-size="9" fill="#0f0f0f">${totalFmt.split(' ')[1]||''}</text><text x="${cx}" y="${cy+8}" text-anchor="middle" font-family="IBM Plex Mono,monospace" font-size="6" fill="#888">R$</text></svg>`;
 }
 
-function setSort(s){
-  sortBy=s;
-  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
-  event.target.classList.add('active');
-  const {assets}=agg(getFiltered());
-  renderTable(assets);
+function mkLegend(data){
+  const total=data.reduce((s,d)=>s+d.v,0)||1;
+  return data.map((d,i)=>`
+  <div class="legend-item">
+    <div class="legend-dot" style="background:${d.c}"></div>
+    <div class="legend-txt"><span class="legend-pct">${(d.v/total*100).toFixed(1)}%</span> ${d.l}<br><span style="color:#888">${fmtVal(d.v)}</span></div>
+  </div>`).join('');
 }
 
-function togglePos(){
+function donutSection(title,color,items){
+  return `<div class="donut-item">
+    <div class="donut-subtitle">${title}</div>
+    <div class="donut-wrap">
+      ${mkDonut(items)}
+      <div class="donut-legend">${mkLegend(items)}</div>
+    </div>
+  </div>`;
+}
+
+function groupBy(assets,field){
+  const G={};
+  assets.forEach(a=>{
+    const k=a[field]||'—';
+    G[k]=(G[k]||0)+a.valor;
+  });
+  return Object.entries(G).sort((a,b)=>b[1]-a[1]).map(([l,v],i)=>({l,v,c:PALETTE[i%PALETTE.length]}));
+}
+
+function renderDonuts(assets){
+  const sec=document.getElementById('donut-section');
+  sec.innerHTML='';
+
+  const ctData=ct=>assets.filter(a=>a.container===ct);
+
+  // IMOBILIZADO
+  const imob=ctData('Imobilizado');
+  const imobTipo=groupBy(imob,'tipo');
+  const imobTitular=groupBy(imob,'titular');
+  sec.innerHTML+=`
+  <div class="donut-container">
+    <div class="donut-header" style="background:#1a7a58"></div>
+    <div class="donut-body">
+      <div class="donut-ct-title" style="color:#1a7a58">Imobilizado</div>
+      <div class="donut-grid donut-grid-2">
+        ${donutSection('Por Tipo',CT_COLORS['Imobilizado'],imobTipo)}
+        ${donutSection('Por Titular',CT_COLORS['Imobilizado'],imobTitular)}
+      </div>
+    </div>
+  </div>`;
+
+  // PREVIDÊNCIA
+  const prev=ctData('Previdência');
+  const prevTitular=groupBy(prev,'titular');
+  const prevTipo=groupBy(prev,'tipo');
+  sec.innerHTML+=`
+  <div class="donut-container">
+    <div class="donut-header" style="background:#1a4f8a"></div>
+    <div class="donut-body">
+      <div class="donut-ct-title" style="color:#1a4f8a">Previdência</div>
+      <div class="donut-grid donut-grid-2">
+        ${donutSection('Por Titular',CT_COLORS['Previdência'],prevTitular)}
+        ${donutSection('Por Tipo de Plano',CT_COLORS['Previdência'],prevTipo)}
+      </div>
+    </div>
+  </div>`;
+
+  // PROVENTOS
+  const prov=ctData('Proventos');
+  const provCambial=groupBy(prov,'moeda_ref');
+  const provTipo=groupBy(prov,'subcat');
+  const provTitular=groupBy(prov,'titular');
+  const provEntidade=groupBy(prov,'entidade');
+  sec.innerHTML+=`
+  <div class="donut-container">
+    <div class="donut-header" style="background:#5c3d9e"></div>
+    <div class="donut-body">
+      <div class="donut-ct-title" style="color:#5c3d9e">Proventos</div>
+      <div class="donut-grid donut-grid-4">
+        ${donutSection('Exposição Cambial',CT_COLORS['Proventos'],provCambial)}
+        ${donutSection('Por Subclasse',CT_COLORS['Proventos'],provTipo)}
+        ${donutSection('Por Titular',CT_COLORS['Proventos'],provTitular)}
+        ${donutSection('Por Entidade',CT_COLORS['Proventos'],provEntidade)}
+      </div>
+    </div>
+  </div>`;
+
+  // CRESCIMENTO
+  const cresc=ctData('Crescimento');
+  const crescSubcat=groupBy(cresc,'subcat');
+  const crescCambial=groupBy(cresc,'moeda_ref');
+  const crescTitular=groupBy(cresc,'titular');
+  const crescEntidade=groupBy(cresc,'entidade');
+  sec.innerHTML+=`
+  <div class="donut-container">
+    <div class="donut-header" style="background:#b83a10"></div>
+    <div class="donut-body">
+      <div class="donut-ct-title" style="color:#b83a10">Crescimento</div>
+      <div class="donut-grid donut-grid-4">
+        ${donutSection('Por Subclasse',CT_COLORS['Crescimento'],crescSubcat)}
+        ${donutSection('Exposição Cambial',CT_COLORS['Crescimento'],crescCambial)}
+        ${donutSection('Por Titular',CT_COLORS['Crescimento'],crescTitular)}
+        ${donutSection('Por Entidade',CT_COLORS['Crescimento'],crescEntidade)}
+      </div>
+    </div>
+  </div>`;
+}
+
+// Build entidade chips
+function buildEntidadeChips(){
+  const ents=[...new Set(RAW.map(r=>r.entidade).filter(Boolean))].sort();
+  const fg=document.getElementById('fg-entidade');
+  const allBtn=document.createElement('button');
+  allBtn.className='chip chip-all active';
+  allBtn.dataset.group='entidade';
+  allBtn.dataset.val='Todos';
+  allBtn.textContent='Todos';
+  fg.appendChild(allBtn);
+  ents.forEach(e=>{
+    const btn=document.createElement('button');
+    btn.className='chip chip-ent';
+    btn.dataset.group='entidade';
+    btn.dataset.val=e;
+    btn.textContent=e;
+    fg.appendChild(btn);
+  });
+}
+
+// Chip click handler
+document.addEventListener('click',e=>{
+  const chip=e.target.closest('.chip[data-group]');
+  if(!chip)return;
+  const group=chip.dataset.group;
+  const val=chip.dataset.val;
+
+  if(group==='perspectiva'){
+    document.querySelectorAll('[data-group="perspectiva"]').forEach(c=>c.classList.remove('active'));
+    chip.classList.add('active');
+    perfMode=val==='real'?'real':'nominal';
+    render();return;
+  }
+
+  const stateMap={titular:filterTitular,moeda:filterMoeda,entidade:filterEntidade};
+  const state=stateMap[group];
+  if(!state)return;
+
+  if(val==='Todos'){
+    state.length=0;state.push('Todos');
+  } else {
+    const todosIdx=state.indexOf('Todos');
+    if(todosIdx>-1)state.splice(todosIdx,1);
+    const idx=state.indexOf(val);
+    if(idx>-1)state.splice(idx,1);
+    else state.push(val);
+    if(state.length===0)state.push('Todos');
+  }
+
+  document.querySelectorAll(`[data-group="${group}"]`).forEach(c=>{
+    c.classList.remove('active');
+    if(state.includes(c.dataset.val))c.classList.add('active');
+  });
+  render();
+});
+
+// Sort buttons
+document.querySelectorAll('.sort-btn').forEach(btn=>{
+  btn.onclick=()=>{
+    document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    sortBy=btn.dataset.sort;
+    render();
+  };
+});
+
+// Positive filter
+document.getElementById('pos-btn').onclick=function(){
   onlyPositive=!onlyPositive;
-  document.getElementById('btn-pos').classList.toggle('active',onlyPositive);
-  const {assets}=agg(getFiltered());
-  renderTable(assets);
-}
+  this.classList.toggle('active',onlyPositive);
+  render();
+};
 
-function setTab(t){
-  activeTab=t;
-  const {assets}=agg(getFiltered());
-  renderTable(assets);
-}
+// Clear
+document.getElementById('btn-clear').onclick=()=>{
+  filterTitular=['Todos'];filterMoeda=['Todos'];filterEntidade=['Todos'];
+  perfMode='real';onlyPositive=false;sortBy='valor';activeTab='Todos';
+  document.querySelectorAll('.chip').forEach(c=>{
+    c.classList.remove('active');
+    if(c.dataset.val==='Todos')c.classList.add('active');
+  });
+  document.querySelector('[data-val="real"]').classList.add('active');
+  document.querySelectorAll('.sort-btn').forEach(b=>b.classList.remove('active'));
+  document.querySelector('.sort-btn[data-sort="valor"]').classList.add('active');
+  document.getElementById('pos-btn').classList.remove('active');
+  render();
+};
 
-function updateFilterCounter(count){
-  const parts=[];
-  if(!filterTitular.has('Todos')) parts.push([...filterTitular].join(', '));
-  if(!filterMoeda.has('Todos')) parts.push([...filterMoeda].join(', '));
-  if(!filterEntidade.has('Todos')) parts.push([...filterEntidade].join(', '));
-  document.getElementById('filter-counter').textContent = count+' ativos'+(parts.length?` · ${parts.join(' · ')}` : '');
-}
-
-// ============================================================
-// INIT
-// ============================================================
 buildEntidadeChips();
-renderAll();
+render();
 </script>
 </body>
 </html>
