@@ -1,0 +1,1291 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WTF — Container Proventos</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,wght@0,300;0,400;0,600;0,700;1,300&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#0f0f0f;--ink2:#2a2a2a;--ink3:#555;--ink4:#888;
+  --paper:#fafaf8;--paper2:#f3f2ef;--paper3:#eceae5;--rule:#dddbd5;
+  --up:#15803d;--up-bg:#dcfce7;
+  --dn:#b91c1c;--dn-bg:#fee2e2;
+  --warn:#92400e;--warn-bg:#fef3c7;
+  --prov:#5c3d9e;--prov-pale:#f0ecfb;
+  /* segment colors */
+  --fii:#1a7a58;--fii-pale:#e8f5f0;
+  --ac:#1a4f8a;--ac-pale:#e8f0fa;
+  --bdr:#7c3aed;--bdr-pale:#ede9fe;
+  --rfbr:#b45309;--rfbr-pale:#fef3c7;
+  --rfusd:#0e7490;--rfusd-pale:#ecfeff;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:var(--paper);font-family:'IBM Plex Sans',sans-serif;font-size:13px;color:var(--ink)}
+
+/* ── HEADER ── */
+#header{background:#0f0f0f;color:#fff;padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:300}
+.hdr-logo{font-family:'Fraunces',serif;font-size:17px}
+.hdr-sep{color:#444;margin:0 10px}
+.hdr-sub{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:2px;color:#888}
+.hdr-right{display:flex;gap:10px;align-items:center}
+.hdr-pill{font-family:'IBM Plex Mono',monospace;font-size:11px;background:#1a1a1a;border:1px solid #333;border-radius:20px;padding:4px 12px;color:#ccc}
+.hdr-total{font-family:'Fraunces',serif;font-size:15px;font-weight:700;color:#7dd3a8}
+
+/* ── NAV / ANCHORS ── */
+#nav{background:var(--paper2);border-bottom:2px solid var(--rule);padding:0 28px;display:flex;gap:0;position:sticky;top:52px;z-index:200;overflow-x:auto}
+.nav-item{font-family:'IBM Plex Mono',monospace;font-size:11px;text-transform:uppercase;letter-spacing:0.8px;padding:12px 18px;cursor:pointer;color:var(--ink4);border-bottom:2px solid transparent;margin-bottom:-2px;white-space:nowrap;text-decoration:none;display:block;transition:color 0.15s}
+.nav-item:hover{color:var(--ink2)}
+.nav-item.active{color:var(--prov);border-bottom-color:var(--prov)}
+
+/* ── MAIN ── */
+main{padding:28px 28px 60px;max-width:1500px;margin:0 auto}
+
+/* ── SECTION HEADER ── */
+.seg-header{display:flex;align-items:center;gap:14px;margin:36px 0 16px;padding-bottom:10px;border-bottom:2px solid var(--rule)}
+.seg-bar{width:5px;height:36px;border-radius:3px;flex-shrink:0}
+.seg-title{font-family:'Fraunces',serif;font-size:20px;font-weight:700}
+.seg-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink4)}
+.seg-ref{font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;padding:4px 10px;border-radius:12px}
+
+/* ── KPI ROWS ── */
+.kpi-row{display:grid;gap:12px;margin-bottom:16px}
+.kpi-row-4{grid-template-columns:repeat(4,1fr)}
+.kpi-row-5{grid-template-columns:repeat(5,1fr)}
+.kpi-row-6{grid-template-columns:repeat(6,1fr)}
+@media(max-width:1000px){.kpi-row-4,.kpi-row-5,.kpi-row-6{grid-template-columns:repeat(2,1fr)}}
+.kpi{background:white;border:1px solid var(--rule);border-radius:8px;padding:14px 16px}
+.kpi.star{border-width:2px;border-color:#86efac}
+.kpi-label{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--ink4);margin-bottom:5px}
+.kpi-val{font-family:'Fraunces',serif;font-size:21px;font-weight:700;line-height:1}
+.kpi-sub{font-family:'IBM Plex Mono',monospace;font-size:11px;color:var(--ink4);margin-top:3px}
+
+/* ── TABLES ── */
+.tbl-wrap{overflow-x:auto;margin-bottom:12px}
+table{width:100%;border-collapse:collapse;background:white;border:1px solid var(--rule);border-radius:8px;overflow:hidden}
+th{background:var(--paper2);font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:0.7px;padding:9px 11px;text-align:left;color:var(--ink3);border-bottom:1px solid var(--rule);white-space:nowrap}
+td{padding:8px 11px;border-bottom:1px solid var(--paper3);font-size:12px;vertical-align:middle}
+tfoot td{background:var(--paper2);font-weight:600;border-top:2px solid var(--rule)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:#fafaf8}
+.mono{font-family:'IBM Plex Mono',monospace}
+.tag{display:inline-block;font-size:10px;font-family:'IBM Plex Mono',monospace;padding:2px 7px;border-radius:10px;white-space:nowrap}
+.mb{font-family:'IBM Plex Mono',monospace;font-size:9px;padding:2px 7px;border-radius:8px;white-space:nowrap;display:inline-block;margin:1px 0}
+.mb-up{background:var(--up-bg);color:var(--up)}
+.mb-dn{background:var(--dn-bg);color:var(--dn)}
+.mb-warn{background:var(--warn-bg);color:var(--warn)}
+.mb-info{background:#eff6ff;color:#1e40af}
+
+/* ── CHARTS ── */
+.charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+@media(max-width:860px){.charts-grid{grid-template-columns:1fr}}
+.chart-panel{background:var(--paper2);border-radius:7px;padding:15px}
+.chart-panel.full{grid-column:1/-1}
+.chart-title{font-family:'IBM Plex Mono',monospace;font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--ink4);margin-bottom:12px}
+.br{display:flex;align-items:center;gap:7px;margin-bottom:7px}
+.bt{font-family:'IBM Plex Mono',monospace;font-size:10px;width:100px;color:var(--ink3);flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bt-sm{font-family:'IBM Plex Mono',monospace;font-size:10px;width:70px;color:var(--ink3);flex-shrink:0}
+.bo{flex:1;height:18px;background:#dddbd5;border-radius:3px;position:relative;overflow:hidden}
+.bi{height:100%;border-radius:3px;display:flex;align-items:center;justify-content:flex-end;padding-right:4px}
+.bl{font-family:'IBM Plex Mono',monospace;font-size:9px;color:white;white-space:nowrap}
+.rl{position:absolute;top:0;bottom:0;width:2px;background:#1e1e1e;z-index:2;border-radius:1px}
+.rl-warn{background:#f59e0b}
+.bn{font-family:'IBM Plex Mono',monospace;font-size:9px;min-width:55px}
+.legend-row{display:flex;gap:14px;flex-wrap:wrap;margin-top:8px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:#888}
+.legend-item{display:flex;align-items:center;gap:4px}
+.legend-line{width:14px;height:2px;border-radius:1px}
+
+/* ── OVERVIEW ── */
+.overview-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:24px}
+@media(max-width:860px){.overview-grid{grid-template-columns:1fr}}
+.overview-donut{background:white;border:1px solid var(--rule);border-radius:8px;padding:18px}
+.donut-title{font-family:'Fraunces',serif;font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--ink3);margin-bottom:12px}
+.donut-wrap{display:flex;align-items:center;gap:16px}
+.legend-list{display:flex;flex-direction:column;gap:5px;flex:1;min-width:0}
+.legend-li{display:flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',monospace;font-size:11px}
+.legend-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.legend-lbl{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:var(--ink3);flex:1}
+.legend-pct{font-weight:500;color:var(--ink2);flex-shrink:0}
+
+/* ── ALERTS ── */
+.alerts-wrap{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+@media(max-width:900px){.alerts-wrap{grid-template-columns:1fr 1fr}}
+.ac{border-radius:8px;padding:13px;border:1px solid}
+.ac-crit{background:var(--dn-bg);border-color:#fca5a5;color:var(--dn)}
+.ac-warn{background:var(--warn-bg);border-color:#fcd34d;color:var(--warn)}
+.ac-ok{background:var(--up-bg);border-color:#86efac;color:var(--up)}
+.ac-info{background:#eff6ff;border-color:#bfdbfe;color:#1e40af}
+.ac-type{font-family:'IBM Plex Mono',monospace;font-size:9px;text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:4px}
+.ac-title{font-size:13px;font-weight:600;margin-bottom:3px}
+.ac-desc{font-family:'IBM Plex Mono',monospace;font-size:11px;line-height:1.5;opacity:0.85;white-space:pre-line}
+
+.note{font-family:'IBM Plex Mono',monospace;font-size:10px;color:#888;line-height:1.7;margin-bottom:16px}
+.divider{height:1px;background:var(--rule);margin:28px 0}
+footer{text-align:center;padding:16px;font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink4);border-top:1px solid var(--rule)}
+</style>
+</head>
+<body>
+
+<div id="header">
+  <div style="display:flex;align-items:center">
+    <span class="hdr-logo">WTF Investments</span>
+    <span class="hdr-sep">|</span>
+    <span class="hdr-sub">Container Proventos — Visão Unificada</span>
+  </div>
+  <div class="hdr-right">
+    <span class="hdr-pill">Referência: IPCA+6% · Selic+0,5%/mês</span>
+    <span class="hdr-pill" id="date-pill"></span>
+    <span class="hdr-total" id="total-pill"></span>
+  </div>
+</div>
+
+<div id="nav">
+  <a class="nav-item" href="#overview">📦 Visão Geral</a>
+  <a class="nav-item" href="#fiis">🏢 FIIs BR</a>
+  <a class="nav-item" href="#acoes">📈 Ações BR</a>
+  <a class="nav-item" href="#bdrs">🌎 BDRs</a>
+  <a class="nav-item" href="#rfbr">🇧🇷 RF BR (IPCA+)</a>
+  <a class="nav-item" href="#rfusd">🇺🇸 RF USD (Bonds)</a>
+  <a class="nav-item" href="#fgts">💼 FGTS</a>
+  <a class="nav-item" href="#rfbr-caixa">🏦 RF BR Caixa</a>
+  <a class="nav-item" href="#rfusd-caixa">💵 RF USD Caixa</a>
+  <a class="nav-item" href="#alertas">⚠️ Alertas</a>
+</div>
+
+<main>
+
+<!-- ══════════════════════════════════════════════════
+     SEÇÃO 0 — VISÃO GERAL DO CONTAINER
+════════════════════════════════════════════════════ -->
+<div id="overview">
+  <div class="seg-header" style="margin-top:0">
+    <div class="seg-bar" style="background:var(--prov)"></div>
+    <div>
+      <div class="seg-title">Visão Geral — Container Proventos</div>
+      <div class="seg-sub">Todos os segmentos · Benchmark: Selic + 0,5%/mês ≈ 21% a.a.</div>
+    </div>
+  </div>
+  <div class="kpi-row kpi-row-4" id="ov-kpis-row1"></div>
+  <div class="kpi-row kpi-row-4" id="ov-kpis-row2" style="margin-top:0"></div>
+  <div class="overview-grid">
+    <div class="overview-donut">
+      <div class="donut-title">Composição por Segmento</div>
+      <div class="donut-wrap">
+        <svg id="donut-seg" width="120" height="120" viewBox="0 0 100 100"></svg>
+        <div class="legend-list" id="legend-seg"></div>
+      </div>
+    </div>
+    <div class="overview-donut">
+      <div class="donut-title">Exposição Cambial</div>
+      <div class="donut-wrap">
+        <svg id="donut-fx" width="120" height="120" viewBox="0 0 100 100"></svg>
+        <div class="legend-list" id="legend-fx"></div>
+      </div>
+    </div>
+  </div>
+  <!-- Overview performance bars -->
+  <div class="charts-grid">
+    <div class="chart-panel">
+      <div class="chart-title">Performance Anual Real por Segmento (vs IPCA+6% = 10,14%)</div>
+      <div id="ov-perf-bars"></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">★ Renda Anual Estimada por Segmento</div>
+      <div id="ov-renda-bars"></div>
+      <div style="font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;color:var(--up);margin-top:10px;padding-top:8px;border-top:1px solid var(--rule)" id="ov-renda-total"></div>
+    </div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════
+     SEÇÃO 1 — FIIs BR
+════════════════════════════════════════════════════ -->
+<div id="fiis">
+  <div class="seg-header">
+    <div class="seg-bar" style="background:var(--fii)"></div>
+    <div>
+      <div class="seg-title" style="color:var(--fii)">FIIs Brasileiros</div>
+      <div class="seg-sub">Fundos de Investimento Imobiliário · Renda via dividendos mensais isentos de IR</div>
+    </div>
+    <span class="seg-ref" style="background:var(--fii-pale);color:var(--fii)">Ref por cat.: PAPEL CDI · TIJOLO 8% · FOF 10%</span>
+  </div>
+  <div class="kpi-row kpi-row-5" id="fii-kpis"></div>
+  <div class="charts-grid">
+    <div class="chart-panel">
+      <div class="chart-title">DY 12M por FII (vs referência da categoria)</div>
+      <div id="fii-dy-bars"></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">P/VP atual (linha = 1,0x)</div>
+      <div id="fii-pvp-bars"></div>
+    </div>
+  </div>
+  <div class="chart-panel full" style="background:var(--paper2);border-radius:7px;padding:15px;margin-bottom:14px">
+    <div class="chart-title">★ Dividendo Real Recebido 12M por FII (cotas × div/cota)</div>
+    <div id="fii-div-bars"></div>
+    <div style="font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;color:var(--up);margin-top:10px;padding-top:8px;border-top:1px solid var(--rule)" id="fii-div-total"></div>
+  </div>
+  <div class="tbl-wrap"><table id="fii-table"><thead><tr>
+    <th>Ticker</th><th>Titular</th><th>Cat.</th><th>Cotas</th><th>Cotação¹</th><th>Valor</th>
+    <th>Últ.Div.²</th><th>Div 12M²</th><th>★ Div Rec.12M</th><th>DY²</th><th>P/VP²</th><th>Ref.</th><th>vs Ref.</th>
+  </tr></thead><tbody id="fii-tbody"></tbody><tfoot id="fii-tfoot"></tfoot></table></div>
+  <div class="note">¹ Cotação = Reais ÷ Quotas (planilha). &nbsp;&nbsp;² DY, P/VP, dividendos: web (StatusInvest/Investidor10/FundsExplorer, mai/2026).</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════
+     SEÇÃO 2 — AÇÕES BR RENDA
+════════════════════════════════════════════════════ -->
+<div id="acoes">
+  <div class="seg-header">
+    <div class="seg-bar" style="background:var(--ac)"></div>
+    <div>
+      <div class="seg-title" style="color:var(--ac)">Ações Brasileiras — Renda</div>
+      <div class="seg-sub">Container Proventos · Dois eixos independentes de avaliação</div>
+    </div>
+    <span class="seg-ref" style="background:var(--ac-pale);color:var(--ac)">Eixo 1: Cota &gt; IPCA 4,14% · Eixo 2: DY ≥ 6%</span>
+  </div>
+  <div class="kpi-row kpi-row-5" id="ac-kpis"></div>
+  <div class="charts-grid">
+    <div class="chart-panel">
+      <div class="chart-title">Eixo 1 — Var. Anual da Cota vs IPCA 4,14%</div>
+      <div id="ac-var-bars"></div>
+      <div class="legend-row"><div class="legend-item"><div class="legend-line" style="background:#1e1e1e"></div>Zero</div><div class="legend-item"><div class="legend-line rl-warn" style="background:#f59e0b;height:2px;width:14px;border-radius:1px"></div>IPCA</div></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">Eixo 2 — DY 12M vs Referência 6%</div>
+      <div id="ac-dy-bars"></div>
+    </div>
+  </div>
+  <div class="chart-panel full" style="background:var(--paper2);border-radius:7px;padding:15px;margin-bottom:14px">
+    <div class="chart-title">★ Dividendo Real Recebido 12M por Ação (cotas × div/cota)</div>
+    <div id="ac-div-bars"></div>
+    <div style="font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;color:var(--up);margin-top:10px;padding-top:8px;border-top:1px solid var(--rule)" id="ac-div-total"></div>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr>
+    <th>Ticker</th><th>Tipo</th><th>Setor</th><th>Titular</th><th>Cotas</th>
+    <th>Cotação¹</th><th>Var.Ano¹</th><th>Eixo 1</th>
+    <th>Últ.Div.²</th><th>Div 12M²</th><th>★ Div Rec.12M</th><th>DY²</th><th>Eixo 2</th><th>P/L²</th><th>Status</th>
+  </tr></thead><tbody id="ac-tbody"></tbody><tfoot id="ac-tfoot"></tfoot></table></div>
+  <div class="note">¹ Cotação e var. anual: planilha (Reais÷Quotas · campo ANO). &nbsp;&nbsp;² Div., DY, P/L: web (StatusInvest/Investidor10, mai/2026).</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════
+     SEÇÃO 3 — BDRs
+════════════════════════════════════════════════════ -->
+<div id="bdrs">
+  <div class="seg-header">
+    <div class="seg-bar" style="background:var(--bdr)"></div>
+    <div>
+      <div class="seg-title" style="color:var(--bdr)">BDRs — Brazilian Depositary Receipts</div>
+      <div class="seg-sub">Ativos internacionais negociados em BRL na B3 · Exposição cambial embutida</div>
+    </div>
+    <span class="seg-ref" style="background:var(--bdr-pale);color:var(--bdr)">Eixo 1: Cota &gt; IPCA · Eixo 2: DY ≥ 6%</span>
+  </div>
+  <div class="kpi-row kpi-row-5" id="bdr-kpis"></div>
+  <div class="charts-grid">
+    <div class="chart-panel">
+      <div class="chart-title">Eixo 1 — Var. Anual vs IPCA 4,14%</div>
+      <div id="bdr-var-bars"></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">Eixo 2 — DY 12M vs 6%</div>
+      <div id="bdr-dy-bars"></div>
+    </div>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr>
+    <th>Ticker</th><th>Tipo</th><th>Titular</th><th>Cotas</th>
+    <th>Cotação¹</th><th>Var.Ano¹</th><th>Eixo 1</th>
+    <th>Últ.Div.²</th><th>Div 12M²</th><th>★ Div Rec.12M</th><th>DY²</th><th>Eixo 2</th><th>Status</th>
+  </tr></thead><tbody id="bdr-tbody"></tbody><tfoot id="bdr-tfoot"></tfoot></table></div>
+  <div class="note">¹ Cotação: planilha. &nbsp;&nbsp;² Dividendos: web (mai/2026).</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════
+     SEÇÃO 4 — RF BR (IPCA+)
+════════════════════════════════════════════════════ -->
+<div id="rfbr">
+  <div class="seg-header">
+    <div class="seg-bar" style="background:var(--rfbr)"></div>
+    <div>
+      <div class="seg-title" style="color:var(--rfbr)">Renda Fixa BR — IPCA+</div>
+      <div class="seg-sub">Tesouro IPCA+, CRI, CRA · Juros incorporados na cota (não distribuídos)</div>
+    </div>
+    <span class="seg-ref" style="background:var(--rfbr-pale);color:var(--rfbr)">Ref: IPCA + 6% a.a. = 10,14%</span>
+  </div>
+  <div class="kpi-row kpi-row-4" id="rfbr-kpis"></div>
+  <div class="charts-grid">
+    <div class="chart-panel">
+      <div class="chart-title">Rendimento Anual Nominal vs Referência IPCA+6% (10,14%)</div>
+      <div id="rfbr-ano-bars"></div>
+      <div class="legend-row"><div class="legend-item"><div class="legend-line" style="background:#1e1e1e"></div>Ref 10,14%</div></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">Rendimento Anual Real (descontado inflação)</div>
+      <div id="rfbr-real-bars"></div>
+      <div class="legend-row"><div class="legend-item"><div class="legend-line" style="background:#1e1e1e"></div>Zero</div></div>
+    </div>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr>
+    <th>Ticker</th><th>Tipo</th><th>Titular</th><th>Valor Atual¹</th>
+    <th>Var. Mês¹</th><th>Var. Ano Nom.¹</th><th>Var. Ano Real¹</th>
+    <th>vs Ref (10,14%)</th><th>Status</th>
+  </tr></thead><tbody id="rfbr-tbody"></tbody><tfoot id="rfbr-tfoot"></tfoot></table></div>
+  <div class="note">¹ Todos os dados de RF BR vêm da planilha WTF_Inventory.xlsx. Sem busca web.<br>
+  Nota: CRI/CRA incorporam juros na cota. Variação anual = rendimento do período, não distribuição.<br>
+  Tesouro IPCA+ 2040 apresenta variação elevada refletindo marcação a mercado (duration longa).</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════
+     SEÇÃO 5 — RF USD (BONDS)
+════════════════════════════════════════════════════ -->
+<div id="rfusd">
+  <div class="seg-header">
+    <div class="seg-bar" style="background:var(--rfusd)"></div>
+    <div>
+      <div class="seg-title" style="color:var(--rfusd)">Renda Fixa USD — Bonds</div>
+      <div class="seg-sub">Bonds corporativos e soberano · Cupom semestral depositado em conta Avenue</div>
+    </div>
+    <span class="seg-ref" style="background:var(--rfusd-pale);color:var(--rfusd)">Ref: IPCA+6% = 10,14% (concorrência BR)</span>
+  </div>
+  <!-- Nota conceitual -->
+  <div style="background:var(--rfusd-pale);border:1px solid #a5f3fc;border-radius:8px;padding:14px;margin-bottom:16px;font-family:IBM Plex Mono,monospace;font-size:11px;color:#0e7490;line-height:1.7">
+    <strong>Como ler este painel:</strong> Cada bond possui dois indicadores independentes.<br>
+    <strong>Cupom contratado</strong> = taxa de juros fixa paga semestralmente sobre o valor de face (USD 1.000/bond) — esta é a renda real gerada.<br>
+    <strong>Var. Anual (planilha)</strong> = marcação a mercado do preço do bond, que oscila com juros US e câmbio — não representa a renda recebida.<br>
+    A comparação com IPCA+6% usa o <strong>cupom contratado</strong> como proxy da renda, não a variação de preço.
+  </div>
+  <div class="kpi-row kpi-row-5" id="rfusd-kpis"></div>
+  <div class="charts-grid">
+    <div class="chart-panel">
+      <div class="chart-title">Cupom Contratado vs Referência IPCA+6% (10,14%)</div>
+      <div id="rfusd-cupom-bars"></div>
+      <div class="legend-row"><div class="legend-item"><div class="legend-line" style="background:#1e1e1e"></div>Ref 10,14%</div></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">Variação Anual do Preço (marcação a mercado)</div>
+      <div id="rfusd-var-bars"></div>
+      <div class="legend-row"><div class="legend-item"><div class="legend-line" style="background:#1e1e1e"></div>Zero</div></div>
+    </div>
+  </div>
+  <div class="chart-panel full" style="background:var(--paper2);border-radius:7px;padding:15px;margin-bottom:14px">
+    <div class="chart-title">★ Cupom Anual Estimado por Bond (bonds × USD 1.000 × taxa de cupom)</div>
+    <div id="rfusd-renda-bars"></div>
+    <div style="font-family:IBM Plex Mono,monospace;font-size:11px;font-weight:600;color:var(--rfusd);margin-top:10px;padding-top:8px;border-top:1px solid var(--rule)" id="rfusd-renda-total"></div>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr>
+    <th>Ticker</th><th>Emissor</th><th>Titular</th><th>Bonds</th><th>Valor BRL¹</th>
+    <th>Cupom%</th><th>Cupom Anual (USD)</th><th>vs Ref (10,14%)</th>
+    <th>Var.Preço Ano¹</th><th>Var.Real Ano¹</th><th>Status Renda</th>
+  </tr></thead><tbody id="rfusd-tbody"></tbody><tfoot id="rfusd-tfoot"></tfoot></table></div>
+  <div class="note">¹ Valor BRL e variações: planilha WTF_Inventory.xlsx. Sem busca web para preços.<br>
+  Cupom (%): taxa contratada do bond, identificada pelo ticker ou pesquisa CBonds (mai/2026).<br>
+  Cupom Anual (USD) = nº de bonds × USD 1.000 × taxa de cupom. Pagamento semestral na Avenue.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════
+     SEÇÃO 6 — FGTS
+════════════════════════════════════════════════════ -->
+<div id="fgts">
+  <div class="seg-header">
+    <div class="seg-bar" style="background:#7c3aed"></div>
+    <div>
+      <div class="seg-title" style="color:#7c3aed">FGTS</div>
+      <div class="seg-sub">Fundo de Garantia · Rendimento incorporado ao saldo · Sem distribuição periódica</div>
+    </div>
+    <span class="seg-ref" style="background:#ede9fe;color:#7c3aed">Ref: IPCA + 6% = 10,14%</span>
+  </div>
+  <div style="background:#ede9fe;border:1px solid #c4b5fd;border-radius:8px;padding:14px;margin-bottom:16px;font-family:IBM Plex Mono,monospace;font-size:11px;color:#7c3aed;line-height:1.7">
+    <strong>Como ler este painel:</strong> O FGTS rende 3% a.a. + TR (taxa referencial) sobre o saldo principal.<br>
+    O "Fundo Priv FGTS" (XP) pode ter rendimento adicional via fundo de investimento em FGTS.<br>
+    A variação exibida vem da planilha (campo ANO), comparada com a referência IPCA+6% = 10,14%.
+  </div>
+  <div class="kpi-row kpi-row-4" id="fgts-kpis"></div>
+  <div class="charts-grid">
+    <div class="chart-panel">
+      <div class="chart-title">Rendimento Anual Nominal vs Referência 10,14%</div>
+      <div id="fgts-ano-bars"></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">Rendimento Anual Real (descontado inflação)</div>
+      <div id="fgts-real-bars"></div>
+    </div>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr>
+    <th>Ticker</th><th>Tipo</th><th>Titular</th><th>Valor Atual¹</th>
+    <th>Var. Mês¹</th><th>Var. Ano Nom.¹</th><th>Var. Ano Real¹</th>
+    <th>vs Ref (10,14%)</th><th>Status</th>
+  </tr></thead><tbody id="fgts-tbody"></tbody><tfoot id="fgts-tfoot"></tfoot></table></div>
+  <div class="note">¹ Todos os dados de FGTS vêm da planilha WTF_Inventory.xlsx. Sem busca web.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════
+     SEÇÃO 7 — RF BR CAIXA (SELIC)
+════════════════════════════════════════════════════ -->
+<div id="rfbr-caixa">
+  <div class="seg-header">
+    <div class="seg-bar" style="background:#0369a1"></div>
+    <div>
+      <div class="seg-title" style="color:#0369a1">RF BR — Caixa (Selic)</div>
+      <div class="seg-sub">Tesouro Selic, Fundos DI, Liquidez imediata · Rendimento diário incorporado</div>
+    </div>
+    <span class="seg-ref" style="background:#e0f2fe;color:#0369a1">Ref: IPCA + 6% = 10,14%</span>
+  </div>
+  <div style="background:#e0f2fe;border:1px solid #7dd3fc;border-radius:8px;padding:14px;margin-bottom:16px;font-family:IBM Plex Mono,monospace;font-size:11px;color:#0369a1;line-height:1.7">
+    <strong>Função estratégica:</strong> Reserva de liquidez do container Proventos.<br>
+    Rendimento atrelado à Selic (14,5% a.a.) — abaixo do benchmark IPCA+6% é esperado e aceitável,<br>
+    pois a função primária é liquidez imediata, não maximização de retorno.
+  </div>
+  <div class="kpi-row kpi-row-4" id="rfbrc-kpis"></div>
+  <div class="charts-grid">
+    <div class="chart-panel">
+      <div class="chart-title">Rendimento Anual Nominal vs Referência 10,14%</div>
+      <div id="rfbrc-ano-bars"></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">Rendimento Anual Real (descontado inflação)</div>
+      <div id="rfbrc-real-bars"></div>
+    </div>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr>
+    <th>Ticker</th><th>Tipo</th><th>Titular</th><th>Valor Atual¹</th>
+    <th>Var. Mês¹</th><th>Var. Ano Nom.¹</th><th>Var. Ano Real¹</th>
+    <th>vs Ref (10,14%)</th><th>Status</th>
+  </tr></thead><tbody id="rfbrc-tbody"></tbody><tfoot id="rfbrc-tfoot"></tfoot></table></div>
+  <div class="note">¹ Todos os dados vêm da planilha WTF_Inventory.xlsx. Sem busca web.</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════
+     SEÇÃO 8 — RF USD CAIXA (MONEY MARKET)
+════════════════════════════════════════════════════ -->
+<div id="rfusd-caixa">
+  <div class="seg-header">
+    <div class="seg-bar" style="background:#0f766e"></div>
+    <div>
+      <div class="seg-title" style="color:#0f766e">RF USD — Caixa (Money Market)</div>
+      <div class="seg-sub">JPMorgan MM · Saldos Avenue · Reserva de liquidez em dólar</div>
+    </div>
+    <span class="seg-ref" style="background:#ccfbf1;color:#0f766e">Ref: IPCA + 6% = 10,14% (concorrência BR)</span>
+  </div>
+  <div style="background:#ccfbf1;border:1px solid #5eead4;border-radius:8px;padding:14px;margin-bottom:16px;font-family:IBM Plex Mono,monospace;font-size:11px;color:#0f766e;line-height:1.7">
+    <strong>Como ler:</strong> Variação negativa em BRL reflete apreciação do Real vs Dólar no período, não perda de yield em USD.<br>
+    O JPM Money Market rende ~5% a.a. em USD — sólido em dólar, mas o câmbio penaliza a conversão BRL.<br>
+    <strong>Anomalia:</strong> "Saldo Avenue E" exibe variação de +713% — erro de base de cálculo na planilha. Excluído das médias.
+  </div>
+  <div class="kpi-row kpi-row-4" id="rfusdc-kpis"></div>
+  <div class="charts-grid">
+    <div class="chart-panel">
+      <div class="chart-title">Variação Anual em BRL (impacto cambial incluído)</div>
+      <div id="rfusdc-ano-bars"></div>
+      <div class="legend-row"><div class="legend-item"><div class="legend-line" style="background:#1e1e1e"></div>Zero</div></div>
+    </div>
+    <div class="chart-panel">
+      <div class="chart-title">Variação Anual Real em BRL</div>
+      <div id="rfusdc-real-bars"></div>
+      <div class="legend-row"><div class="legend-item"><div class="legend-line" style="background:#1e1e1e"></div>Zero</div></div>
+    </div>
+  </div>
+  <div class="tbl-wrap"><table><thead><tr>
+    <th>Ticker</th><th>Tipo</th><th>Titular</th><th>Valor BRL¹</th>
+    <th>Var. Mês¹</th><th>Var. Ano BRL¹</th><th>Var. Real BRL¹</th>
+    <th>Obs.</th>
+  </tr></thead><tbody id="rfusdc-tbody"></tbody></table></div>
+  <div class="note">¹ Todos os dados vêm da planilha WTF_Inventory.xlsx. Variação negativa em BRL = efeito cambial (Real apreciou vs USD).</div>
+</div>
+
+<div class="divider"></div>
+
+<!-- ══════════════════════════════════════════════════
+     ALERTAS CONSOLIDADOS
+════════════════════════════════════════════════════ -->
+<div id="alertas">
+  <div class="seg-header">
+    <div class="seg-bar" style="background:#b91c1c"></div>
+    <div>
+      <div class="seg-title">Alertas CIO — Container Proventos</div>
+      <div class="seg-sub">Análise consolidada de todos os segmentos</div>
+    </div>
+  </div>
+  <div class="alerts-wrap" id="alerts-wrap"></div>
+</div>
+
+</main>
+<footer>WTF Investments · Container Proventos · Gerado em <span id="footer-date"></span>
+· Cotações: WTF_Inventory.xlsx · Dividendos FII/Ações/BDR: StatusInvest/Investidor10 · Cupons Bonds: CBonds/BondbloX
+· IPCA 12M: 4,14% · Selic: 14,5% · Ref. Unificada: IPCA+6% = 10,14%</footer>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// DADOS — todos da planilha + web onde indicado
+// ═══════════════════════════════════════════════════════════════
+
+const IPCA = 4.14, REF_DIV = 6.0, REF = 10.14;
+
+// ── FIIs ──────────────────────────────────────────────────────
+const FIIS = [
+  {ticker:'VISC11',titular:'Giovani',quotas:220, valor:24096.6, cotacao:109.53,cat:'TIJOLO',ref:8.0, ultimo_div:0.84,div12m:9.79, dy:8.97, pvp:0.94},
+  {ticker:'PMLL11',titular:'Ellen',  quotas:210, valor:22623.3, cotacao:107.73,cat:'TIJOLO',ref:8.0, ultimo_div:1.00,div12m:9.58, dy:11.1, pvp:0.96},
+  {ticker:'RBRX11',titular:'E+B',    quotas:5000,valor:43800.0, cotacao:8.76,  cat:'FOF',   ref:10.0,ultimo_div:0.09,div12m:0.95, dy:10.85,pvp:0.98},
+  {ticker:'JSRE11',titular:'Ellen',  quotas:400, valor:24540.0, cotacao:61.35, cat:'TIJOLO',ref:8.0, ultimo_div:0.48,div12m:5.76, dy:9.22, pvp:0.61},
+  {ticker:'HGRU11',titular:'Ellen',  quotas:200, valor:25920.0, cotacao:129.60,cat:'TIJOLO',ref:8.0, ultimo_div:0.95,div12m:12.44,dy:9.48, pvp:1.02},
+  {ticker:'RVBI11',titular:'Bryan',  quotas:100, valor:5795.0,  cotacao:57.95, cat:'FOF',   ref:10.0,ultimo_div:0.37,div12m:4.32, dy:7.46, pvp:0.91},
+  {ticker:'HSML11',titular:'Giovani',quotas:363, valor:32815.2, cotacao:90.40, cat:'TIJOLO',ref:8.0, ultimo_div:0.71,div12m:7.82, dy:9.16, pvp:0.89},
+  {ticker:'VGIR11',titular:'Ellen',  quotas:3000,valor:29550.0, cotacao:9.85,  cat:'PAPEL', ref:14.5,ultimo_div:0.13,div12m:1.53, dy:15.52,pvp:1.01},
+  {ticker:'HSLG11',titular:'Ellen',  quotas:400, valor:36672.0, cotacao:91.68, cat:'TIJOLO',ref:8.0, ultimo_div:0.72,div12m:7.56, dy:8.13, pvp:0.92},
+];
+
+// ── AÇÕES BR ──────────────────────────────────────────────────
+const ACOES = [
+  {ticker:'ISAE4', tipo:'AÇÃO BR',  setor:'Energia Elét.',   titular:'E+B', quotas:3200, valor:96256, cotacao:30.08,var_ano:6.24,  ultimo_div:0.42,div12m:3.04,dy:6.09, pl:18.5},
+  {ticker:'BBSE3', tipo:'AÇÃO BR',  setor:'Seguros',         titular:'Ellen',quotas:2100,valor:72030, cotacao:34.30,var_ano:2.22,  ultimo_div:2.61,div12m:4.57,dy:13.26,pl:8.9},
+  {ticker:'TAEE11',tipo:'BR (Unit)',setor:'Transmissão',      titular:'Giovani',quotas:2100,valor:87087,cotacao:41.47,var_ano:0.57,  ultimo_div:0.94,div12m:3.79,dy:9.26, pl:11.2},
+  {ticker:'EGIE3', tipo:'AÇÃO BR',  setor:'Energia Elét.',   titular:'Ellen',quotas:2500,valor:84125, cotacao:33.65,var_ano:12.68, ultimo_div:3.61,div12m:3.61,dy:10.75,pl:15.3},
+  {ticker:'FESA4', tipo:'AÇÃO BR',  setor:'Metalurgia',      titular:'Giovani',quotas:6000,valor:43620,cotacao:7.27, var_ano:-3.71, ultimo_div:0.12,div12m:0.58,dy:7.98, pl:4.2},
+  {ticker:'KLBN3', tipo:'AÇÃO BR',  setor:'Papel & Cel.',    titular:'Ellen',quotas:20000,valor:68600,cotacao:3.43, var_ano:-11.25,ultimo_div:0.08,div12m:0.32,dy:9.33, pl:22.1},
+];
+
+// ── BDRs ──────────────────────────────────────────────────────
+const BDRS = [
+  {ticker:'AURA33',tipo:'BDR',    titular:'Ellen',    quotas:3000,valor:393480,cotacao:131.16,var_ano:53.80,  ultimo_div:1.71,div12m:3.56,dy:4.78, pl:null},
+  {ticker:'SPYI11',tipo:'BDR/ETF',titular:'G+B',      quotas:1100,valor:113729,cotacao:103.39,var_ano:-7.07,  ultimo_div:0.93,div12m:11.16,dy:10.79,pl:null},
+];
+
+// ── RF BR (IPCA+) ─────────────────────────────────────────────
+const RFBR = [
+  {ticker:'Tes.IPCA+2029',  tipo:'Tesouro',titular:'Giovani',valor:21387.47, mes:0.0,    ano:4.844,  ano_real:2.414},
+  {ticker:'Tes.IPCA+2032',  tipo:'Tesouro',titular:'Giovani',valor:32574.88, mes:0.0,    ano:14.715, ano_real:12.285},
+  {ticker:'Tes.IPCA+2040',  tipo:'Tesouro',titular:'Ellen',  valor:134820.28,mes:0.0,    ano:33.027, ano_real:30.597},
+  {ticker:'Tes.IPCA+2040 B',tipo:'Tesouro',titular:'Bryan',  valor:3601.24,  mes:0.0,    ano:4.207,  ano_real:1.777},
+  {ticker:'CRI BELENUS',    tipo:'CRI',    titular:'Ellen',  valor:15719.15, mes:0.0,    ano:3.557,  ano_real:1.127},
+  {ticker:'CRA PLANAGRI',   tipo:'CRA',    titular:'Ellen',  valor:7677.38,  mes:0.0,    ano:7.256,  ano_real:4.826},
+  {ticker:'CRA FS Bioen.',  tipo:'CRA',    titular:'Ellen',  valor:25303.38, mes:0.0,    ano:2.032,  ano_real:-0.399},
+];
+
+// ── RF USD (BONDS) ────────────────────────────────────────────
+// cupom = taxa contratada (% a.a. sobre valor de face USD 1.000)
+// var_ano = variação de preço na planilha (marcação a mercado)
+const BONDS = [
+  {ticker:'AMBIBZ',       emissor:'AB InBev',    titular:'Giovani',bonds:8, valor:6073.59,  cupom:5.375,var_ano:-22.47},
+  {ticker:'MOVIBZ 5.25',  emissor:'Movida',      titular:'Giovani',bonds:11,valor:47652.10, cupom:5.25, var_ano:-10.71},
+  {ticker:'BRASKM 8',     emissor:'Braskem',     titular:'Giovani',bonds:9, valor:25395.23, cupom:8.00, var_ano:35.48},
+  {ticker:'CLOPAR',       emissor:'Copel',       titular:'Giovani',bonds:8, valor:39031.83, cupom:5.75, var_ano:-9.66},
+  {ticker:'RRRPBZ 9.75',  emissor:'3R Petrol.',  titular:'Giovani',bonds:6, valor:31733.39, cupom:9.75, var_ano:-6.18},
+  {ticker:'BRASKM 4.5',   emissor:'Braskem',     titular:'Giovani',bonds:7, valor:20139.72, cupom:4.50, var_ano:38.14},
+  {ticker:'SIMHBZ',       emissor:'Simpar',      titular:'Giovani',bonds:7, valor:30472.03, cupom:5.875,var_ano:-1.66},
+  {ticker:'PRIOBZ',       emissor:'Prio',        titular:'Giovani',bonds:5, valor:25073.15, cupom:7.375,var_ano:-9.10},
+  {ticker:'CSNABZ 6.75',  emissor:'CSN',         titular:'Giovani',bonds:5, valor:21305.98, cupom:6.75, var_ano:-16.01},
+  {ticker:'AEGEBZ',       emissor:'Aegea',       titular:'Giovani',bonds:5, valor:21463.84, cupom:6.75, var_ano:-23.13},
+  {ticker:'MRFGBZ',       emissor:'Marfrig',     titular:'Giovani',bonds:5, valor:25043.34, cupom:8.00, var_ano:-6.09},
+  {ticker:'ECOPET',       emissor:'Ecopetrol',   titular:'Giovani',bonds:5, valor:24660.07, cupom:6.875,var_ano:-12.64},
+  {ticker:'BRFSBZ',       emissor:'BRF',         titular:'Giovani',bonds:5, valor:24503.04, cupom:5.75, var_ano:-12.43},
+  {ticker:'ELEBRA',       emissor:'Eletrobras',  titular:'Giovani',bonds:5, valor:23889.02, cupom:6.75, var_ano:-9.78},
+  {ticker:'RDEDOR',       emissor:"Rede D'Or",   titular:'Giovani',bonds:5, valor:23622.20, cupom:4.50, var_ano:-11.30},
+  {ticker:'MOVIBZ 7.85 G',emissor:'Movida',      titular:'Giovani',bonds:3, valor:14736.98, cupom:7.85, var_ano:1.25},
+  {ticker:'BRAZIL 6.125', emissor:'Brasil Gov',  titular:'Giovani',bonds:6, valor:30042.74, cupom:6.125,var_ano:13.69},
+  {ticker:'AMBIBZ-E',     emissor:'AB InBev',    titular:'Ellen',  bonds:11,valor:8351.19,  cupom:5.375,var_ano:-22.47},
+  {ticker:'MOVIBZ 7.85 E',emissor:'Movida',      titular:'Ellen',  bonds:10,valor:49123.26, cupom:7.85, var_ano:-3.61},
+  {ticker:'CSNABZ 8.875', emissor:'CSN',         titular:'Ellen',  bonds:7, valor:28977.07, cupom:8.875,var_ano:-19.48},
+  {ticker:'RRRPBZ-E',     emissor:'3R Petrol.',  titular:'Ellen',  bonds:5, valor:26444.49, cupom:9.75, var_ano:-10.21},
+  {ticker:'BRASKM 4.5-E', emissor:'Braskem',     titular:'Ellen',  bonds:5, valor:14385.52, cupom:4.50, var_ano:30.89},
+  {ticker:'BRASKM 4.5 28',emissor:'Braskem',     titular:'Ellen',  bonds:5, valor:15127.10, cupom:4.50, var_ano:37.64},
+];
+
+// ═══════════════════════════════════════════════════════════════
+// HELPERS
+// ═══════════════════════════════════════════════════════════════
+const fmtBRL  = v => 'R$ '+v.toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2});
+const fmtBRL0 = v => 'R$ '+Math.round(v).toLocaleString('pt-BR');
+const fmtUSD0 = v => 'US$ '+Math.round(v).toLocaleString('pt-BR');
+const fmtPct  = (v,d=1) => (v>=0?'+':'')+v.toFixed(d)+'%';
+const upDn    = v => v>=0?'var(--up)':'var(--dn)';
+
+function barH(bt, btClass, v, maxV, col, refPct, note, isDiv=false) {
+  const w = Math.min(Math.abs(v)/maxV*100,100);
+  const isNeg = v < 0 && !isDiv;
+  const cls = btClass||'bt';
+  const refDiv = refPct!=null ? '<div class="rl" style="left:'+refPct+'%"></div>' : '';
+  const refDivYellow = refPct!=null ? '<div class="rl" style="left:'+refPct+'%;background:#f59e0b"></div>' : '';
+  if(isNeg){
+    return '<div class="br"><div class="'+cls+'">'+bt+'</div>'
+      +'<div class="bo" style="overflow:visible">'
+      +'<div style="position:absolute;right:50%;width:'+(w/2)+'%;height:100%;background:'+col+';border-radius:3px 0 0 3px"></div>'
+      +'<div class="rl" style="left:50%"></div>'
+      +refDivYellow
+      +'<span style="position:absolute;font-family:IBM Plex Mono,monospace;font-size:9px;color:'+col+';right:calc(50% + '+(w/2)+'% + 3px);top:50%;transform:translateY(-50%);white-space:nowrap">'+fmtPct(v)+'</span>'
+      +'</div>'
+      +'<div class="bn" style="color:'+col+'">'+note+'</div></div>';
+  }
+  const lbl = isDiv ? fmtBRL0(v) : fmtPct(v);
+  return '<div class="br"><div class="'+cls+'">'+bt+'</div>'
+    +'<div class="bo">'
+    +'<div class="bi" style="width:'+w+'%;background:'+col+'"><span class="bl">'+lbl+'</span></div>'
+    +refDiv
+    +'</div>'
+    +'<div class="bn" style="color:'+col+'">'+note+'</div></div>';
+}
+
+function donutSVG(svgId, segments){
+  const total = segments.reduce((s,x)=>s+x.v,0)||1;
+  const r=36,cx=50,cy=50,sw=14;
+  let angle=-Math.PI/2, paths='';
+  segments.forEach(seg=>{
+    const frac=seg.v/total, a=frac*2*Math.PI;
+    if(frac<0.005) return;
+    const x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle);
+    angle+=a;
+    const x2=cx+r*Math.cos(angle),y2=cy+r*Math.sin(angle);
+    const large=a>Math.PI?1:0;
+    paths+=`<path d="M${x1} ${y1} A${r} ${r} 0 ${large} 1 ${x2} ${y2}" fill="none" stroke="${seg.color}" stroke-width="${sw}" stroke-linecap="butt"/>`;
+  });
+  document.getElementById(svgId).innerHTML=paths;
+}
+
+function kpiRow(id, items){
+  document.getElementById(id).innerHTML = items.map(k=>
+    `<div class="kpi${k.star?' star':''}">
+      <div class="kpi-label">${k.label}</div>
+      <div class="kpi-val" style="color:${k.color||'var(--ink)'}">${k.val}</div>
+      <div class="kpi-sub">${k.sub||''}</div>
+    </div>`).join('');
+}
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 0 — OVERVIEW
+// ═══════════════════════════════════════════════════════════════
+const totFII   = FIIS.reduce((s,f)=>s+f.valor,0);
+const totAC    = ACOES.reduce((s,a)=>s+a.valor,0);
+const totBDR   = BDRS.reduce((s,b)=>s+b.valor,0);
+const totRFBR  = RFBR.reduce((s,r)=>s+r.valor,0);
+const totBOND  = BONDS.reduce((s,b)=>s+b.valor,0);
+const totPROV  = totFII+totAC+totBDR+totRFBR+totBOND;
+
+// Renda estimada por segmento
+const rendaFII  = FIIS.reduce((s,f)=>s+f.quotas*f.div12m,0);
+const rendaAC   = ACOES.reduce((s,a)=>s+a.quotas*a.div12m,0);
+const rendaBDR  = BDRS.reduce((s,b)=>s+b.quotas*b.div12m,0);
+const rendaRFBR = RFBR.reduce((s,r)=>s+r.valor*(r.ano/100),0); // rendimento acumulado como proxy
+const rendaBOND = BONDS.reduce((s,b)=>s+b.bonds*1000*b.cupom/100,0)*5.7; // USD→BRL ~5.70
+const rendaTOT  = rendaFII+rendaAC+rendaBDR+rendaRFBR+rendaBOND;
+
+document.getElementById('total-pill').textContent = 'Proventos: '+((totFII+totAC+totBDR+totRFBR+totBOND+436405.71+396599.06+123040.94)/1e6).toFixed(3)+'M';
+document.getElementById('date-pill').textContent  = new Date().toLocaleDateString('pt-BR');
+document.getElementById('footer-date').textContent= new Date().toLocaleDateString('pt-BR');
+
+// Totais dos novos segmentos (definidos depois no JS, mas valores fixos para overview)
+const OV_FGTS=436405.71, OV_RFBRC=396599.06, OV_RFUSDC=123040.94;
+const totPROV_ALL = totFII+totAC+totBDR+totRFBR+totBOND+OV_FGTS+OV_RFBRC+OV_RFUSDC;
+// Linha 1: Total + primeiros 3 segmentos
+kpiRow('ov-kpis-row1',[
+  {label:'Total Container',     val:fmtBRL0(totPROV_ALL), sub:'8 segmentos completos', star:true},
+  {label:'FIIs BR',             val:fmtBRL0(totFII),       sub:(totFII/totPROV_ALL*100).toFixed(1)+'% do container',  color:'var(--fii)'},
+  {label:'Ações BR',            val:fmtBRL0(totAC),        sub:(totAC/totPROV_ALL*100).toFixed(1)+'%',                color:'var(--ac)'},
+  {label:'BDRs',                val:fmtBRL0(totBDR),       sub:(totBDR/totPROV_ALL*100).toFixed(1)+'%',               color:'var(--bdr)'},
+]);
+// Linha 2: os 5 segmentos de renda fixa / reserva
+kpiRow('ov-kpis-row2',[
+  {label:'RF BR (IPCA+)',        val:fmtBRL0(totRFBR),     sub:(totRFBR/totPROV_ALL*100).toFixed(1)+'%',              color:'var(--rfbr)'},
+  {label:'Bonds USD',            val:fmtBRL0(totBOND),     sub:(totBOND/totPROV_ALL*100).toFixed(1)+'%',              color:'var(--rfusd)'},
+  {label:'FGTS',                 val:fmtBRL0(OV_FGTS),     sub:(OV_FGTS/totPROV_ALL*100).toFixed(1)+'%',             color:'#7c3aed'},
+  {label:'RF BR Caixa + MM USD', val:fmtBRL0(OV_RFBRC+OV_RFUSDC), sub:((OV_RFBRC+OV_RFUSDC)/totPROV_ALL*100).toFixed(1)+'% · liquidez', color:'#0369a1'},
+]);
+
+// Donut segmentos
+const segColors=['var(--fii)','var(--ac)','var(--bdr)','var(--rfbr)','var(--rfusd)','#7c3aed','#0369a1','#0f766e'];
+const segLabels=['FIIs BR','Ações BR','BDRs','RF BR (IPCA+)','Bonds USD','FGTS','RF BR Caixa','RF USD Caixa'];
+// Use totFGTS/totRFBRC/totRFUSDC only after they are computed (they come later in JS)
+// So use the raw values directly here
+const totFGTS_OV=436405.71, totRFBRC_OV=396599.06, totRFUSDC_OV=123040.94;
+const segVals=[totFII,totAC,totBDR,totRFBR,totBOND,totFGTS_OV,totRFBRC_OV,totRFUSDC_OV];
+donutSVG('donut-seg',segVals.map((v,i)=>({v,color:segColors[i]})));
+document.getElementById('legend-seg').innerHTML=segLabels.map((l,i)=>
+  `<div class="legend-li"><div class="legend-dot" style="background:${segColors[i]}"></div>
+   <span class="legend-lbl">${l}</span><span class="legend-pct">${(segVals[i]/totPROV*100).toFixed(1)}%</span></div>`).join('');
+
+// Donut FX
+const totReal=FIIS.reduce((s,f)=>s+f.valor,0)+ACOES.reduce((s,a)=>s+a.valor,0)+totRFBR;
+const totDol =BDRS.reduce((s,b)=>s+b.valor,0)+totBOND;
+donutSVG('donut-fx',[{v:totReal,color:'#1a7a58'},{v:totDol,color:'#1a4f8a'}]);
+document.getElementById('legend-fx').innerHTML=`
+  <div class="legend-li"><div class="legend-dot" style="background:#1a7a58"></div><span class="legend-lbl">Real 🇧🇷</span><span class="legend-pct">${(totReal/totPROV*100).toFixed(1)}%</span></div>
+  <div class="legend-li"><div class="legend-dot" style="background:#1a4f8a"></div><span class="legend-lbl">Dólar 🇺🇸</span><span class="legend-pct">${(totDol/totPROV*100).toFixed(1)}%</span></div>`;
+
+// Perf bars por segmento
+const segPerfs=[
+  {label:'FIIs BR',    perf: FIIS.reduce((s,f)=>s+f.dy,0)/FIIS.length},
+  {label:'Ações BR',   perf: ACOES.reduce((s,a)=>s+a.dy,0)/ACOES.length},
+  {label:'BDRs',       perf: BDRS.reduce((s,b)=>s+b.dy,0)/BDRS.length},
+  {label:'RF BR',      perf: RFBR.reduce((s,r)=>s+r.ano,0)/RFBR.length},
+  {label:'Bonds USD',  perf: BONDS.reduce((s,b)=>s+b.cupom,0)/BONDS.length},
+];
+const maxPerf=Math.max(...segPerfs.map(x=>Math.abs(x.perf)),REF)*1.1;
+const refPerfPct=REF/maxPerf*100;
+document.getElementById('ov-perf-bars').innerHTML=segPerfs.map(s=>{
+  const col=s.perf>=REF?'var(--up)':'var(--dn)';
+  const w=s.perf/maxPerf*100;
+  return `<div class="br"><div class="bt">${s.label}</div>
+  <div class="bo"><div class="bi" style="width:${w}%;background:${col}"><span class="bl">${s.perf.toFixed(1)}%</span></div>
+  <div class="rl" style="left:${refPerfPct}%"></div></div>
+  <div class="bn" style="color:${col}">${s.perf>=REF?'✓ acima':'✗ abaixo'}</div></div>`;
+}).join('');
+
+// Renda bars por segmento
+const rendas=[
+  {label:'Bonds USD',v:rendaBOND,color:'var(--rfusd)'},
+  {label:'RF BR',    v:rendaRFBR,color:'var(--rfbr)'},
+  {label:'Ações BR', v:rendaAC,  color:'var(--ac)'},
+  {label:'FIIs BR',  v:rendaFII, color:'var(--fii)'},
+  {label:'BDRs',     v:rendaBDR, color:'var(--bdr)'},
+].sort((a,b)=>b.v-a.v);
+const maxRenda=Math.max(...rendas.map(x=>x.v));
+document.getElementById('ov-renda-bars').innerHTML=rendas.map(r=>{
+  const w=r.v/maxRenda*100;
+  return `<div class="br"><div class="bt">${r.label}</div>
+  <div class="bo"><div class="bi" style="width:${w}%;background:${r.color}"><span class="bl">${fmtBRL0(r.v)}</span></div></div>
+  <div class="bn" style="color:${r.color}">${fmtBRL0(r.v/12)}/mês</div></div>`;
+}).join('');
+document.getElementById('ov-renda-total').innerHTML=`Total Estimado 12M: ${fmtBRL0(rendaTOT)} → Média mensal: ${fmtBRL0(rendaTOT/12)}`;
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 1 — FIIs
+// ═══════════════════════════════════════════════════════════════
+const fiiDivTot=FIIS.reduce((s,f)=>s+f.quotas*f.div12m,0);
+const fiiAvgDY=FIIS.reduce((s,f)=>s+f.dy,0)/FIIS.length;
+kpiRow('fii-kpis',[
+  {label:'Valor Total',val:fmtBRL0(totFII),sub:(totFII/totPROV*100).toFixed(1)+'% do container'},
+  {label:'DY Médio',val:fiiAvgDY.toFixed(2)+'%',color:upDn(fiiAvgDY-8),sub:'Ref por categoria'},
+  {label:'Acima Ref.',val:FIIS.filter(f=>f.dy>=f.ref).length+'/'+FIIS.length,color:'var(--up)'},
+  {label:'Ativos',val:FIIS.length,sub:'9 FIIs em carteira'},
+  {label:'★ Div Real 12M',val:fmtBRL0(fiiDivTot),sub:'Média: '+fmtBRL0(fiiDivTot/12)+'/mês',star:true,color:'var(--up)'},
+]);
+// DY bars
+const maxFiiDY=Math.max(...FIIS.map(f=>f.dy),14.5)*1.1;
+document.getElementById('fii-dy-bars').innerHTML=FIIS.map(f=>{
+  const col=f.dy>=f.ref?'var(--up)':'var(--dn)';
+  const rp=f.ref/maxFiiDY*100;
+  return `<div class="br"><div class="bt-sm">${f.ticker}</div>
+  <div class="bo"><div class="bi" style="width:${f.dy/maxFiiDY*100}%;background:${col}"><span class="bl">${f.dy.toFixed(1)}%</span></div>
+  <div class="rl" style="left:${rp}%"></div></div>
+  <div class="bn" style="color:${col}">${f.dy>=f.ref?'✓':' ✗'} ref ${f.ref}%</div></div>`;
+}).join('');
+// PVP bars
+document.getElementById('fii-pvp-bars').innerHTML=FIIS.map(f=>{
+  const col=f.pvp<1?'var(--up)':'var(--dn)'; const rp=1/1.5*100;
+  return `<div class="br"><div class="bt-sm">${f.ticker}</div>
+  <div class="bo"><div class="bi" style="width:${Math.min(f.pvp/1.5,1)*100}%;background:${col}"><span class="bl">${f.pvp.toFixed(2)}x</span></div>
+  <div class="rl" style="left:${rp}%"></div></div>
+  <div class="bn" style="color:${col}">${f.pvp<1?'desc.':'ágio'}</div></div>`;
+}).join('');
+// Div recebido bars
+const maxFiiDR=Math.max(...FIIS.map(f=>f.quotas*f.div12m));
+document.getElementById('fii-div-bars').innerHTML=FIIS.map(f=>{
+  const dr=f.quotas*f.div12m; const w=dr/maxFiiDR*100;
+  return `<div class="br"><div class="bt-sm">${f.ticker}</div>
+  <div class="bo"><div class="bi" style="width:${w}%;background:var(--fii)"><span class="bl">${fmtBRL0(dr)}</span></div></div>
+  <div class="bn" style="color:var(--fii)">${f.quotas.toLocaleString('pt-BR')}c</div></div>`;
+}).join('');
+document.getElementById('fii-div-total').innerHTML=`Total FIIs 12M: ${fmtBRL0(fiiDivTot)} → Média mensal: ${fmtBRL0(fiiDivTot/12)}`;
+// Tabela FIIs
+const catColors={PAPEL:'#fef3c7|#92400e',TIJOLO:'#e8f5f0|#1a7a58',FOF:'#eff6ff|#1e40af'};
+let fiiRows='',fiiTotDiv=0;
+[...FIIS].sort((a,b)=>b.dy-a.dy).forEach(f=>{
+  const dr=f.quotas*f.div12m; fiiTotDiv+=dr;
+  const [tbg,tfc]=catColors[f.cat].split('|'); const vs=f.dy-f.ref;
+  const dyC=f.dy>=f.ref?'var(--up)':'var(--dn)'; const pvC=f.pvp<1?'var(--up)':f.pvp>1.1?'var(--dn)':'var(--warn)';
+  fiiRows+=`<tr><td class="mono" style="font-weight:600">${f.ticker}</td><td>${f.titular}</td>
+  <td><span class="tag" style="background:${tbg};color:${tfc}">${f.cat}</span></td>
+  <td class="mono">${f.quotas.toLocaleString('pt-BR')}</td><td class="mono">R$ ${f.cotacao.toFixed(2)}</td>
+  <td class="mono">${fmtBRL0(f.valor)}</td><td class="mono">${fmtBRL(f.ultimo_div)}</td>
+  <td class="mono">${fmtBRL(f.div12m)}</td>
+  <td class="mono" style="font-weight:600;color:var(--up)">${fmtBRL0(dr)}</td>
+  <td class="mono" style="color:${dyC};font-weight:600">${f.dy.toFixed(2)}%</td>
+  <td class="mono" style="color:${pvC}">${f.pvp.toFixed(2)}x</td>
+  <td class="mono" style="color:#888">${f.ref}%</td>
+  <td><span class="mb ${vs>=0?'mb-up':'mb-dn'}">${vs>=0?'✓ +'+vs.toFixed(1):'✗ '+vs.toFixed(1)}pp</span></td></tr>`;
+});
+document.getElementById('fii-tbody').innerHTML=fiiRows;
+document.getElementById('fii-tfoot').innerHTML=`<tr><td colspan="5">TOTAL FIIs</td><td>${fmtBRL0(totFII)}</td><td colspan="2"></td><td style="color:var(--up)">${fmtBRL0(fiiTotDiv)}/ano</td><td>${fiiAvgDY.toFixed(2)}%</td><td colspan="3"></td></tr>`;
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 2 — AÇÕES
+// ═══════════════════════════════════════════════════════════════
+const acDivTot=ACOES.reduce((s,a)=>s+a.quotas*a.div12m,0);
+const acAvgDY=ACOES.reduce((s,a)=>s+a.dy,0)/ACOES.length;
+kpiRow('ac-kpis',[
+  {label:'Valor Total',val:fmtBRL0(totAC),sub:(totAC/totPROV*100).toFixed(1)+'% do container'},
+  {label:'Var. Média',val:fmtPct(ACOES.reduce((s,a)=>s+a.var_ano,0)/ACOES.length),color:upDn(ACOES.reduce((s,a)=>s+a.var_ano,0)/ACOES.length-IPCA),sub:'Eixo 1'},
+  {label:'DY Médio',val:acAvgDY.toFixed(2)+'%',color:upDn(acAvgDY-REF_DIV),sub:'Eixo 2'},
+  {label:'Status Duplo',val:ACOES.filter(a=>a.var_ano>=IPCA&&a.dy>=REF_DIV).length+'/'+ACOES.length,color:'var(--up)',sub:'Duplo OK'},
+  {label:'★ Div Real 12M',val:fmtBRL0(acDivTot),sub:'Média: '+fmtBRL0(acDivTot/12)+'/mês',star:true,color:'var(--up)'},
+]);
+// Var chart (diverging)
+const maxAcVar=Math.max(...ACOES.map(a=>Math.abs(a.var_ano)),IPCA)*1.15;
+const ipPct=IPCA/maxAcVar*50;
+document.getElementById('ac-var-bars').innerHTML=ACOES.map(a=>{
+  const v=a.var_ano, col=v>=IPCA?'var(--up)':'var(--dn)'; const isNeg=v<0;
+  const w=Math.abs(v)/maxAcVar*50;
+  const barD=isNeg?'<div style="position:absolute;right:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:3px 0 0 3px"></div>':'<div style="position:absolute;left:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:0 3px 3px 0"></div>';
+  const posS=isNeg?'right:calc(50% + '+w+'% + 3px)':'left:calc(50% + '+w+'% + 3px)';
+  const note=v>=IPCA?'\u2713+'+((v-IPCA).toFixed(1))+'pp':'\u2717'+((v-IPCA).toFixed(1))+'pp';
+  return '<div class="br"><div class="bt-sm">'+a.ticker+'</div>'
+    +'<div class="bo" style="overflow:visible">'
+    +barD
+    +'<div class="rl" style="left:50%"></div>'
+    +'<div class="rl rl-warn" style="left:calc(50% + '+ipPct+'%)"></div>'
+    +'<span style="position:absolute;font-family:IBM Plex Mono,monospace;font-size:9px;color:'+col+';'+posS+';top:50%;transform:translateY(-50%)">'+fmtPct(v)+'</span>'
+    +'</div>'
+    +'<div class="bn" style="color:'+col+'">'+note+'</div></div>';
+}).join('');
+// DY chart
+const maxAcDY=Math.max(...ACOES.map(a=>a.dy),REF_DIV)*1.15; const refAcPct=REF_DIV/maxAcDY*100;
+document.getElementById('ac-dy-bars').innerHTML=[...ACOES].sort((a,b)=>b.dy-a.dy).map(a=>{
+  const col=a.dy>=REF_DIV?'var(--up)':'var(--dn)';
+  return `<div class="br"><div class="bt-sm">${a.ticker}</div>
+  <div class="bo"><div class="bi" style="width:${a.dy/maxAcDY*100}%;background:${col}"><span class="bl">${a.dy.toFixed(1)}%</span></div>
+  <div class="rl" style="left:${refAcPct}%"></div></div>
+  <div class="bn" style="color:${col}">${a.dy>=REF_DIV?'\u2713+'+(a.dy-REF_DIV).toFixed(1):'\u2717'+(a.dy-REF_DIV).toFixed(1)}pp</div></div>`;
+}).join('');
+// Div bars
+const maxAcDR=Math.max(...ACOES.map(a=>a.quotas*a.div12m));
+document.getElementById('ac-div-bars').innerHTML=ACOES.map(a=>{
+  const dr=a.quotas*a.div12m; const w=dr/maxAcDR*100;
+  return `<div class="br"><div class="bt-sm">${a.ticker}</div>
+  <div class="bo"><div class="bi" style="width:${w}%;background:var(--ac)"><span class="bl">${fmtBRL0(dr)}</span></div></div>
+  <div class="bn" style="color:var(--ac)">${a.quotas.toLocaleString('pt-BR')}c</div></div>`;
+}).join('');
+document.getElementById('ac-div-total').innerHTML=`Total Ações 12M: ${fmtBRL0(acDivTot)} → Média mensal: ${fmtBRL0(acDivTot/12)}`;
+// Tabela ações
+let acRows='',acTotDiv=0;
+[...ACOES].sort((a,b)=>b.dy-a.dy).forEach(a=>{
+  const dr=a.quotas*a.div12m; acTotDiv+=dr;
+  const ok1=a.var_ano>=IPCA, ok2=a.dy>=REF_DIV;
+  const gc=ok1&&ok2?'mb-up':!ok1&&!ok2?'mb-dn':'mb-warn';
+  const gt=ok1&&ok2?'✓✓ OK':!ok1&&!ok2?'✗✗ Falha':'~ Parcial';
+  let plS,plC; if(!a.pl){plS='N/A';plC='#888';}else if(a.pl<0){plS='Prej.';plC='var(--dn)';}else if(a.pl>20){plS=a.pl.toFixed(1)+'x';plC='var(--dn)';}else if(a.pl>15){plS=a.pl.toFixed(1)+'x';plC='var(--warn)';}else{plS=a.pl.toFixed(1)+'x';plC='var(--up)';}
+  const [tbg,tfc]=a.tipo.includes('Unit')?['#fef3c7','#92400e']:['#e8f5f0','#1a7a58'];
+  acRows+=`<tr><td class="mono" style="font-weight:600">${a.ticker}</td>
+  <td><span class="tag" style="background:${tbg};color:${tfc}">${a.tipo}</span></td>
+  <td style="font-size:11px;color:#555">${a.setor}</td><td>${a.titular}</td>
+  <td class="mono">${a.quotas.toLocaleString('pt-BR')}</td>
+  <td class="mono">R$ ${a.cotacao.toFixed(2)}</td>
+  <td class="mono" style="color:${ok1?'var(--up)':'var(--dn)'}">${fmtPct(a.var_ano)}</td>
+  <td><span class="mb ${ok1?'mb-up':'mb-dn'}">${ok1?'\u2713+'+(a.var_ano-IPCA).toFixed(1)+'pp':'\u2717'+(a.var_ano-IPCA).toFixed(1)+'pp'}</span></td>
+  <td class="mono">${fmtBRL(a.ultimo_div)}</td><td class="mono">${fmtBRL(a.div12m)}</td>
+  <td class="mono" style="font-weight:600;color:var(--up)">${fmtBRL0(dr)}</td>
+  <td class="mono" style="color:${ok2?'var(--up)':'var(--dn)'};font-weight:600">${a.dy.toFixed(2)}%</td>
+  <td><span class="mb ${ok2?'mb-up':'mb-dn'}">${ok2?'\u2713+'+(a.dy-REF_DIV).toFixed(1):'\u2717'+(a.dy-REF_DIV).toFixed(1)}pp</span></td>
+  <td class="mono" style="color:${plC}">${plS}</td>
+  <td><span class="mb ${gc}">${gt}</span></td></tr>`;
+});
+document.getElementById('ac-tbody').innerHTML=acRows;
+document.getElementById('ac-tfoot').innerHTML=`<tr><td colspan="4">TOTAL</td><td>${ACOES.reduce((s,a)=>s+a.quotas,0).toLocaleString('pt-BR')}</td><td colspan="5"></td><td style="color:var(--up)">${fmtBRL0(acTotDiv)}/ano</td><td>${acAvgDY.toFixed(2)}%</td><td colspan="3"></td></tr>`;
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 3 — BDRs
+// ═══════════════════════════════════════════════════════════════
+const bdrDivTot=BDRS.reduce((s,b)=>s+b.quotas*b.div12m,0);
+const bdrAvgDY=BDRS.reduce((s,b)=>s+b.dy,0)/BDRS.length;
+kpiRow('bdr-kpis',[
+  {label:'Valor Total',val:fmtBRL0(totBDR),sub:(totBDR/totPROV*100).toFixed(1)+'% do container'},
+  {label:'Var. Média Anual',val:fmtPct(BDRS.reduce((s,b)=>s+b.var_ano,0)/BDRS.length),color:'var(--bdr)',sub:'incl. câmbio'},
+  {label:'DY Médio',val:bdrAvgDY.toFixed(2)+'%',color:upDn(bdrAvgDY-REF_DIV)},
+  {label:'Acima IPCA',val:BDRS.filter(b=>b.var_ano>=IPCA).length+'/'+BDRS.length,color:'var(--up)'},
+  {label:'★ Div Real 12M',val:fmtBRL0(bdrDivTot),sub:'Média: '+fmtBRL0(bdrDivTot/12)+'/mês',star:true,color:'var(--up)'},
+]);
+// Var bars
+const maxBDRVar=Math.max(...BDRS.map(b=>Math.abs(b.var_ano)),IPCA)*1.1;
+document.getElementById('bdr-var-bars').innerHTML=BDRS.map(b=>{
+  const v=b.var_ano,col=v>=IPCA?'var(--up)':'var(--dn)',isNeg=v<0,w=Math.abs(v)/maxBDRVar*50;
+  const barD=isNeg?'<div style="position:absolute;right:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:3px 0 0 3px"></div>':'<div style="position:absolute;left:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:0 3px 3px 0"></div>';
+  const posS=isNeg?'right:calc(50% + '+w+'% + 3px)':'left:calc(50% + '+w+'% + 3px)';
+  return '<div class="br"><div class="bt-sm">'+b.ticker+'</div>'
+    +'<div class="bo" style="overflow:visible">'
+    +barD
+    +'<div class="rl" style="left:50%"></div>'
+    +'<span style="position:absolute;font-family:IBM Plex Mono,monospace;font-size:9px;color:'+col+';'+posS+';top:50%;transform:translateY(-50%)">'+fmtPct(v)+'</span>'
+    +'</div><div class="bn" style="color:'+col+'">'+fmtPct(v)+'</div></div>';
+}).join('');
+// DY bars
+const maxBDRDY=Math.max(...BDRS.map(b=>b.dy),REF_DIV)*1.1;
+document.getElementById('bdr-dy-bars').innerHTML=BDRS.map(b=>{
+  const col=b.dy>=REF_DIV?'var(--up)':'var(--dn)'; const rp=REF_DIV/maxBDRDY*100;
+  return `<div class="br"><div class="bt-sm">${b.ticker}</div>
+  <div class="bo"><div class="bi" style="width:${b.dy/maxBDRDY*100}%;background:${col}"><span class="bl">${b.dy.toFixed(1)}%</span></div>
+  <div class="rl" style="left:${rp}%"></div></div>
+  <div class="bn" style="color:${col}">${b.dy>=REF_DIV?'✓':'✗'} 6%</div></div>`;
+}).join('');
+// Tabela BDRs
+let bdrRows='',bdrTotDiv=0;
+BDRS.forEach(b=>{
+  const dr=b.quotas*b.div12m; bdrTotDiv+=dr;
+  const ok1=b.var_ano>=IPCA, ok2=b.dy>=REF_DIV;
+  const gc=ok1&&ok2?'mb-up':!ok1&&!ok2?'mb-dn':'mb-warn';
+  const gt=ok1&&ok2?'✓✓ OK':!ok1&&!ok2?'✗✗ Falha':'~ Parcial';
+  bdrRows+=`<tr><td class="mono" style="font-weight:600">${b.ticker}</td>
+  <td><span class="tag" style="background:var(--bdr-pale);color:var(--bdr)">${b.tipo}</span></td>
+  <td>${b.titular}</td><td class="mono">${b.quotas.toLocaleString('pt-BR')}</td>
+  <td class="mono">R$ ${b.cotacao.toFixed(2)}</td>
+  <td class="mono" style="color:${ok1?'var(--up)':'var(--dn)'}">${fmtPct(b.var_ano)}</td>
+  <td><span class="mb ${ok1?'mb-up':'mb-dn'}">${ok1?'\u2713+'+(b.var_ano-IPCA).toFixed(1)+'pp':'\u2717'+(b.var_ano-IPCA).toFixed(1)+'pp'}</span></td>
+  <td class="mono">${fmtBRL(b.ultimo_div)}</td><td class="mono">${fmtBRL(b.div12m)}</td>
+  <td class="mono" style="font-weight:600;color:var(--up)">${fmtBRL0(dr)}</td>
+  <td class="mono" style="color:${ok2?'var(--up)':'var(--dn)'}">${b.dy.toFixed(2)}%</td>
+  <td><span class="mb ${ok2?'mb-up':'mb-dn'}">${ok2?'\u2713+'+(b.dy-REF_DIV).toFixed(1):'\u2717'+(b.dy-REF_DIV).toFixed(1)}pp</span></td>
+  <td><span class="mb ${gc}">${gt}</span></td></tr>`;
+});
+document.getElementById('bdr-tbody').innerHTML=bdrRows;
+document.getElementById('bdr-tfoot').innerHTML=`<tr><td colspan="3">TOTAL BDRs</td><td>${BDRS.reduce((s,b)=>s+b.quotas,0).toLocaleString('pt-BR')}</td><td colspan="5"></td><td style="color:var(--up)">${fmtBRL0(bdrTotDiv)}/ano</td><td>${bdrAvgDY.toFixed(2)}%</td><td colspan="2"></td></tr>`;
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 4 — RF BR
+// ═══════════════════════════════════════════════════════════════
+const rfbrAvgAno=RFBR.reduce((s,r)=>s+r.ano,0)/RFBR.length;
+const rfbrAvgReal=RFBR.reduce((s,r)=>s+r.ano_real,0)/RFBR.length;
+kpiRow('rfbr-kpis',[
+  {label:'Valor Total',val:fmtBRL0(totRFBR),sub:(totRFBR/totPROV*100).toFixed(1)+'% do container'},
+  {label:'Rend. Médio Nominal',val:fmtPct(rfbrAvgAno),color:upDn(rfbrAvgAno-REF),sub:'vs ref 10,14%'},
+  {label:'Rend. Médio Real',val:fmtPct(rfbrAvgReal),color:upDn(rfbrAvgReal),sub:'descontado IPCA'},
+  {label:'Acima Ref.',val:RFBR.filter(r=>r.ano>=REF).length+'/'+RFBR.length,color:upDn(RFBR.filter(r=>r.ano>=REF).length-RFBR.length/2),sub:'rend. ≥ 10,14%'},
+]);
+// Ano bars
+const maxRFBRAno=Math.max(...RFBR.map(r=>Math.abs(r.ano)),REF)*1.1; const refRFBRpct=REF/maxRFBRAno*100;
+document.getElementById('rfbr-ano-bars').innerHTML=RFBR.map(r=>{
+  const col=r.ano>=REF?'var(--up)':'var(--dn)';
+  return `<div class="br"><div class="bt">${r.ticker}</div>
+  <div class="bo"><div class="bi" style="width:${r.ano/maxRFBRAno*100}%;background:${col}"><span class="bl">${fmtPct(r.ano)}</span></div>
+  <div class="rl" style="left:${refRFBRpct}%"></div></div>
+  <div class="bn" style="color:${col}">${r.ano>=REF?'\u2713+'+(r.ano-REF).toFixed(1):'\u2717'+(r.ano-REF).toFixed(1)}pp</div></div>`;
+}).join('');
+// Real bars (diverging)
+const maxRFBRReal=Math.max(...RFBR.map(r=>Math.abs(r.ano_real)))*1.1||5;
+document.getElementById('rfbr-real-bars').innerHTML=RFBR.map(r=>{
+  const v=r.ano_real,col=v>=0?'var(--up)':'var(--dn)',isNeg=v<0,w=Math.abs(v)/maxRFBRReal*50;
+  const barD=isNeg?'<div style="position:absolute;right:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:3px 0 0 3px"></div>':'<div style="position:absolute;left:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:0 3px 3px 0"></div>';
+  const posS=isNeg?'right:calc(50% + '+w+'% + 3px)':'left:calc(50% + '+w+'% + 3px)';
+  return '<div class="br"><div class="bt">'+r.ticker+'</div>'
+    +'<div class="bo" style="overflow:visible">'
+    +barD
+    +'<div class="rl" style="left:50%"></div>'
+    +'<span style="position:absolute;font-family:IBM Plex Mono,monospace;font-size:9px;color:'+col+';'+posS+';top:50%;transform:translateY(-50%)">'+fmtPct(v)+'</span>'
+    +'</div><div class="bn" style="color:'+col+'">'+fmtPct(v)+'</div></div>';
+}).join('');
+// Tabela RF BR
+let rfbrRows='',rfbrTotVal=0;
+RFBR.forEach(r=>{
+  rfbrTotVal+=r.valor;
+  const vs=r.ano-REF; const col=r.ano>=REF?'var(--up)':'var(--dn)'; const rCol=r.ano_real>=0?'var(--up)':'var(--dn)';
+  const [tbg,tfc]=r.tipo==='Tesouro'?['#fef3c7','#92400e']:r.tipo==='CRI'?['#e8f5f0','#1a7a58']:['#eff6ff','#1e40af'];
+  rfbrRows+=`<tr><td class="mono" style="font-weight:600;font-size:11px">${r.ticker}</td>
+  <td><span class="tag" style="background:${tbg};color:${tfc}">${r.tipo}</span></td>
+  <td>${r.titular}</td><td class="mono" style="font-weight:600">${fmtBRL0(r.valor)}</td>
+  <td class="mono">${fmtPct(r.mes)}</td>
+  <td class="mono" style="font-weight:600;color:${col}">${fmtPct(r.ano)}</td>
+  <td class="mono" style="color:${rCol}">${fmtPct(r.ano_real)}</td>
+  <td><span class="mb ${vs>=0?'mb-up':'mb-dn'}">${vs>=0?'\u2713+'+vs.toFixed(1):'\u2717'+vs.toFixed(1)}pp</span></td>
+  <td><span class="mb ${r.ano>=REF?'mb-up':'mb-dn'}">${r.ano>=REF?'ACIMA REF':'ABAIXO REF'}</span></td></tr>`;
+});
+document.getElementById('rfbr-tbody').innerHTML=rfbrRows;
+document.getElementById('rfbr-tfoot').innerHTML=`<tr><td colspan="3">TOTAL RF BR</td><td>${fmtBRL0(rfbrTotVal)}</td><td></td><td>${fmtPct(rfbrAvgAno)}</td><td>${fmtPct(rfbrAvgReal)}</td><td colspan="2"></td></tr>`;
+
+// ═══════════════════════════════════════════════════════════════
+// SECTION 5 — BONDS USD
+// ═══════════════════════════════════════════════════════════════
+const FX=5.70; // BRL/USD estimado
+const bondCupomUSD=BONDS.reduce((s,b)=>s+b.bonds*1000*b.cupom/100,0);
+const bondCupomBRL=bondCupomUSD*FX;
+const bondAvgCupom=BONDS.reduce((s,b)=>s+b.cupom,0)/BONDS.length;
+const bondAvgVar=BONDS.reduce((s,b)=>s+b.var_ano,0)/BONDS.length;
+kpiRow('rfusd-kpis',[
+  {label:'Valor Total (BRL)',val:fmtBRL0(totBOND),sub:(totBOND/totPROV*100).toFixed(1)+'% do container'},
+  {label:'Cupom Médio',val:bondAvgCupom.toFixed(2)+'%',color:upDn(bondAvgCupom-REF),sub:'taxa contratada'},
+  {label:'Acima Ref. (Cupom)',val:BONDS.filter(b=>b.cupom>=REF).length+'/'+BONDS.length,color:upDn(BONDS.filter(b=>b.cupom>=REF).length-BONDS.length/2)},
+  {label:'★ Cupom Anual Est.',val:fmtUSD0(bondCupomUSD),sub:fmtBRL0(bondCupomBRL)+'/ano',color:'var(--rfusd)'},
+  {label:'★ Média Mensal Est.',val:fmtBRL0(bondCupomBRL/12),sub:'BRL/mês (câmbio ~5,70)',star:true,color:'var(--up)'},
+]);
+// Cupom bars
+const maxCupom=Math.max(...BONDS.map(b=>b.cupom),REF)*1.1; const refCupomPct=REF/maxCupom*100;
+document.getElementById('rfusd-cupom-bars').innerHTML=BONDS.map(b=>{
+  const col=b.cupom>=REF?'var(--up)':'var(--dn)';
+  return `<div class="br"><div class="bt" style="width:90px;font-size:10px">${b.ticker}</div>
+  <div class="bo"><div class="bi" style="width:${b.cupom/maxCupom*100}%;background:${col}"><span class="bl">${b.cupom.toFixed(2)}%</span></div>
+  <div class="rl" style="left:${refCupomPct}%"></div></div>
+  <div class="bn" style="color:${col}">${b.cupom>=REF?'\u2713+'+(b.cupom-REF).toFixed(1):'\u2717'+(b.cupom-REF).toFixed(1)}pp</div></div>`;
+}).join('');
+// Var bars (diverging)
+const maxBVar=Math.max(...BONDS.map(b=>Math.abs(b.var_ano)))*1.1||20;
+document.getElementById('rfusd-var-bars').innerHTML=BONDS.map(b=>{
+  const v=b.var_ano,col=v>=0?'var(--rfusd)':'var(--dn)',isNeg=v<0,w=Math.abs(v)/maxBVar*50;
+  const barD=isNeg?'<div style="position:absolute;right:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:3px 0 0 3px"></div>':'<div style="position:absolute;left:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:0 3px 3px 0"></div>';
+  const posS=isNeg?'right:calc(50% + '+w+'% + 3px)':'left:calc(50% + '+w+'% + 3px)';
+  return '<div class="br"><div class="bt" style="width:90px;font-size:10px">'+b.ticker+'</div>'
+    +'<div class="bo" style="overflow:visible">'
+    +barD
+    +'<div class="rl" style="left:50%"></div>'
+    +'<span style="position:absolute;font-family:IBM Plex Mono,monospace;font-size:9px;color:'+col+';'+posS+';top:50%;transform:translateY(-50%)">'+fmtPct(v)+'</span>'
+    +'</div><div class="bn" style="color:'+col+'">'+fmtPct(v)+'</div></div>';
+}).join('');
+// Cupom renda bars
+const maxBondCupomAnual=Math.max(...BONDS.map(b=>b.bonds*1000*b.cupom/100));
+document.getElementById('rfusd-renda-bars').innerHTML=[...BONDS].sort((a,b)=>(b.bonds*1000*b.cupom/100)-(a.bonds*1000*a.cupom/100)).map(b=>{
+  const ca=b.bonds*1000*b.cupom/100; const w=ca/maxBondCupomAnual*100;
+  return `<div class="br"><div class="bt" style="width:90px;font-size:10px">${b.ticker}</div>
+  <div class="bo"><div class="bi" style="width:${w}%;background:var(--rfusd)"><span class="bl">US$ ${Math.round(ca).toLocaleString('pt-BR')}</span></div></div>
+  <div class="bn" style="color:var(--rfusd)">${b.bonds} bonds</div></div>`;
+}).join('');
+document.getElementById('rfusd-renda-total').innerHTML=`Total Cupom Anual: ${fmtUSD0(bondCupomUSD)} (≈ ${fmtBRL0(bondCupomBRL)}) → Média mensal: ${fmtBRL0(bondCupomBRL/12)} · Câmbio estimado: R$ 5,70/USD`;
+// Tabela bonds
+let bondRows='',bondTotVal=0,bondTotCupom=0;
+[...BONDS].sort((a,b)=>b.cupom-a.cupom).forEach(b=>{
+  bondTotVal+=b.valor; const ca=b.bonds*1000*b.cupom/100; bondTotCupom+=ca;
+  const vs=b.cupom-REF; const col=b.cupom>=REF?'var(--up)':'var(--dn)';
+  const varC=b.var_ano>=0?'var(--rfusd)':'var(--dn)';
+  bondRows+=`<tr><td class="mono" style="font-weight:600;font-size:11px">${b.ticker}</td>
+  <td style="font-size:11px;color:#555">${b.emissor}</td><td>${b.titular}</td>
+  <td class="mono">${b.bonds}</td><td class="mono">${fmtBRL0(b.valor)}</td>
+  <td class="mono" style="font-weight:600;color:${col}">${b.cupom.toFixed(3)}%</td>
+  <td class="mono" style="color:var(--rfusd)">US$ ${Math.round(ca).toLocaleString('pt-BR')}</td>
+  <td><span class="mb ${vs>=0?'mb-up':'mb-dn'}">${vs>=0?'\u2713+'+vs.toFixed(1):'\u2717'+vs.toFixed(1)}pp</span></td>
+  <td class="mono" style="color:${varC}">${fmtPct(b.var_ano)}</td>
+  <td class="mono" style="color:${b.var_ano>=0?'var(--up)':'var(--dn)'}">${fmtPct(b.var_ano)}</td>
+  <td><span class="mb ${b.cupom>=REF?'mb-up':'mb-dn'}">${b.cupom>=REF?'✓ ACIMA':'✗ ABAIXO'}</span></td></tr>`;
+});
+document.getElementById('rfusd-tbody').innerHTML=bondRows;
+document.getElementById('rfusd-tfoot').innerHTML=`<tr><td colspan="3">TOTAL</td><td>${BONDS.reduce((s,b)=>s+b.bonds,0)}</td><td>${fmtBRL0(bondTotVal)}</td><td>${bondAvgCupom.toFixed(2)}%</td><td>US$ ${Math.round(bondTotCupom).toLocaleString('pt-BR')}/ano</td><td colspan="4"></td></tr>`;
+
+// ═══════════════════════════════════════════════════════════════
+// DADOS — FGTS, RF BR CAIXA, RF USD CAIXA
+// ═══════════════════════════════════════════════════════════════
+
+const FGTS_DATA = [
+  {ticker:'Ellen FGTS',      tipo:'FGTS',    titular:'Ellen',  valor:334891.45, mes:0.0,    ano:2.067,  ano_real:-0.363},
+  {ticker:'Fundo Priv FGTS', tipo:'FGTS+',   titular:'Ellen',  valor:101514.26, mes:0.0,    ano:12.563, ano_real:10.133},
+];
+
+const RFBRC_DATA = [
+  {ticker:'Apto Osasco-Tita',tipo:'Recebível',titular:'Giovani',valor:146705.25,mes:0.0,    ano:2.355,  ano_real:-0.075},
+  {ticker:'Tesouro Selic',   tipo:'Tesouro', titular:'Giovani',valor:147573.89, mes:0.0,    ano:3.783,  ano_real:1.353},
+  {ticker:'Tesouro Selic 31',tipo:'Tesouro', titular:'Bryan',  valor:2255.0,    mes:0.0,    ano:5.331,  ano_real:2.900},
+  {ticker:'Trend DI FIC RF', tipo:'Fundo DI',titular:'Ellen',  valor:100064.92, mes:0.0,    ano:3.128,  ano_real:0.698},
+];
+
+// Saldo Avenue E excluído das médias por anomalia de dados (>700%)
+const RFUSDC_DATA = [
+  {ticker:'JPM MM Gigio',   tipo:'Money Mkt',titular:'Giovani',valor:104454.18,mes:-1.091,ano:-9.634, ano_real:-12.064, anomalia:false},
+  {ticker:'JPM MM Ellen',   tipo:'Money Mkt',titular:'Ellen',  valor:11292.34, mes:-1.091,ano:-9.633, ano_real:-12.064, anomalia:false},
+  {ticker:'Saldo Avenue G', tipo:'Saldo',    titular:'Giovani',valor:891.65,   mes:-1.091,ano:-33.551,ano_real:-35.981, anomalia:false},
+  {ticker:'Saldo Avenue E', tipo:'Saldo',    titular:'Ellen',  valor:6402.77,  mes:-1.091,ano:713.181,ano_real:710.751, anomalia:true},
+];
+
+// Totais novos segmentos
+const totFGTS  = FGTS_DATA.reduce((s,r)=>s+r.valor,0);
+const totRFBRC = RFBRC_DATA.reduce((s,r)=>s+r.valor,0);
+const totRFUSDC= RFUSDC_DATA.reduce((s,r)=>s+r.valor,0);
+
+// Atualizar total do container (já calculado acima, mas agora completo)
+const totPROV_FULL = totFII+totAC+totBDR+totRFBR+totBOND+totFGTS+totRFBRC+totRFUSDC;
+
+// ── SEÇÃO FGTS ────────────────────────────────────────────────
+(function(){
+  const avgAno  = FGTS_DATA.reduce((s,r)=>s+r.ano,0)/FGTS_DATA.length;
+  const avgReal = FGTS_DATA.reduce((s,r)=>s+r.ano_real,0)/FGTS_DATA.length;
+  kpiRow('fgts-kpis',[
+    {label:'Valor Total',        val:fmtBRL0(totFGTS), sub:(totFGTS/totPROV_FULL*100).toFixed(1)+'% do container'},
+    {label:'Rend. Médio Nominal',val:fmtPct(avgAno),   color:upDn(avgAno-REF), sub:'vs ref 10,14%'},
+    {label:'Rend. Médio Real',   val:fmtPct(avgReal),  color:upDn(avgReal),    sub:'descontado IPCA'},
+    {label:'Acima Ref.',         val:FGTS_DATA.filter(r=>r.ano>=REF).length+'/'+FGTS_DATA.length,
+     color:upDn(FGTS_DATA.filter(r=>r.ano>=REF).length-0.5)},
+  ]);
+  // Barras nominais
+  const maxAno = Math.max(...FGTS_DATA.map(r=>r.ano), REF)*1.1;
+  const refPct = REF/maxAno*100;
+  document.getElementById('fgts-ano-bars').innerHTML = FGTS_DATA.map(r=>{
+    const col = r.ano>=REF?'var(--up)':'var(--dn)';
+    return '<div class="br"><div class="bt">'+r.ticker+'</div>'
+      +'<div class="bo"><div class="bi" style="width:'+( r.ano/maxAno*100)+'%;background:'+col+'"><span class="bl">'+fmtPct(r.ano)+'</span></div>'
+      +'<div class="rl" style="left:'+refPct+'%"></div></div>'
+      +'<div class="bn" style="color:'+col+'">'+(r.ano>=REF?'+':'')+((r.ano-REF).toFixed(1))+'pp</div></div>';
+  }).join('');
+  // Barras reais (diverging)
+  const maxReal = Math.max(...FGTS_DATA.map(r=>Math.abs(r.ano_real)))*1.2||2;
+  document.getElementById('fgts-real-bars').innerHTML = FGTS_DATA.map(r=>{
+    const v=r.ano_real, col=v>=0?'var(--up)':'var(--dn)', isNeg=v<0, w=Math.abs(v)/maxReal*50;
+    const barD=isNeg?'<div style="position:absolute;right:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:3px 0 0 3px"></div>':'<div style="position:absolute;left:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:0 3px 3px 0"></div>';
+    const posS=isNeg?'right:calc(50% + '+w+'% + 3px)':'left:calc(50% + '+w+'% + 3px)';
+    return '<div class="br"><div class="bt">'+r.ticker+'</div>'
+      +'<div class="bo" style="overflow:visible">'+barD+'<div class="rl" style="left:50%"></div>'
+      +'<span style="position:absolute;font-family:IBM Plex Mono,monospace;font-size:9px;color:'+col+';'+posS+';top:50%;transform:translateY(-50%)">'+fmtPct(v)+'</span>'
+      +'</div><div class="bn" style="color:'+col+'">'+fmtPct(v)+'</div></div>';
+  }).join('');
+  // Tabela
+  let rows='', totV=0;
+  FGTS_DATA.forEach(r=>{
+    totV+=r.valor;
+    const vs=r.ano-REF; const col=r.ano>=REF?'var(--up)':'var(--dn)'; const rCol=r.ano_real>=0?'var(--up)':'var(--dn)';
+    rows+='<tr><td class="mono" style="font-weight:600">'+r.ticker+'</td>'
+      +'<td><span class="tag" style="background:#ede9fe;color:#7c3aed">'+r.tipo+'</span></td>'
+      +'<td>'+r.titular+'</td><td class="mono" style="font-weight:600">'+fmtBRL0(r.valor)+'</td>'
+      +'<td class="mono">'+fmtPct(r.mes)+'</td>'
+      +'<td class="mono" style="font-weight:600;color:'+col+'">'+fmtPct(r.ano)+'</td>'
+      +'<td class="mono" style="color:'+rCol+'">'+fmtPct(r.ano_real)+'</td>'
+      +'<td><span class="mb '+(vs>=0?'mb-up':'mb-dn')+'">'+(vs>=0?'\u2713+':'\u2717')+vs.toFixed(1)+'pp</span></td>'
+      +'<td><span class="mb '+(r.ano>=REF?'mb-up':'mb-dn')+'">'+(r.ano>=REF?'ACIMA REF':'ABAIXO REF')+'</span></td></tr>';
+  });
+  document.getElementById('fgts-tbody').innerHTML=rows;
+  document.getElementById('fgts-tfoot').innerHTML='<tr><td colspan="3">TOTAL FGTS</td><td>'+fmtBRL0(totFGTS)+'</td><td></td><td>'+fmtPct(avgAno)+'</td><td>'+fmtPct(avgReal)+'</td><td colspan="2"></td></tr>';
+})();
+
+// ── SEÇÃO RF BR CAIXA ─────────────────────────────────────────
+(function(){
+  const avgAno  = RFBRC_DATA.reduce((s,r)=>s+r.ano,0)/RFBRC_DATA.length;
+  const avgReal = RFBRC_DATA.reduce((s,r)=>s+r.ano_real,0)/RFBRC_DATA.length;
+  kpiRow('rfbrc-kpis',[
+    {label:'Valor Total',        val:fmtBRL0(totRFBRC), sub:(totRFBRC/totPROV_FULL*100).toFixed(1)+'% do container'},
+    {label:'Rend. Médio Nominal',val:fmtPct(avgAno),    color:upDn(avgAno-REF),  sub:'Selic ~14,5% a.a.'},
+    {label:'Rend. Médio Real',   val:fmtPct(avgReal),   color:upDn(avgReal),     sub:'descontado IPCA'},
+    {label:'Função',             val:'Liquidez',         color:'#0369a1',          sub:'Reserva imediata'},
+  ]);
+  const maxAno = Math.max(...RFBRC_DATA.map(r=>r.ano), REF)*1.1;
+  const refPct = REF/maxAno*100;
+  document.getElementById('rfbrc-ano-bars').innerHTML = RFBRC_DATA.map(r=>{
+    const col = r.ano>=REF?'var(--up)':'var(--dn)';
+    return '<div class="br"><div class="bt">'+r.ticker+'</div>'
+      +'<div class="bo"><div class="bi" style="width:'+(r.ano/maxAno*100)+'%;background:'+col+'"><span class="bl">'+fmtPct(r.ano)+'</span></div>'
+      +'<div class="rl" style="left:'+refPct+'%"></div></div>'
+      +'<div class="bn" style="color:'+col+'">'+(r.ano>=REF?'+':'')+((r.ano-REF).toFixed(1))+'pp</div></div>';
+  }).join('');
+  const maxReal = Math.max(...RFBRC_DATA.map(r=>Math.abs(r.ano_real)))*1.2||2;
+  document.getElementById('rfbrc-real-bars').innerHTML = RFBRC_DATA.map(r=>{
+    const v=r.ano_real, col=v>=0?'var(--up)':'var(--dn)', isNeg=v<0, w=Math.abs(v)/maxReal*50;
+    const barD=isNeg?'<div style="position:absolute;right:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:3px 0 0 3px"></div>':'<div style="position:absolute;left:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:0 3px 3px 0"></div>';
+    const posS=isNeg?'right:calc(50% + '+w+'% + 3px)':'left:calc(50% + '+w+'% + 3px)';
+    return '<div class="br"><div class="bt">'+r.ticker+'</div>'
+      +'<div class="bo" style="overflow:visible">'+barD+'<div class="rl" style="left:50%"></div>'
+      +'<span style="position:absolute;font-family:IBM Plex Mono,monospace;font-size:9px;color:'+col+';'+posS+';top:50%;transform:translateY(-50%)">'+fmtPct(v)+'</span>'
+      +'</div><div class="bn" style="color:'+col+'">'+fmtPct(v)+'</div></div>';
+  }).join('');
+  let rows='', totV=0;
+  RFBRC_DATA.forEach(r=>{
+    totV+=r.valor;
+    const vs=r.ano-REF; const col=r.ano>=REF?'var(--up)':'var(--dn)'; const rCol=r.ano_real>=0?'var(--up)':'var(--dn)';
+    const [tbg,tfc]=r.tipo==='Tesouro'?['#fef3c7','#92400e']:r.tipo==='Fundo DI'?['#eff6ff','#1e40af']:['#e8f5f0','#1a7a58'];
+    rows+='<tr><td class="mono" style="font-weight:600;font-size:11px">'+r.ticker+'</td>'
+      +'<td><span class="tag" style="background:'+tbg+';color:'+tfc+'">'+r.tipo+'</span></td>'
+      +'<td>'+r.titular+'</td><td class="mono" style="font-weight:600">'+fmtBRL0(r.valor)+'</td>'
+      +'<td class="mono">'+fmtPct(r.mes)+'</td>'
+      +'<td class="mono" style="font-weight:600;color:'+col+'">'+fmtPct(r.ano)+'</td>'
+      +'<td class="mono" style="color:'+rCol+'">'+fmtPct(r.ano_real)+'</td>'
+      +'<td><span class="mb '+(vs>=0?'mb-up':'mb-dn')+'">'+(vs>=0?'\u2713+':'\u2717')+vs.toFixed(1)+'pp</span></td>'
+      +'<td><span class="mb '+(r.ano>=REF?'mb-up':'mb-dn')+'">'+(r.ano>=REF?'ACIMA REF':'ABAIXO REF')+'</span></td></tr>';
+  });
+  document.getElementById('rfbrc-tbody').innerHTML=rows;
+  document.getElementById('rfbrc-tfoot').innerHTML='<tr><td colspan="3">TOTAL RF BR Caixa</td><td>'+fmtBRL0(totRFBRC)+'</td><td></td><td>'+fmtPct(avgAno)+'</td><td>'+fmtPct(avgReal)+'</td><td colspan="2"></td></tr>';
+})();
+
+// ── SEÇÃO RF USD CAIXA ────────────────────────────────────────
+(function(){
+  const validData = RFUSDC_DATA.filter(r=>!r.anomalia);
+  const avgAno    = validData.reduce((s,r)=>s+r.ano,0)/validData.length;
+  const avgReal   = validData.reduce((s,r)=>s+r.ano_real,0)/validData.length;
+  kpiRow('rfusdc-kpis',[
+    {label:'Valor Total (BRL)',   val:fmtBRL0(totRFUSDC), sub:(totRFUSDC/totPROV_FULL*100).toFixed(1)+'% do container'},
+    {label:'Var. Média (BRL)',    val:fmtPct(avgAno),      color:upDn(avgAno), sub:'excl. anomalia'},
+    {label:'Yield USD estimado',  val:'~5,0% a.a.',         color:'var(--up)',   sub:'JPM Money Market'},
+    {label:'Impacto Cambial',     val:'BRL apreciou',       color:'var(--dn)',   sub:'penaliza retorno BRL'},
+  ]);
+  // Barras nominais (diverging — maioria negativa por câmbio)
+  const validForChart = RFUSDC_DATA.filter(r=>!r.anomalia);
+  const maxAno = Math.max(...validForChart.map(r=>Math.abs(r.ano)))*1.1||10;
+  document.getElementById('rfusdc-ano-bars').innerHTML = RFUSDC_DATA.map(r=>{
+    if(r.anomalia) return '<div class="br"><div class="bt" style="font-size:10px">'+r.ticker+'</div>'
+      +'<div style="flex:1;font-family:IBM Plex Mono,monospace;font-size:10px;color:#f59e0b;padding:4px 8px;background:#fef3c7;border-radius:4px">⚠ Anomalia de dados (+713%) — excluída do gráfico</div></div>';
+    const v=r.ano, col=v>=0?'var(--up)':'var(--dn)', isNeg=v<0, w=Math.abs(v)/maxAno*50;
+    const barD=isNeg?'<div style="position:absolute;right:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:3px 0 0 3px"></div>':'<div style="position:absolute;left:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:0 3px 3px 0"></div>';
+    const posS=isNeg?'right:calc(50% + '+w+'% + 3px)':'left:calc(50% + '+w+'% + 3px)';
+    return '<div class="br"><div class="bt">'+r.ticker+'</div>'
+      +'<div class="bo" style="overflow:visible">'+barD+'<div class="rl" style="left:50%"></div>'
+      +'<span style="position:absolute;font-family:IBM Plex Mono,monospace;font-size:9px;color:'+col+';'+posS+';top:50%;transform:translateY(-50%)">'+fmtPct(v)+'</span>'
+      +'</div><div class="bn" style="color:'+col+'">'+fmtPct(v)+'</div></div>';
+  }).join('');
+  // Barras reais
+  const maxReal = Math.max(...validForChart.map(r=>Math.abs(r.ano_real)))*1.1||10;
+  document.getElementById('rfusdc-real-bars').innerHTML = RFUSDC_DATA.map(r=>{
+    if(r.anomalia) return '<div class="br"><div class="bt" style="font-size:10px">'+r.ticker+'</div>'
+      +'<div style="flex:1;font-family:IBM Plex Mono,monospace;font-size:10px;color:#f59e0b;padding:4px 8px;background:#fef3c7;border-radius:4px">⚠ Anomalia — excluída</div></div>';
+    const v=r.ano_real, col=v>=0?'var(--up)':'var(--dn)', isNeg=v<0, w=Math.abs(v)/maxReal*50;
+    const barD=isNeg?'<div style="position:absolute;right:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:3px 0 0 3px"></div>':'<div style="position:absolute;left:50%;width:'+w+'%;height:100%;background:'+col+';border-radius:0 3px 3px 0"></div>';
+    const posS=isNeg?'right:calc(50% + '+w+'% + 3px)':'left:calc(50% + '+w+'% + 3px)';
+    return '<div class="br"><div class="bt">'+r.ticker+'</div>'
+      +'<div class="bo" style="overflow:visible">'+barD+'<div class="rl" style="left:50%"></div>'
+      +'<span style="position:absolute;font-family:IBM Plex Mono,monospace;font-size:9px;color:'+col+';'+posS+';top:50%;transform:translateY(-50%)">'+fmtPct(v)+'</span>'
+      +'</div><div class="bn" style="color:'+col+'">'+fmtPct(v)+'</div></div>';
+  }).join('');
+  // Tabela
+  let rows='';
+  RFUSDC_DATA.forEach(r=>{
+    const col=r.anomalia?'#92400e':(r.ano>=0?'var(--up)':'var(--dn)');
+    const obs=r.anomalia?'<span class="mb mb-warn">⚠ Anomalia dados</span>':(r.tipo==='Saldo'?'<span class="mb mb-info">Caixa operacional</span>':'<span class="mb mb-info">Yield USD ~5%/ano</span>');
+    rows+='<tr><td class="mono" style="font-weight:600;font-size:11px">'+r.ticker+'</td>'
+      +'<td><span class="tag" style="background:#ccfbf1;color:#0f766e">'+r.tipo+'</span></td>'
+      +'<td>'+r.titular+'</td><td class="mono" style="font-weight:600">'+fmtBRL0(r.valor)+'</td>'
+      +'<td class="mono">'+fmtPct(r.mes)+'</td>'
+      +'<td class="mono" style="color:'+col+'">'+fmtPct(r.ano)+'</td>'
+      +'<td class="mono" style="color:'+(r.anomalia?'#92400e':(r.ano_real>=0?'var(--up)':'var(--dn)'))+'">'+(r.anomalia?'N/A (anomalia)':fmtPct(r.ano_real))+'</td>'
+      +'<td>'+obs+'</td></tr>';
+  });
+  document.getElementById('rfusdc-tbody').innerHTML=rows;
+})();
+
+// ═══════════════════════════════════════════════════════════════
+// ALERTAS
+// ═══════════════════════════════════════════════════════════════
+const alerts=[];
+// Concentração BDRs
+if(totBDR/totPROV>0.10) alerts.push({c:'ac-crit',t:'CONCENTRAÇÃO CRÍTICA',h:'BDRs: '+(totBDR/totPROV*100).toFixed(1)+'% de Proventos',d:`AURA33 domina com R$ 393k. Limite: 10% por ativo.\nAlocação total BDRs: ${fmtBRL0(totBDR)}`});
+// FIIs abaixo ref
+FIIS.filter(f=>f.dy<f.ref).forEach(f=>alerts.push({c:'ac-warn',t:'FII ABAIXO DA REF.',h:f.ticker+' ['+f.cat+']: DY '+f.dy.toFixed(2)+'% vs '+f.ref+'%',d:`Deficit: ${(f.dy-f.ref).toFixed(2)}pp · Titular: ${f.titular}`}));
+// Ações dupla falha
+ACOES.filter(a=>a.var_ano<IPCA&&a.dy<REF_DIV).forEach(a=>alerts.push({c:'ac-crit',t:'AÇÃO — DUPLA FALHA',h:a.ticker+': cota e DY abaixo',d:`Cota: ${fmtPct(a.var_ano)} vs IPCA · DY: ${a.dy.toFixed(2)}% vs 6%`}));
+ACOES.filter(a=>a.var_ano<IPCA&&a.dy>=REF_DIV).forEach(a=>alerts.push({c:'ac-warn',t:'AÇÃO — EIXO 1 FALHA',h:a.ticker+': cota abaixo do IPCA',d:`Var: ${fmtPct(a.var_ano)} · IPCA: +${IPCA}% · DY OK: ${a.dy.toFixed(2)}%`}));
+ACOES.filter(a=>a.var_ano>=IPCA&&a.dy<REF_DIV).forEach(a=>alerts.push({c:'ac-warn',t:'AÇÃO — EIXO 2 FALHA',h:a.ticker+': DY abaixo de 6%',d:`DY: ${a.dy.toFixed(2)}% · Deficit: ${(a.dy-REF_DIV).toFixed(2)}pp · Cota OK`}));
+// TAEE11 unit
+alerts.push({c:'ac-info',t:'TRIBUTÁRIO',h:'TAEE11 é Unit — sem isenção IR em vendas',d:`Considerar migração para TAEE3/TAEE4\nDY bruto: 9,26% · pode ser penalizado na venda`});
+// RF BR abaixo ref
+RFBR.filter(r=>r.ano<REF).forEach(r=>alerts.push({c:'ac-warn',t:'RF BR ABAIXO REF.',h:r.ticker+': '+fmtPct(r.ano)+' vs ref '+REF+'%',d:`Deficit: ${(r.ano-REF).toFixed(1)}pp · Valor: ${fmtBRL0(r.valor)}\nRendimento real: ${fmtPct(r.ano_real)}`}));
+// Bonds cupom abaixo ref
+const bondsBelowRef=BONDS.filter(b=>b.cupom<REF);
+if(bondsBelowRef.length>0) alerts.push({c:'ac-warn',t:'BONDS — CUPOM ABAIXO REF.',h:bondsBelowRef.length+' bonds com cupom < '+REF+'%',d:bondsBelowRef.slice(0,4).map(b=>b.ticker+': '+b.cupom+'% (deficit '+(b.cupom-REF).toFixed(1)+'pp)').join('\n')});
+// Bonds com var muito negativa (stress de preço)
+const bondsStress=BONDS.filter(b=>b.var_ano<-20);
+if(bondsStress.length>0) alerts.push({c:'ac-info',t:'BONDS — MARCAÇÃO NEGATIVA',h:bondsStress.length+' bonds com queda de preço > 20%',d:bondsStress.map(b=>b.ticker+': '+fmtPct(b.var_ano)).join(' · ')+'\nAtenção: preço ≠ cupom. Renda contratada mantida.'});
+if(alerts.length===0) alerts.push({c:'ac-ok',t:'COMPLIANCE',h:'Nenhum alerta crítico',d:'Todos os segmentos dentro dos parâmetros.'});
+document.getElementById('alerts-wrap').innerHTML=alerts.map(a=>
+  `<div class="ac ${a.c}"><div class="ac-type">${a.t}</div><div class="ac-title">${a.h}</div><div class="ac-desc">${a.d}</div></div>`
+).join('');
+
+// Nav active on scroll
+const sections=['overview','fiis','acoes','bdrs','rfbr','rfusd','fgts','rfbr-caixa','rfusd-caixa','alertas'];
+window.addEventListener('scroll',()=>{
+  let cur='';
+  sections.forEach(id=>{
+    const el=document.getElementById(id);
+    if(el&&window.scrollY>=el.offsetTop-120) cur=id;
+  });
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.toggle('active',n.getAttribute('href')==='#'+cur));
+});
+</script>
+</body>
+</html>
